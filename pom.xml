@@ -8,6 +8,7 @@
     <artifactId>musashi-banking-system</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
+    <name>musashi-banking-system</name>
     <modules>
         <module>web</module>
         <module>ejb</module>
@@ -24,16 +25,25 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>jakarta.platform</groupId>
-                <artifactId>jakarta.jakartaee-api</artifactId>
-                <version>10.0.0</version>
+                <groupId>lk.jiat.app</groupId>
+                <artifactId>core</artifactId>
+                <version>1.0</version>
+                <type>jar</type>
             </dependency>
             <dependency>
-                <groupId>jakarta.platform</groupId>
-                <artifactId>jakarta.jakartaee-web-api</artifactId>
-                <version>10.0.0</version>
+                <groupId>lk.jiat.app</groupId>
+                <artifactId>ejb</artifactId>
+                <version>1.0</version>
+                <type>ejb</type>
+            </dependency>
+            <dependency>
+                <groupId>lk.jiat.app</groupId>
+                <artifactId>web</artifactId>
+                <version>1.0</version>
+                <type>war</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
 </project>

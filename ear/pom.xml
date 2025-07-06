@@ -10,11 +10,66 @@
     </parent>
 
     <artifactId>ear</artifactId>
+    <packaging>ear</packaging>
+    <name>musashi-banking-system-ear</name>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>lk.jiat.app</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>lk.jiat.app</groupId>
+            <artifactId>ejb</artifactId>
+            <version>1.0</version>
+            <type>ejb</type>
+        </dependency>
+        <dependency>
+            <groupId>lk.jiat.app</groupId>
+            <artifactId>web</artifactId>
+            <version>1.0</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.name}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <modules>
+                        <jarModule>
+                            <groupId>lk.jiat.app</groupId>
+                            <artifactId>core</artifactId>
+                            <bundleFileName>core-module.jar</bundleFileName>
+                        </jarModule>
+                        <ejbModule>
+                            <groupId>lk.jiat.app</groupId>
+                            <artifactId>ejb</artifactId>
+                            <bundleFileName>ejb-module.jar</bundleFileName>
+                        </ejbModule>
+                        <webModule>
+                            <groupId>lk.jiat.app</groupId>
+                            <artifactId>web</artifactId>
+                            <contextRoot>/musashi-banking-system</contextRoot>
+                            <bundleFileName>web-module.war</bundleFileName>
+                        </webModule>
+                    </modules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
