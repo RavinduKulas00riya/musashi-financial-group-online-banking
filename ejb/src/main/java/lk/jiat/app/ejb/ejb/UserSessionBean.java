@@ -4,6 +4,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import lk.jiat.app.core.dto.LoginDto;
 import lk.jiat.app.core.model.User;
 import lk.jiat.app.core.service.UserService;
 import lk.jiat.app.core.util.Encryption;
@@ -62,29 +63,22 @@ public class UserSessionBean implements UserService {
     }
 
     @Override
-    public boolean validate(String emailOrMobile, String password) {
-
-        System.out.println("validate method called");
+    public User validate(String emailOrMobile, String password) {
 
         if(emailOrMobile.matches("^[0]{1}[7]{1}[01245678]{1}[0-9]{7}$")){
-            System.out.println("Mobile is valid");
 
-            return getUserByMobile(emailOrMobile) != null
-                    &&
-                    getUserByMobile(emailOrMobile).getPassword().equals(Encryption.encrypt(password));
+            User user = getUserByMobile(emailOrMobile);
 
-//            System.out.println(getUserByMobile(emailOrMobile)!=null);
+            if(user!=null && user.getPassword().equals(Encryption.encrypt(password))) return user;
             
         } else if (emailOrMobile.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
-            System.out.println("Email is valid");
 
-            return getUserByEmail(emailOrMobile) != null
-                    &&
-                    getUserByEmail(emailOrMobile).getPassword().equals(Encryption.encrypt(password));
-//            System.out.println(getUserByEmail(emailOrMobile)!=null);
+            User user = getUserByEmail(emailOrMobile);
+
+            if(user!=null && user.getPassword().equals(Encryption.encrypt(password))) return user;
+
         }
 
-        System.out.println("all invalid");
-        return false;
+        return null;
     }
 }
