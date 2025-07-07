@@ -97,7 +97,7 @@ public class Accounts implements Serializable{
     @Column(name = "created_date_time")
     private LocalDateTime createdDateTime;
 
-    @OneToMany(mappedBy = "accounts", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Interests> interests;
 
     // Getters and setters

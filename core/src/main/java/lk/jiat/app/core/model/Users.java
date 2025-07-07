@@ -96,10 +96,10 @@ public class Users {
     @Enumerated(EnumType.STRING)
     private UserType userType = UserType.CUSTOMER;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Accounts> accounts;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Notifications> notifications;
 
     // Getters and setters
