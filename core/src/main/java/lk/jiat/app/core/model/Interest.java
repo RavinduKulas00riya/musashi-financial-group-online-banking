@@ -6,17 +6,17 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "interests")
-public class Interests {
+public class Interest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    public Interests() {
+    public Interest() {
     }
 
     private Double amount;
 
-    public Interests(Integer id, Double balanceAfter, Accounts account, LocalDateTime dateTime, Double amount) {
+    public Interest(Integer id, Double balanceAfter, Account account, LocalDateTime dateTime, Double amount) {
         this.id = id;
         this.balanceAfter = balanceAfter;
         this.account = account;
@@ -51,11 +51,11 @@ public class Interests {
         this.dateTime = dateTime;
     }
 
-    public Accounts getAccount() {
+    public Account getAccount() {
         return account;
     }
 
-    public void setAccount(Accounts account) {
+    public void setAccount(Account account) {
         this.account = account;
     }
 
@@ -69,7 +69,7 @@ public class Interests {
 
     @ManyToOne
     @JoinColumn(name = "accounts_id")
-    private Accounts account;
+    private Account account;
 
     @Column(name = "balance_after")
     private Double balanceAfter;

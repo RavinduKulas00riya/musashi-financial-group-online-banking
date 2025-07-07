@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "accounts")
-public class Accounts implements Serializable{
+public class Account implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class Accounts implements Serializable{
 
     private Double balance;
 
-    public Accounts(Integer id, String accountNo, Double balance, Users user, LocalDateTime createdDateTime, List<Interests> interests) {
+    public Account(Integer id, String accountNo, Double balance, User user, LocalDateTime createdDateTime, List<Interest> interests) {
         this.id = id;
         this.accountNo = accountNo;
         this.balance = balance;
@@ -28,25 +28,25 @@ public class Accounts implements Serializable{
         this.interests = interests;
     }
 
-    public Accounts() {
+    public Account() {
     }
 
     @Enumerated(EnumType.STRING)
     private AccountStatus status = AccountStatus.ACTIVE;
 
-    public Users getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(Users user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
-    public List<Interests> getInterests() {
+    public List<Interest> getInterests() {
         return interests;
     }
 
-    public void setInterests(List<Interests> interests) {
+    public void setInterests(List<Interest> interests) {
         this.interests = interests;
     }
 
@@ -92,13 +92,13 @@ public class Accounts implements Serializable{
 
     @ManyToOne
     @JoinColumn(name = "users_id")
-    private Users user;
+    private User user;
 
     @Column(name = "created_date_time")
     private LocalDateTime createdDateTime;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<Interests> interests;
+    private List<Interest> interests;
 
     // Getters and setters
 }

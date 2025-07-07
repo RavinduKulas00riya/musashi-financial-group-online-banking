@@ -2,11 +2,11 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
     <persistence-unit name="AppPU" transaction-type="JTA">
         <jta-data-source>jiat_jdbc</jta-data-source>
-        <class>lk.jiat.app.core.model.Users</class>
-        <class>lk.jiat.app.core.model.Accounts</class>
-        <class>lk.jiat.app.core.model.Interests</class>
-        <class>lk.jiat.app.core.model.Notifications</class>
-        <class>lk.jiat.app.core.model.Transfers</class>
+        <class>lk.jiat.app.core.model.User</class>
+        <class>lk.jiat.app.core.model.Account</class>
+        <class>lk.jiat.app.core.model.Interest</class>
+        <class>lk.jiat.app.core.model.Notification</class>
+        <class>lk.jiat.app.core.model.Transfer</class>
         <shared-cache-mode>NONE</shared-cache-mode>
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="create"/>

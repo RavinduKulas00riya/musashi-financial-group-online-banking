@@ -6,19 +6,19 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transfers")
-public class Transfers {
+public class Transfer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    public Transfers() {
+    public Transfer() {
     }
 
     @ManyToOne
     @JoinColumn(name = "from_acc")
-    private Accounts fromAccount;
+    private Account fromAccount;
 
-    public Transfers(Integer id, LocalDateTime dateTime, TransactionStatus transactionStatus, Double amount, Accounts toAccount, Accounts fromAccount) {
+    public Transfer(Integer id, LocalDateTime dateTime, TransactionStatus transactionStatus, Double amount, Account toAccount, Account fromAccount) {
         this.id = id;
         this.dateTime = dateTime;
         this.transactionStatus = transactionStatus;
@@ -29,7 +29,7 @@ public class Transfers {
 
     @ManyToOne
     @JoinColumn(name = "to_acc")
-    private Accounts toAccount;
+    private Account toAccount;
 
     private Double amount;
 
@@ -49,19 +49,19 @@ public class Transfers {
         this.id = id;
     }
 
-    public Accounts getFromAccount() {
+    public Account getFromAccount() {
         return fromAccount;
     }
 
-    public void setFromAccount(Accounts fromAccount) {
+    public void setFromAccount(Account fromAccount) {
         this.fromAccount = fromAccount;
     }
 
-    public Accounts getToAccount() {
+    public Account getToAccount() {
         return toAccount;
     }
 
-    public void setToAccount(Accounts toAccount) {
+    public void setToAccount(Account toAccount) {
         this.toAccount = toAccount;
     }
 

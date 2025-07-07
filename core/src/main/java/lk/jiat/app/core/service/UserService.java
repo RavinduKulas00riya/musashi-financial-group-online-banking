@@ -1,11 +1,15 @@
 package lk.jiat.app.core.service;
 
 import jakarta.ejb.Remote;
-import lk.jiat.app.core.model.Users;
-
-import java.util.List;
+import lk.jiat.app.core.model.User;
 
 @Remote
 public interface UserService {
-    List<Users> getAllUsers();
+    User getUserById(Integer id);
+    User getUserByEmail(String email);
+    User getUserByMobile(String mobile);
+    void addUser(User user);
+    void updateUser(User user);
+    void deleteUser(User user);
+    boolean validate(String emailOrMobile, String password);
 }

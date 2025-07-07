@@ -7,28 +7,28 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
-public class Notifications implements Serializable {
+public class Notification implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    public Notifications() {
+    public Notification() {
     }
 
     private String message;
 
-    public Notifications(Integer id, String message, Users user, LocalDateTime dateTime) {
+    public Notification(Integer id, String message, User user, LocalDateTime dateTime) {
         this.id = id;
         this.message = message;
         this.user = user;
         this.dateTime = dateTime;
     }
 
-    public Users getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(Users user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -58,7 +58,7 @@ public class Notifications implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "users_id")
-    private Users user;
+    private User user;
 
     @Column(name = "date_time")
     private LocalDateTime dateTime;

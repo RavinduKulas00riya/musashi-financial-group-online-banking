@@ -2,11 +2,16 @@ package lk.jiat.app.core.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class Users {
+@NamedQueries({
+        @NamedQuery(name = "User.findByEmail", query = "select u from User u where u.email =:email"),
+        @NamedQuery(name = "User.findByMobile", query = "select u from User u where u.mobile =:mobile"),
+})
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -16,11 +21,10 @@ public class Users {
     private String email;
     private String password;
 
-    public Users() {
+    public User() {
     }
 
-    public Users(Integer id, String name, String mobile, String email, String password, List<Accounts> accounts, List<Notifications> notifications) {
-        this.id = id;
+    public User(String name, String mobile, String email, String password, List<Account> accounts, List<Notification> notifications) {
         this.name = name;
         this.mobile = mobile;
         this.email = email;
@@ -37,19 +41,19 @@ public class Users {
         this.userType = userType;
     }
 
-    public List<Notifications> getNotifications() {
+    public List<Notification> getNotifications() {
         return notifications;
     }
 
-    public void setNotifications(List<Notifications> notifications) {
+    public void setNotifications(List<Notification> notifications) {
         this.notifications = notifications;
     }
 
-    public List<Accounts> getAccounts() {
+    public List<Account> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(List<Accounts> accounts) {
+    public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
     }
 
@@ -97,10 +101,10 @@ public class Users {
     private UserType userType = UserType.CUSTOMER;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Accounts> accounts;
+    private List<Account> accounts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Notifications> notifications;
+    private List<Notification> notifications;
 
     // Getters and setters
 }
