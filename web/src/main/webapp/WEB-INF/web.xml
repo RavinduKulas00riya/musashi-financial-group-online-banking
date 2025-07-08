@@ -21,6 +21,14 @@
         <role-name>CUSTOMER</role-name>
     </security-role>
 
+<!--    <login-config>-->
+<!--        <auth-method>FORM</auth-method>-->
+<!--        <form-login-config>-->
+<!--            <form-login-page>/admin_login.jsp</form-login-page>-->
+<!--            <form-error-page>/unauthorized.jsp</form-error-page>-->
+<!--        </form-login-config>-->
+<!--    </login-config>-->
+
     <error-page>
         <error-code>401</error-code>
         <location>/unauthorized.jsp</location>

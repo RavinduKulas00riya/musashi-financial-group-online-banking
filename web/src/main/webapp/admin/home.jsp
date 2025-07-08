@@ -12,5 +12,9 @@
 </head>
 <body>
     <h1>Admin | Home</h1>
+    <form method="GET" action="${pageContext.request.contextPath}/logout">
+        <button type="submit">Logout</button>
+    </form>
+
 </body>
 </html>

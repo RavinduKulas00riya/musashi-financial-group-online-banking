@@ -12,5 +12,21 @@
 </head>
 <body>
   <h1>Login</h1>
+
+  <form method="POST" action="${pageContext.request.contextPath}/login">
+      <table>
+          <tr>
+              <th>Email</th>
+              <td><input type="text" name="emailOrMobile"></td>
+          </tr>
+          <tr>
+              <th>Password</th>
+              <td><input type="password" name="password"></td>
+          </tr>
+          <tr>
+              <td><input type="submit" value="Login"></td>
+          </tr>
+      </table>
+  </form>
 </body>
 </html>
