@@ -12,5 +12,5 @@ public interface UserService {
     void addUser(User user);
     void updateUser(User user);
     void deleteUser(User user);
-    User validate(String emailOrMobile, String password);
+    User validate(String email, String password);
 }

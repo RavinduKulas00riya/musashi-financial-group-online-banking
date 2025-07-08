@@ -19,8 +19,7 @@ public class Account implements Serializable{
 
     private Double balance;
 
-    public Account(Integer id, String accountNo, Double balance, User user, LocalDateTime createdDateTime, List<Interest> interests) {
-        this.id = id;
+    public Account(String accountNo, Double balance, User user, LocalDateTime createdDateTime, List<Interest> interests) {
         this.accountNo = accountNo;
         this.balance = balance;
         this.user = user;

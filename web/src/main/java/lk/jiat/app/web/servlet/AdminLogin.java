@@ -31,7 +31,7 @@ public class AdminLogin extends HttpServlet {
 //        User user = new User("John Doe", "123", "email", Encryption.encrypt("123"), new ArrayList<>(), new ArrayList<>());
 //        userService.addUser(user);
 
-        String emailOrMobile = req.getParameter("emailOrMobile");
+        String email = req.getParameter("email");
         String password = req.getParameter("password");
 
 //        User user = userService.validate(emailOrMobile, password);
@@ -39,13 +39,13 @@ public class AdminLogin extends HttpServlet {
 //        if(user != null) {
 
             AuthenticationParameters parameters = AuthenticationParameters.withParams()
-                    .credential(new UsernamePasswordCredential(emailOrMobile, password));
+                    .credential(new UsernamePasswordCredential(email, password));
 
             AuthenticationStatus status = securityContext.authenticate(req, resp, parameters);
 
             if (status == AuthenticationStatus.SUCCESS) {
 
-                req.getSession().setAttribute("admin", userService.getUserByEmail(emailOrMobile));
+                req.getSession().setAttribute("admin", userService.getUserByEmail(email));
                 resp.sendRedirect(req.getContextPath() + "/admin/home.jsp");
 
 //                if(user.getUserType().equals(UserType.CUSTOMER)) {

@@ -21,17 +21,25 @@ public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String emailOrMobile = req.getParameter("emailOrMobile");
+        String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        User user = userService.validate(emailOrMobile, password);
+        System.out.println("Login email: " + email);
 
-        if(user != null && user.getUserType().equals(UserType.CUSTOMER)) {
-            req.getSession().setAttribute("user", user);
-            resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
+        if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+
+            User user = userService.validate(email, password);
+
+            if (user != null && user.getUserType().equals(UserType.CUSTOMER)) {
+                req.getSession().setAttribute("user", user);
+                resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
+            } else {
+                req.setAttribute("message", "Incorrect email or password");
+                req.getRequestDispatcher("index.jsp").forward(req, resp);
+            }
         }else{
-            resp.setContentType("text/html");
-            resp.getWriter().write("Invalid email/mobile or password");
+            req.setAttribute("message", "Invalid email or password");
+            req.getRequestDispatcher("index.jsp").forward(req, resp);
         }
     }
 }
