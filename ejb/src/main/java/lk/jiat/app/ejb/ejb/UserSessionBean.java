@@ -18,7 +18,9 @@ public class UserSessionBean implements UserService {
     @Override
     public User getUserById(Integer id) {
         try {
-            return em.find(User.class, id);
+            User user = em.find(User.class, id);
+            user.getNotifications().size();
+            return user;
         }catch (NoResultException e){
             return null;
         }
@@ -70,7 +72,7 @@ public class UserSessionBean implements UserService {
             User user = getUserByMobile(emailOrMobile);
 
             if(user!=null && user.getPassword().equals(Encryption.encrypt(password))) return user;
-            
+
         } else if (emailOrMobile.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
 
             User user = getUserByEmail(emailOrMobile);
