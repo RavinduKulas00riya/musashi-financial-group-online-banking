@@ -11,7 +11,6 @@ import lk.jiat.app.core.model.UserType;
 import lk.jiat.app.core.service.UserService;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @WebServlet("/login")
 public class Login extends HttpServlet {
@@ -22,32 +21,17 @@ public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-//        System.out.println("Login doGet");
-//        User user = new User("John Doe", "123", "email", Encryption.encrypt("123"), new ArrayList<>(), new ArrayList<>());
-//        userService.addUser(user);
-
         String emailOrMobile = req.getParameter("emailOrMobile");
         String password = req.getParameter("password");
-        String userType = req.getParameter("userType");
-
-        resp.setContentType("text/html");
 
         User user = userService.validate(emailOrMobile, password);
 
-        if(user != null) {
-            if(user.getUserType().equals(UserType.ADMIN) && Objects.equals(userType, "ADMIN")) {
-                // admin
-                resp.getWriter().write("hello admin");
-                return;
-            }
-
-            if(user.getUserType().equals(UserType.CUSTOMER) && Objects.equals(userType, "CUSTOMER")) {
-                // customer
-                resp.getWriter().write("hello customer");
-                return;
-            }
+        if(user != null && user.getUserType().equals(UserType.CUSTOMER)) {
+            req.getSession().setAttribute("user", user);
+            resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
+        }else{
+            resp.setContentType("text/html");
+            resp.getWriter().write("Invalid email/mobile or password");
         }
-
-        resp.getWriter().write("Invalid email or password");
     }
 }

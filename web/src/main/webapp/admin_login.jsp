@@ -2,21 +2,19 @@
   Created by IntelliJ IDEA.
   User: Ravindu Kulasooriya
   Date: 07/07/2025
-  Time: 4:06 pm
+  Time: 5:52 pm
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<head>
+  <head>
     <title>Admin | Login</title>
-</head>
-<body>
-  <h1>Admin | Login</h1>
-
-  <form method="POST" action="${pageContext.request.contextPath}/login">
+  </head>
+  <body>
+  <form method="POST" action="${pageContext.request.contextPath}/admin_login">
     <table>
       <tr>
-        <th>Email or Mobile</th>
+        <th>Email</th>
         <td><input type="text" name="emailOrMobile"></td>
       </tr>
       <tr>
@@ -28,5 +26,5 @@
       </tr>
     </table>
   </form>
-</body>
+  </body>
 </html>
