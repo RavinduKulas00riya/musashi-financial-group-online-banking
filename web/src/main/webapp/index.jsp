@@ -31,6 +31,13 @@
             padding: 8px;
             font-size: 14px;
             cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .redirect-btn{
+            background: none;
+        }
+        div{
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -44,6 +51,7 @@
     <input type="text" placeholder="Email" name="email" required>
     <input type="password" placeholder="Password" name="password" required>
     <button type="submit">Login</button>
+    <button class="redirect-btn" onclick="location.href='register.jsp'">New User? Create New Account</button>
 </form>
 </body>
 </html>

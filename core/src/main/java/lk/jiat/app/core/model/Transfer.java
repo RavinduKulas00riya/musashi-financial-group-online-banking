@@ -18,8 +18,7 @@ public class Transfer {
     @JoinColumn(name = "from_acc")
     private Account fromAccount;
 
-    public Transfer(Integer id, LocalDateTime dateTime, TransactionStatus transactionStatus, Double amount, Account toAccount, Account fromAccount) {
-        this.id = id;
+    public Transfer(LocalDateTime dateTime, TransactionStatus transactionStatus, Double amount, Account toAccount, Account fromAccount) {
         this.dateTime = dateTime;
         this.transactionStatus = transactionStatus;
         this.amount = amount;

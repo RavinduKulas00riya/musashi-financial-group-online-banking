@@ -65,19 +65,13 @@ public class UserSessionBean implements UserService {
     }
 
     @Override
-    public User validate(String emailOrMobile, String password) {
+    public User validate(String email, String password) {
 
-        if(emailOrMobile.matches("^[0]{1}[7]{1}[01245678]{1}[0-9]{7}$")){
+        if (email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
 
-            User user = getUserByMobile(emailOrMobile);
+            User user = getUserByEmail(email);
 
-            if(user!=null && user.getPassword().equals(Encryption.encrypt(password))) return user;
-
-        } else if (emailOrMobile.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
-
-            User user = getUserByEmail(emailOrMobile);
-
-            if(user!=null && user.getPassword().equals(Encryption.encrypt(password))) return user;
+            if(user!=null && user.getPassword().equals(password)) return user;
 
         }
 

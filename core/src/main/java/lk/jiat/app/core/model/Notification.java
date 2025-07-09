@@ -17,8 +17,7 @@ public class Notification implements Serializable {
 
     private String message;
 
-    public Notification(Integer id, String message, User user, LocalDateTime dateTime) {
-        this.id = id;
+    public Notification(String message, User user, LocalDateTime dateTime) {
         this.message = message;
         this.user = user;
         this.dateTime = dateTime;

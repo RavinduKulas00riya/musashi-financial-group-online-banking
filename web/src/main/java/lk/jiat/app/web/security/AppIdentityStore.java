@@ -9,6 +9,7 @@ import jakarta.security.enterprise.identitystore.IdentityStore;
 import lk.jiat.app.core.model.User;
 import lk.jiat.app.core.model.UserType;
 import lk.jiat.app.core.service.UserService;
+import lk.jiat.app.core.util.Encryption;
 
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class AppIdentityStore implements IdentityStore {
         if (credential instanceof UsernamePasswordCredential) {
             UsernamePasswordCredential upc = (UsernamePasswordCredential) credential;
 
-            User user = userService.validate(upc.getCaller(), upc.getPasswordAsString());
+            User user = userService.validate(upc.getCaller(), Encryption.encrypt(upc.getPasswordAsString()));
 
             System.out.println(user);
 

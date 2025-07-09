@@ -45,7 +45,8 @@ public class AdminLogin extends HttpServlet {
 
             if (status == AuthenticationStatus.SUCCESS) {
 
-                req.getSession().setAttribute("admin", userService.getUserByEmail(email));
+                req.getSession().setAttribute("user", userService.getUserByEmail(email));
+                req.getSession().setMaxInactiveInterval(15 * 60);
                 resp.sendRedirect(req.getContextPath() + "/admin/home.jsp");
 
 //                if(user.getUserType().equals(UserType.CUSTOMER)) {

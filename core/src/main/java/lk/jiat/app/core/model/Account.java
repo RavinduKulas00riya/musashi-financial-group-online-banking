@@ -8,6 +8,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "accounts")
+@NamedQueries({
+        @NamedQuery(name = "Account.findByAccountNumber",
+                query = "SELECT a FROM Account a LEFT JOIN FETCH a.interests LEFT JOIN FETCH a.user WHERE a.accountNo = :accountNo")
+})
 public class Account implements Serializable{
 
     @Id
@@ -89,14 +93,14 @@ public class Account implements Serializable{
         this.id = id;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "users_id")
     private User user;
 
     @Column(name = "created_date_time")
     private LocalDateTime createdDateTime;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Interest> interests;
 
     // Getters and setters

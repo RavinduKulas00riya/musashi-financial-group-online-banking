@@ -100,7 +100,7 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private UserType userType = UserType.CUSTOMER;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Account> accounts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

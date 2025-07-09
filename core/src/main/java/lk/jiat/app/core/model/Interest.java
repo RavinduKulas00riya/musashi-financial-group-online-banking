@@ -67,7 +67,7 @@ public class Interest {
         this.balanceAfter = balanceAfter;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "accounts_id")
     private Account account;
 

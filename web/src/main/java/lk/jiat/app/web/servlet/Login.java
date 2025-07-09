@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lk.jiat.app.core.model.User;
 import lk.jiat.app.core.model.UserType;
 import lk.jiat.app.core.service.UserService;
+import lk.jiat.app.core.util.Encryption;
 
 import java.io.IOException;
 
@@ -28,10 +29,11 @@ public class Login extends HttpServlet {
 
         if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
 
-            User user = userService.validate(email, password);
+            User user = userService.validate(email, Encryption.encrypt(password));
 
             if (user != null && user.getUserType().equals(UserType.CUSTOMER)) {
                 req.getSession().setAttribute("user", user);
+                req.getSession().setMaxInactiveInterval(15 * 60);
                 resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
             } else {
                 req.setAttribute("message", "Incorrect email or password");

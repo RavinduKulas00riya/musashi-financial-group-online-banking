@@ -31,6 +31,13 @@
       padding: 8px;
       font-size: 14px;
       cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .redirect-btn{
+      background: none;
+    }
+    div{
+      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -48,6 +55,7 @@
   <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
   <input type="number" name="amount" placeholder="Initial Amount" required>
   <button type="submit">Register</button>
+  <button class="redirect-btn" onclick="location.href='index.jsp'">Already Registered? Go to Login</button>
 </form>
 </body>
 </html>

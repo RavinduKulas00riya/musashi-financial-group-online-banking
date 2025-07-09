@@ -79,7 +79,7 @@
 
 <div class="section">
     <h2>Transfer Funds</h2>
-    <form action="${pageContext.request.contextPath}/transfer" method="post">
+    <form action="${pageContext.request.contextPath}/transaction" method="post">
         <input type="text" name="destination" placeholder="Destination Account No." required>
         <input type="number" name="amount" placeholder="Amount" required>
         <input type="date" name="date" placeholder="Date (Optional)">
