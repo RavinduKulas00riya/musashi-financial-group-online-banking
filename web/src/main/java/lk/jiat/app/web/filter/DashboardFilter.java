@@ -27,11 +27,11 @@ public class DashboardFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
 
-        if (session != null && session.getAttribute("user") != null) {
-            User sessionUser = (User) session.getAttribute("user");
+        if (session != null && session.getAttribute("user_id") != null) {
+            Integer sessionUser = (Integer) session.getAttribute("user_id");
 
             // Get up-to-date user with notifications
-            User fullUser = userService.getUserById(sessionUser.getId());
+            User fullUser = userService.getUserById(sessionUser);
 
             if (fullUser != null && fullUser.getNotifications() != null) {
                 List<Notification> notifications = fullUser.getNotifications();
@@ -39,6 +39,10 @@ public class DashboardFilter implements Filter {
                 notifications.sort((n1, n2) -> n2.getDateTime().compareTo(n1.getDateTime()));
                 request.setAttribute("notifications", notifications);
             }
+
+            session.setAttribute("user", fullUser);
+
+            System.out.println("Filtered user: " + fullUser.getName());
 
             chain.doFilter(request, response); // proceed to JSP
         } else {

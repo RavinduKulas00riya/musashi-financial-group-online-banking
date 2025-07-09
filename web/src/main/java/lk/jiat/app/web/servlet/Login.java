@@ -32,7 +32,7 @@ public class Login extends HttpServlet {
             User user = userService.validate(email, Encryption.encrypt(password));
 
             if (user != null && user.getUserType().equals(UserType.CUSTOMER)) {
-                req.getSession().setAttribute("user", user);
+                req.getSession().setAttribute("user_id", user.getId());
                 req.getSession().setMaxInactiveInterval(15 * 60);
                 resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
             } else {

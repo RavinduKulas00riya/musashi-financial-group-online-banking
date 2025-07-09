@@ -10,11 +10,14 @@ import lk.jiat.app.core.model.*;
 import lk.jiat.app.core.service.AccountService;
 import lk.jiat.app.core.service.NotificationService;
 import lk.jiat.app.core.service.TransactionService;
+import lk.jiat.app.core.service.UserService;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
 
 @WebServlet("/transaction")
@@ -29,6 +32,9 @@ public class Transaction extends HttpServlet {
     @EJB
     private NotificationService notificationService;
 
+    @EJB
+    private UserService userService;
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -36,6 +42,13 @@ public class Transaction extends HttpServlet {
         String amountParam = req.getParameter("amount");
         String date = req.getParameter("date");
         String time = req.getParameter("time");
+        User fromUser = (User) req.getSession().getAttribute("user");
+
+        if (fromUser != null && fromUser.getNotifications() != null) {
+            List<Notification> notifications = fromUser.getNotifications();
+            notifications.sort((n1, n2) -> n2.getDateTime().compareTo(n1.getDateTime()));
+            req.setAttribute("notifications", notifications);
+        }
 
         String message = null;
 
@@ -80,18 +93,25 @@ public class Transaction extends HttpServlet {
         }
 
         //instant
-        User fromUser = (User) req.getSession().getAttribute("user");
+
         Account fromAccount = accountService.getAccount(fromUser.getAccounts().get(0).getAccountNo());
         Account toAccount = accountService.getAccount(toAcc);
 
+
         if (fromAccount == null ) {
-            req.setAttribute("message", "Your account is suspended or has been removed.");
+            req.setAttribute("message", "Your account is suspended.");
             req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
             return;
         }
 
         if (toAccount == null) {
-            req.setAttribute("message", "Destination account is suspended or has been removed.");
+            req.setAttribute("message", "Destination account is suspended or invalid.");
+            req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+            return;
+        }
+
+        if(fromAccount.getBalance() < amount) {
+            req.setAttribute("message", "Insufficient funds.");
             req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
             return;
         }
@@ -100,15 +120,35 @@ public class Transaction extends HttpServlet {
 
         transactionService.createTransaction(new Transfer(dateTime,transactionStatus,amount,toAccount,fromAccount));
 
-        Notification notification = new Notification();
-        notification.setMessage("$"+amount+" has been transferred to "+toAccount.getAccountNo());
-        notification.setUser(fromUser);
-        notification.setDateTime(dateTime);
-        notificationService.sendNotification(notification);
+        if(transactionStatus == TransactionStatus.PENDING) {
 
-        notification.setMessage("$"+amount+" has been transferred to you by "+fromAccount.getAccountNo());
-        notification.setUser(toUser);
-        notificationService.sendNotification(notification);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+            Notification notification = new Notification();
+            notification.setMessage("$"+amount+" has been scheduled to be transferred to "+toAccount.getAccountNo()+" on "+formatter.format(dateTime));
+            notification.setUser(fromUser);
+            notification.setDateTime(LocalDateTime.now());
+            notificationService.sendNotification(notification);
+
+        }else{
+
+            fromAccount.setBalance(fromAccount.getBalance() - amount);
+            accountService.updateAccount(fromAccount);
+
+            toAccount.setBalance(toAccount.getBalance() + amount);
+            accountService.updateAccount(toAccount);
+
+            Notification notification = new Notification();
+            notification.setMessage("$"+amount+" has been transferred to "+toAccount.getAccountNo());
+            notification.setUser(fromUser);
+            notification.setDateTime(LocalDateTime.now());
+            notificationService.sendNotification(notification);
+
+            notification.setMessage("$"+amount+" has been transferred to you by "+fromAccount.getAccountNo());
+            notification.setUser(toUser);
+            notificationService.sendNotification(notification);
+
+        }
 
         resp.sendRedirect(req.getContextPath()+"/customer/home.jsp");
 

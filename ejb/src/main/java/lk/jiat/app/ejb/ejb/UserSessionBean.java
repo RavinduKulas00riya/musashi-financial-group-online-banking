@@ -56,12 +56,12 @@ public class UserSessionBean implements UserService {
 
     @Override
     public void updateUser(User user) {
-
+        em.merge(user);
     }
 
     @Override
     public void deleteUser(User user) {
-
+        em.remove(user);
     }
 
     @Override

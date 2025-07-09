@@ -2,7 +2,10 @@
 <%@ page import="lk.jiat.app.core.service.UserService" %>
 <%@ page import="lk.jiat.app.core.model.Notification" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
-<%@ page import="java.util.List" %><%--
+<%@ page import="java.util.List" %>
+<%@ page import="lk.jiat.app.core.model.User" %>
+<%@ page import="lk.jiat.app.core.model.Account" %>
+<%--
   Created by IntelliJ IDEA.
   User: Ravindu Kulasooriya
   Date: 07/07/2025
@@ -44,6 +47,11 @@
             display: flex;
             flex-direction: column;
         }
+        label {
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
         input {
             margin-bottom: 10px;
             padding: 8px;
@@ -66,6 +74,11 @@
         li {
             margin-bottom: 8px;
         }
+        .msg {
+            margin-bottom: 10px;
+            margin-top: 10px;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -77,13 +90,46 @@
     <button onclick="location.href='schedule.jsp'">Scheduled Operations</button>
 </div>
 
+<%
+    User user = (User) session.getAttribute("user");
+    Account account = null;
+    if (user != null && user.getAccounts() != null && !user.getAccounts().isEmpty()) {
+        account = user.getAccounts().get(0); // assuming only one account per user
+    }
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+%>
+
+<div class="section">
+    <h2>Profile</h2>
+    <div><strong>Full Name:</strong> <%= user != null ? user.getName() : "N/A" %></div>
+    <div><strong>Email:</strong> <%= user != null ? user.getEmail() : "N/A" %></div>
+    <div><strong>Mobile:</strong> <%= user != null ? user.getMobile() : "N/A" %></div>
+
+    <hr style="margin: 15px 0;">
+
+    <h2>Account</h2>
+    <div><strong>Account Number:</strong> <%= account != null ? account.getAccountNo() : "N/A" %></div>
+    <div><strong>Balance:</strong> <%= account != null ? "USD " + account.getBalance() : "N/A" %></div>
+    <div><strong>Status:</strong> <%= account != null ? account.getStatus() : "N/A" %></div>
+    <div><strong>Created:</strong> <%= account != null && account.getCreatedDateTime() != null
+            ? account.getCreatedDateTime().format(dtf) : "N/A" %></div>
+</div>
+
 <div class="section">
     <h2>Transfer Funds</h2>
+    <% String msg = (String) request.getAttribute("message"); %>
     <form action="${pageContext.request.contextPath}/transaction" method="post">
-        <input type="text" name="destination" placeholder="Destination Account No." required>
-        <input type="number" name="amount" placeholder="Amount" required>
-        <input type="date" name="date" placeholder="Date (Optional)">
-        <input type="time" name="time" placeholder="Time (Optional)">
+        <% if (msg != null) { %>
+        <div class="msg"><%= msg %></div>
+        <% } %>
+        <label for="destination">Destination Account No.</label>
+        <input type="text" id="destination" name="destination" required>
+        <label for="amount">Amount</label>
+        <input type="number" id="amount" name="amount" required>
+        <label for="date">Date (Optional)</label>
+        <input type="date" id="date" name="date">
+        <label for="time">Time (Optional)</label>
+        <input type="time" id="time" name="time">
         <button type="submit">Submit</button>
     </form>
 </div>
@@ -100,7 +146,7 @@
                 for (Notification n : notifications) {
                     String time = n.getDateTime() != null ? n.getDateTime().format(formatter) : "Unknown time";
         %>
-        <li><%= n.getMessage() %> — <%= time %></li>
+        <li><%= n.getMessage() %> — <strong><%= time %></strong></li>
         <%
             }
         } else {
@@ -113,4 +159,3 @@
 </div>
 </body>
 </html>
-

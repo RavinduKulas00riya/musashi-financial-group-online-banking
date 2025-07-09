@@ -31,4 +31,9 @@ public class AccountSessionBean implements AccountService {
         }
         return null;
     }
+
+    @Override
+    public void updateAccount(Account account) {
+        em.merge(account);
+    }
 }

@@ -9,4 +9,5 @@ import java.util.List;
 @Remote
 public interface AccountService {
     Account getAccount(String AccountNumber);
+    void updateAccount(Account account);
 }
