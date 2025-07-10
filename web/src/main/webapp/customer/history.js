@@ -71,7 +71,6 @@ function fillTable(data) {
             row.innerHTML = `
         <td>${item.accountNumber}</td>
         <td>${item.name}</td>
-        <td>${item.transactionType}</td>
         <td>${item.amount}</td>
         <td>${item.dateTime}</td>
         <td></td> <!-- Placeholder for the button -->
@@ -95,5 +94,17 @@ function fillTable(data) {
 
     if (!document.querySelector('table tbody')) {
         document.querySelector('table').appendChild(tbody);
+    }
+}
+
+async function cancelTransaction(transactionId) {
+
+    const response = await fetch('http://localhost:8080/musashi-banking-system/cancelTransaction?id=' + transactionId);
+    const result = await response.text();
+    if (result === 'success') {
+        await searchHistory("PENDING");
+    }else{
+        console.log(result);
+        alert("Cancellation unsuccessful. Please try again later.");
     }
 }

@@ -13,7 +13,7 @@ import lk.jiat.app.core.service.UserService;
 import java.io.IOException;
 import java.util.List;
 
-@WebFilter({"/customer/home.jsp","/customer/history.jsp"})
+@WebFilter({"/customer/home.jsp","/customer/history.jsp","/customer/schedule.jsp"})
 public class DashboardFilter implements Filter {
 
     @EJB

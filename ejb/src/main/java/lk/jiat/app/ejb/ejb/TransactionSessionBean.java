@@ -37,4 +37,15 @@ public class TransactionSessionBean implements TransactionService {
     public List<Transfer> getAllTransactions() {
         return List.of();
     }
+
+    @Override
+    public void deleteTransaction(Transfer transfer) {
+        Transfer managedTransfer = em.merge(transfer);
+        em.remove(managedTransfer);
+    }
+
+    @Override
+    public Transfer getTransaction(Integer id) {
+        return em.find(Transfer.class, id);
+    }
 }
