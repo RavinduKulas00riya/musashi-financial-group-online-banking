@@ -66,7 +66,7 @@
         }
     </style>
 </head>
-<body onload="searchHistory()">
+<body onload="searchHistory('COMPLETED')">
 <h1>Transaction History</h1>
 
 <div class="nav-buttons">
@@ -85,7 +85,7 @@
             <option value="Sent">Sent</option>
             <option value="Received">Received</option>
         </select>
-        <button onclick="searchHistory()">Search</button>
+        <button onclick="searchHistory('COMPLETED')">Search</button>
     </div>
 </div>
 

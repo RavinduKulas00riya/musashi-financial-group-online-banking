@@ -31,6 +31,9 @@ public class LoadHistory extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        try {
+
+
             User user = (User) request.getSession().getAttribute("user");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -45,7 +48,14 @@ public class LoadHistory extends HttpServlet {
 
             String accountNo = input.getString("accountNumber");
             String name = input.getString("name");
-            String sentOrReceived = input.getString("sentOrReceived");
+            String status = input.getString("status");
+            String sentOrReceived;
+
+            if(status.equals(TransactionStatus.COMPLETED.name())){
+                sentOrReceived = input.getString("sentOrReceived");
+            }else{
+                sentOrReceived = null;
+            }
 
             JSONArray result = new JSONArray();
 
@@ -64,11 +74,15 @@ public class LoadHistory extends HttpServlet {
             transactions.forEach(transaction -> {
                 JSONObject json = new JSONObject();
 
-                if (!transaction.getTransactionStatus().equals(TransactionStatus.COMPLETED)) {
+                System.out.println("1");
+
+                if (!transaction.getTransactionStatus().name().equals(status)) {
                     return;
                 }
 
-                if (transaction.getFromAccount().getAccountNo().equals(user.getAccounts().get(0).getAccountNo())) {
+                System.out.println("2");
+
+                if (status.equals(TransactionStatus.PENDING.name()) || transaction.getFromAccount().getAccountNo().equals(user.getAccounts().get(0).getAccountNo())) {
                     json.put("accountNumber", transaction.getToAccount().getAccountNo());
                     json.put("name", transaction.getToAccount().getUser().getName());
                     json.put("transactionType", "Sent");
@@ -78,22 +92,40 @@ public class LoadHistory extends HttpServlet {
                     json.put("transactionType", "Received");
                 }
 
+                System.out.println("3");
+
                 if (!name.isEmpty() && !json.getString("name").contains(name)) {
                     return;
                 }
 
-                if (!sentOrReceived.isEmpty() && !json.getString("transactionType").equals(sentOrReceived)) {
-                    return;
-                }
+                System.out.println("4");
 
                 json.put("amount", transaction.getAmount());
                 json.put("dateTime", formatter.format(transaction.getDateTime()));
+
+                if(status.equals(TransactionStatus.PENDING.name())) {
+
+                    json.put("transactionId", transaction.getId());
+                    if(json.getString("transactionType").equals("Received")){
+                        return;
+                    }
+                }else{
+                    if (!Objects.equals(sentOrReceived, "") && !json.getString("transactionType").equals(sentOrReceived)) {
+                        return;
+                    }
+                }
+
+                System.out.println("5");
 
                 result.put(json);
             });
 
             response.setContentType("application/json");
             response.getWriter().write(result.toString());
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     private void sendError(HttpServletResponse response, String message){
