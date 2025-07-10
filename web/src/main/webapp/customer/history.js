@@ -1,13 +1,11 @@
 async function searchHistory() {
     const accountNumber = document.querySelector('input[name="accountNumber"]').value;
     const name = document.querySelector('input[name="name"]').value;
-    const status = document.querySelector('select[name="status"]').value;
     const sentOrReceived = document.querySelector('select[name="sent_or_received"]').value;
 
     const data = {
         accountNumber: accountNumber,
         name: name,
-        status: status,
         sentOrReceived:sentOrReceived
     };
 
@@ -43,7 +41,6 @@ function fillTable(data) {
             <td>${item.transactionType}</td>
             <td>${item.amount}</td>
             <td>${item.dateTime}</td>
-            <td>${item.status}</td>
         `;
         tbody.appendChild(row);
     });

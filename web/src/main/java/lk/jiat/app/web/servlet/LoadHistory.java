@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lk.jiat.app.core.model.TransactionStatus;
 import lk.jiat.app.core.model.Transfer;
 import lk.jiat.app.core.model.User;
 import lk.jiat.app.core.service.AccountService;
@@ -44,7 +45,6 @@ public class LoadHistory extends HttpServlet {
 
             String accountNo = input.getString("accountNumber");
             String name = input.getString("name");
-            String status = input.getString("status");
             String sentOrReceived = input.getString("sentOrReceived");
 
             JSONArray result = new JSONArray();
@@ -64,7 +64,7 @@ public class LoadHistory extends HttpServlet {
             transactions.forEach(transaction -> {
                 JSONObject json = new JSONObject();
 
-                if (!status.isEmpty() && !transaction.getTransactionStatus().name().equals(status)) {
+                if (!transaction.getTransactionStatus().equals(TransactionStatus.COMPLETED)) {
                     return;
                 }
 
@@ -88,7 +88,6 @@ public class LoadHistory extends HttpServlet {
 
                 json.put("amount", transaction.getAmount());
                 json.put("dateTime", formatter.format(transaction.getDateTime()));
-                json.put("status", transaction.getTransactionStatus());
 
                 result.put(json);
             });

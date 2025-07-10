@@ -85,12 +85,6 @@
             <option value="Sent">Sent</option>
             <option value="Received">Received</option>
         </select>
-        <select name="status">
-            <option value="" selected>Status</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="PENDING">Pending</option>
-            <option value="CANCELLED">Cancelled</option>
-        </select>
         <button onclick="searchHistory()">Search</button>
     </div>
 </div>
@@ -103,34 +97,10 @@
         <th>Received/Sent</th>
         <th>Amount (USD)</th>
         <th>Date & Time</th>
-        <th>Status</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>987654321</td>
-        <td>John Doe</td>
-        <td>Received</td>
-        <td>250.00</td>
-        <td>2025-07-08 14:30</td>
-        <td>Completed</td>
-    </tr>
-    <tr>
-        <td>123456789</td>
-        <td>Jane Smith</td>
-        <td>Sent</td>
-        <td>100.00</td>
-        <td>2025-07-07 09:45</td>
-        <td>Pending</td>
-    </tr>
-    <tr>
-        <td>456789123</td>
-        <td>Michael Lee</td>
-        <td>Sent</td>
-        <td>75.00</td>
-        <td>2025-07-06 18:10</td>
-        <td>Cancelled</td>
-    </tr>
+
     </tbody>
 </table>
 
