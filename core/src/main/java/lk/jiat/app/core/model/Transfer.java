@@ -2,11 +2,15 @@ package lk.jiat.app.core.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transfers")
-public class Transfer {
+@NamedQueries({
+        @NamedQuery(name = "Transfer.findByUser", query = "select t from Transfer t where t.toAccount=:customer or t.fromAccount=:customer order by t.dateTime DESC"),
+})
+public class Transfer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

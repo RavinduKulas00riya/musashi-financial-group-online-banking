@@ -4,7 +4,6 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
-import lk.jiat.app.core.dto.LoginDto;
 import lk.jiat.app.core.model.User;
 import lk.jiat.app.core.service.UserService;
 import lk.jiat.app.core.util.Encryption;

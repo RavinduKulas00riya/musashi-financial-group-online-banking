@@ -23,8 +23,8 @@ public class AccountSessionBean implements AccountService {
         try {
             Account account = em.createNamedQuery("Account.findByAccountNumber", Account.class)
                     .setParameter("accountNo", AccountNumber).getSingleResult();
-            account.getUser();
-            account.getInterests().size();
+//            account.getUser();
+//            account.getInterests().size();
             if(account.getStatus().equals(AccountStatus.ACTIVE)) return account;
         }catch (NoResultException e){
             return null;
