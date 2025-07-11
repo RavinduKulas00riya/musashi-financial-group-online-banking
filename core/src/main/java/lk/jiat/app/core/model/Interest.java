@@ -17,8 +17,7 @@ public class Interest implements Serializable {
 
     private Double amount;
 
-    public Interest(Integer id, Double balanceAfter, Account account, LocalDateTime dateTime, Double amount) {
-        this.id = id;
+    public Interest(Double balanceAfter, Account account, LocalDateTime dateTime, Double amount) {
         this.balanceAfter = balanceAfter;
         this.account = account;
         this.dateTime = dateTime;

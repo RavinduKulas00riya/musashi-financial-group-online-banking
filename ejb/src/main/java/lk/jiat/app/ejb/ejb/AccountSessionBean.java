@@ -36,4 +36,19 @@ public class AccountSessionBean implements AccountService {
     public void updateAccount(Account account) {
         em.merge(account);
     }
+
+    @Override
+    public List<Account> getAllAccounts() {
+        return em.createNamedQuery("Account.findAll", Account.class).getResultList();
+    }
+
+    @Override
+    public List<Account> getActiveAccounts() {
+        try {
+            return em.createNamedQuery("Account.findActiveAccounts", Account.class)
+                    .setParameter("status", AccountStatus.ACTIVE).getResultList();
+        }catch (NoResultException e){
+            return List.of();
+        }
+    }
 }

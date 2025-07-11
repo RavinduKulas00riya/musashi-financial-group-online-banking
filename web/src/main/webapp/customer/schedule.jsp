@@ -1,11 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Ravindu Kulasooriya
-  Date: 10/07/2025
-  Time: 10:57 pm
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>Customer Dashboard</title>
@@ -55,6 +47,7 @@
             border-collapse: collapse;
             width: 100%;
             max-width: 900px;
+            margin-bottom: 40px;
         }
         th, td {
             border: 1px solid #aaa;
@@ -63,6 +56,10 @@
         }
         th {
             background-color: #f0f0f0;
+        }
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -95,12 +92,43 @@
     </tr>
     </thead>
     <tbody>
+    <!-- Filled dynamically -->
+    </tbody>
+</table>
 
+<!-- New Daily Interest History Table -->
+<div class="section-title">Daily Interest History</div>
+<table>
+    <thead>
+    <tr>
+        <th>Date & Time</th>
+        <th>Interest Rate</th>
+        <th>Amount (USD)</th>
+        <th>Balance After (USD)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>2025-07-08 00:00</td>
+        <td>3.5%</td>
+        <td>5.25</td>
+        <td>1505.25</td>
+    </tr>
+    <tr>
+        <td>2025-07-07 00:00</td>
+        <td>3.5%</td>
+        <td>5.15</td>
+        <td>1500.00</td>
+    </tr>
+    <tr>
+        <td>2025-07-06 00:00</td>
+        <td>3.5%</td>
+        <td>5.00</td>
+        <td>1494.85</td>
+    </tr>
     </tbody>
 </table>
 
 <script src="${pageContext.request.contextPath}/customer/history.js"></script>
 </body>
 </html>
-
-
