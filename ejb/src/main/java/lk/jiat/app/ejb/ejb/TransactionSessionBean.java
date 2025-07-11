@@ -1,13 +1,13 @@
 package lk.jiat.app.ejb.ejb;
 
+import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transaction;
-import lk.jiat.app.core.model.Account;
-import lk.jiat.app.core.model.Transfer;
-import lk.jiat.app.core.model.User;
+import lk.jiat.app.core.model.*;
+import lk.jiat.app.core.service.NotificationService;
 import lk.jiat.app.core.service.TransactionService;
 
 import java.util.List;
@@ -17,6 +17,9 @@ public class TransactionSessionBean implements TransactionService {
 
     @PersistenceContext
     private EntityManager em;
+
+    @EJB
+    private NotificationService notificationService;
 
     @Override
     public void createTransaction(Transfer transfer) {
@@ -47,5 +50,28 @@ public class TransactionSessionBean implements TransactionService {
     @Override
     public Transfer getTransaction(Integer id) {
         return em.find(Transfer.class, id);
+    }
+
+    @Override
+    public List<Transfer> getPendingTransactions() {
+        try {
+            return em.createNamedQuery("Transfer.findPendingTransactions", Transfer.class)
+                    .setParameter("status", TransactionStatus.PENDING).getResultList();
+        }catch (NoResultException e){
+            return List.of();
+        }
+    }
+
+    @Override
+    public void updateTransaction(Transfer transfer) {
+        em.merge(transfer);
+        notificationService.sendNotification(new Notification(
+                "$"+transfer.getAmount()+" has been transferred to you by "+transfer.getFromAccount().getAccountNo(),
+                transfer.getToAccount().getUser(),
+                transfer.getDateTime()));
+        notificationService.sendNotification(new Notification(
+                "The scheduled transaction to send $"+transfer.getAmount()+" to "+transfer.getToAccount().getAccountNo()+" has been completed",
+                transfer.getFromAccount().getUser(),
+                transfer.getDateTime()));
     }
 }

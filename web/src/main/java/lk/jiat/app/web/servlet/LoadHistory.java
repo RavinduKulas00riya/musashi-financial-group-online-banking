@@ -74,13 +74,9 @@ public class LoadHistory extends HttpServlet {
             transactions.forEach(transaction -> {
                 JSONObject json = new JSONObject();
 
-                System.out.println("1");
-
                 if (!transaction.getTransactionStatus().name().equals(status)) {
                     return;
                 }
-
-                System.out.println("2");
 
                 if (status.equals(TransactionStatus.PENDING.name()) || transaction.getFromAccount().getAccountNo().equals(user.getAccounts().get(0).getAccountNo())) {
                     json.put("accountNumber", transaction.getToAccount().getAccountNo());
@@ -92,13 +88,9 @@ public class LoadHistory extends HttpServlet {
                     json.put("transactionType", "Received");
                 }
 
-                System.out.println("3");
-
                 if (!name.isEmpty() && !json.getString("name").contains(name)) {
                     return;
                 }
-
-                System.out.println("4");
 
                 json.put("amount", transaction.getAmount());
                 json.put("dateTime", formatter.format(transaction.getDateTime()));
@@ -115,8 +107,6 @@ public class LoadHistory extends HttpServlet {
                     }
                 }
 
-                System.out.println("5");
-
                 result.put(json);
             });
 
@@ -130,7 +120,6 @@ public class LoadHistory extends HttpServlet {
 
     private void sendError(HttpServletResponse response, String message){
 
-        System.out.println(message);
         try {
             response.setContentType("text/plain");
             response.getWriter().write(message);

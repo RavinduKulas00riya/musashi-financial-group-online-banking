@@ -6,10 +6,9 @@ import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
 import lk.jiat.app.core.model.Account;
 import lk.jiat.app.core.model.Interest;
-import lk.jiat.app.core.service.AccountService;
-import lk.jiat.app.core.service.InterestService;
-import lk.jiat.app.core.service.NotificationService;
-import lk.jiat.app.core.service.TimerService;
+import lk.jiat.app.core.model.TransactionStatus;
+import lk.jiat.app.core.model.Transfer;
+import lk.jiat.app.core.service.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -26,25 +25,45 @@ public class TimerSessionBean implements TimerService {
     @EJB
     private InterestService interestService;
 
+    @EJB
+    private TransactionService transactionService;
+
     private final Double interestRate = 0.001;
 
     @Override
     @Schedule(hour = "*", minute = "*", second = "0", persistent = true)
     public void checkPendingTransactions() {
-        System.out.println("Checking pending transactions at " + LocalDateTime.now());
+
+        try {
+
+            List<Transfer> pendingTransactions = transactionService.getPendingTransactions();
+            pendingTransactions.forEach(t -> {
+
+                if (t.getDateTime().isBefore(LocalDateTime.now())) {
+
+                    Double amount = t.getAmount();
+                    Account from = t.getFromAccount();
+                    Account to = t.getToAccount();
+                    from.setBalance(from.getBalance() - amount);
+                    to.setBalance(to.getBalance() + amount);
+                    accountService.updateAccount(from);
+                    accountService.updateAccount(to);
+                    t.setTransactionStatus(TransactionStatus.COMPLETED);
+                    transactionService.updateTransaction(t);
+                }
+            });
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @Override
     @Schedule(hour = "0", minute = "0", second = "0", persistent = true)
     public void dailyInterestCalculation() {
 
-        System.out.println("Daily interest calculation at " + LocalDateTime.now());
-
         try {
 
             List<Account> accountList = accountService.getActiveAccounts();
-
-            System.out.println("Active accounts: " + accountList.size());
 
             accountList.forEach(account -> {
 
@@ -58,10 +77,8 @@ public class TimerSessionBean implements TimerService {
                 account.setBalance(newBalance);
                 accountService.updateAccount(account);
                 interestService.addInterest(new Interest(newBalance, account, LocalDateTime.now(), formattedAmount));
-                System.out.println("New balance: " + newBalance);
 
             });
-            System.out.println("Daily interest calculation completed");
         }catch (Exception e){
             System.out.println(e);
         }

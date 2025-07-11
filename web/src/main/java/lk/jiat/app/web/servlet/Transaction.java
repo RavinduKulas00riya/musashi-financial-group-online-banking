@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 @WebServlet("/transaction")
 public class Transaction extends HttpServlet {
@@ -31,152 +32,122 @@ public class Transaction extends HttpServlet {
     @EJB
     private NotificationService notificationService;
 
-    @EJB
-    private UserService userService;
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User fromUser = (User) req.getSession().getAttribute("user");
-        setNotifications(req, fromUser);
 
-        String destinationAccountNo = req.getParameter("destination");
+        String toAcc = req.getParameter("destination");
         String amountParam = req.getParameter("amount");
         String date = req.getParameter("date");
         String time = req.getParameter("time");
+        User fromUser = (User) req.getSession().getAttribute("user");
 
-        String errorMessage = validateInput(destinationAccountNo, amountParam, date, time);
-        if (errorMessage != null) {
-            forwardWithError(req, resp, errorMessage);
-            return;
-        }
-
-        Double amount = Double.parseDouble(amountParam);
-        LocalDateTime transactionDateTime = determineTransactionDateTime(date, time);
-        TransactionStatus transactionStatus = transactionDateTime.isAfter(LocalDateTime.now())
-                ? TransactionStatus.PENDING
-                : TransactionStatus.COMPLETED;
-
-        Account fromAccount = getFromAccount(fromUser);
-        Account toAccount = accountService.getAccount(destinationAccountNo);
-
-        errorMessage = validateAccountsAndBalance(fromAccount, toAccount, amount);
-        if (errorMessage != null) {
-            forwardWithError(req, resp, errorMessage);
-            return;
-        }
-
-        processTransaction(fromAccount, toAccount, amount, transactionDateTime, transactionStatus);
-        sendNotifications(fromAccount, toAccount, amount, transactionDateTime, transactionStatus);
-
-        resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
-    }
-
-    private void setNotifications(HttpServletRequest req, User user) {
-        if (user != null && user.getNotifications() != null) {
-            List<Notification> notifications = user.getNotifications();
+        if (fromUser != null && fromUser.getNotifications() != null) {
+            List<Notification> notifications = fromUser.getNotifications();
             notifications.sort((n1, n2) -> n2.getDateTime().compareTo(n1.getDateTime()));
             req.setAttribute("notifications", notifications);
         }
-    }
 
-    private String validateInput(String destination, String amountParam, String date, String time) {
-        if (isEmpty(destination)) {
-            return "Destination account is required.";
+        String message = null;
+
+        // Trim and null-check
+        if (toAcc == null || toAcc.trim().isEmpty()) {
+            message = "Destination account is required.";
         }
+
+        Double amount = null;
         try {
-            double amount = Double.parseDouble(amountParam);
+            amount = Double.valueOf(amountParam);
             if (amount <= 0) {
-                return "Amount must be greater than zero.";
+                message = "Amount must be greater than zero.";
             }
-        } catch (NumberFormatException e) {
-            return "Invalid amount.";
+        } catch (Exception e) {
+            message = "Invalid amount.";
         }
-        boolean hasDate = !isEmpty(date);
-        boolean hasTime = !isEmpty(time);
-        if (hasDate != hasTime) {
-            return "Both date and time must be provided together.";
-        }
-        if (hasDate && hasTime) {
-            try {
-                LocalDateTime dateTime = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
-                if (dateTime.isBefore(LocalDateTime.now())) {
-                    return "Invalid date or time.";
-                }
-            } catch (Exception e) {
-                return "Invalid date or time format.";
+
+        // Check date-time combo logic
+        boolean hasDate = date != null && !date.trim().isEmpty();
+        boolean hasTime = time != null && !time.trim().isEmpty();
+
+        LocalDateTime dateTime = LocalDateTime.now();
+        TransactionStatus transactionStatus = TransactionStatus.COMPLETED;
+
+        if ((hasDate && !hasTime) || (!hasDate && hasTime)) {
+            message = "Both date and time must be filled if one is provided.";
+        }else if (hasDate && hasTime) {
+            dateTime = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
+
+            if(dateTime.isBefore(LocalDateTime.now())) {
+                message = "Invalid date or time.";
             }
-        }
-        return null;
-    }
 
-    private boolean isEmpty(String value) {
-        return value == null || value.trim().isEmpty();
-    }
-
-    private LocalDateTime determineTransactionDateTime(String date, String time) {
-        if (!isEmpty(date) && !isEmpty(time)) {
-            return LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
+            transactionStatus = TransactionStatus.PENDING;
         }
-        return LocalDateTime.now();
-    }
 
-    private Account getFromAccount(User user) {
-        if (user == null || user.getAccounts() == null || user.getAccounts().isEmpty()) {
-            return null;
+        if (message != null) {
+            req.setAttribute("message", message);
+            req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+            return;
         }
-        return accountService.getAccount(user.getAccounts().get(0).getAccountNo());
-    }
 
-    private String validateAccountsAndBalance(Account fromAccount, Account toAccount, double amount) {
-        if (fromAccount == null) {
-            return "Your account is suspended.";
+        //instant
+
+        Account fromAccount = accountService.getAccount(fromUser.getAccounts().get(0).getAccountNo());
+        Account toAccount = accountService.getAccount(toAcc);
+
+
+        if (fromAccount == null ) {
+            req.setAttribute("message", "Your account is suspended.");
+            req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+            return;
         }
+
         if (toAccount == null) {
-            return "Destination account is suspended or invalid.";
+            req.setAttribute("message", "Destination account is suspended or invalid.");
+            req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+            return;
         }
-        if (fromAccount.getBalance() < amount) {
-            return "Insufficient funds.";
-        }
-        return null;
-    }
 
-    private void processTransaction(Account fromAccount, Account toAccount, double amount,
-                                    LocalDateTime dateTime, TransactionStatus status) {
-        transactionService.createTransaction(new Transfer(dateTime, status, amount, toAccount, fromAccount));
-        if (status == TransactionStatus.COMPLETED) {
+        if(fromAccount.getBalance() < amount) {
+            req.setAttribute("message", "Insufficient funds.");
+            req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+            return;
+        }
+
+        User toUser = toAccount.getUser();
+
+        transactionService.createTransaction(new Transfer(dateTime,transactionStatus,amount,toAccount,fromAccount));
+
+        if(transactionStatus == TransactionStatus.PENDING) {
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+            Notification notification = new Notification();
+            notification.setMessage("$"+amount+" has been scheduled to be transferred to "+toAccount.getAccountNo()+" on "+formatter.format(dateTime));
+            notification.setUser(fromUser);
+            notification.setDateTime(LocalDateTime.now());
+            notificationService.sendNotification(notification);
+
+        }else{
+
             fromAccount.setBalance(fromAccount.getBalance() - amount);
-            toAccount.setBalance(toAccount.getBalance() + amount);
             accountService.updateAccount(fromAccount);
+
+            toAccount.setBalance(toAccount.getBalance() + amount);
             accountService.updateAccount(toAccount);
+
+            Notification notification = new Notification();
+            notification.setMessage("$"+amount+" has been transferred to "+toAccount.getAccountNo());
+            notification.setUser(fromUser);
+            notification.setDateTime(LocalDateTime.now());
+            notificationService.sendNotification(notification);
+
+            notification.setMessage("$"+amount+" has been transferred to you by "+fromAccount.getAccountNo());
+            notification.setUser(toUser);
+            notificationService.sendNotification(notification);
+
         }
-    }
 
-    private void sendNotifications(Account fromAccount, Account toAccount, double amount,
-                                   LocalDateTime dateTime, TransactionStatus status) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        Notification fromUserNotification = new Notification();
-        fromUserNotification.setUser(fromAccount.getUser());
-        fromUserNotification.setDateTime(LocalDateTime.now());
+        resp.sendRedirect(req.getContextPath()+"/customer/home.jsp");
 
-        if (status == TransactionStatus.PENDING) {
-            fromUserNotification.setMessage(String.format("$%.2f has been scheduled to be transferred to %s on %s",
-                    amount, toAccount.getAccountNo(), formatter.format(dateTime)));
-        } else {
-            fromUserNotification.setMessage(String.format("$%.2f has been transferred to %s",
-                    amount, toAccount.getAccountNo()));
-            Notification toUserNotification = new Notification();
-            toUserNotification.setMessage(String.format("$%.2f has been transferred to you by %s",
-                    amount, fromAccount.getAccountNo()));
-            toUserNotification.setUser(toAccount.getUser());
-            toUserNotification.setDateTime(LocalDateTime.now());
-            notificationService.sendNotification(toUserNotification);
-        }
-        notificationService.sendNotification(fromUserNotification);
-    }
-
-    private void forwardWithError(HttpServletRequest req, HttpServletResponse resp, String message)
-            throws ServletException, IOException {
-        req.setAttribute("message", message);
-        req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
     }
 }

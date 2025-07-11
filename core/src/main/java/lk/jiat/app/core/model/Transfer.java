@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Table(name = "transfers")
 @NamedQueries({
         @NamedQuery(name = "Transfer.findByUser", query = "select t from Transfer t where t.toAccount=:customer or t.fromAccount=:customer order by t.dateTime DESC"),
+        @NamedQuery(name = "Transfer.findPendingTransactions", query = "select t from Transfer t where t.transactionStatus=:status"),
 })
 public class Transfer implements Serializable {
     @Id

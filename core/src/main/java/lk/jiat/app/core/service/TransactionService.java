@@ -15,4 +15,6 @@ public interface TransactionService {
     List<Transfer> getAllTransactions();
     void deleteTransaction(Transfer transfer);
     Transfer getTransaction(Integer id);
+    List<Transfer> getPendingTransactions();
+    void updateTransaction(Transfer transfer);
 }
