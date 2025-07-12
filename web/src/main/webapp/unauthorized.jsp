@@ -9,8 +9,18 @@
 <html>
 <head>
     <title>Unauthorized</title>
+    <style>
+        button{
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Unauthorized</h1>
+    <div style="display: flex; flex-direction: row; gap: 10px;">
+        <button onclick="window.location.href='admin_login.jsp'">Back to Admin Login</button>
+        <button onclick="window.location.href='index.jsp'">Go to Customer Login</button>
+    </div>
+
 </body>
 </html>

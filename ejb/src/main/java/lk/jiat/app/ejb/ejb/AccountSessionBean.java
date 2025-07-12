@@ -21,7 +21,6 @@ public class AccountSessionBean implements AccountService {
     @Override
     public Account getAccount(String accountNumber) {
         try {
-            System.out.println(accountNumber);
             Account account = em.createNamedQuery("Account.findByAccountNumber", Account.class)
                     .setParameter("accountNo", accountNumber).getSingleResult();
 //            account.getUser();

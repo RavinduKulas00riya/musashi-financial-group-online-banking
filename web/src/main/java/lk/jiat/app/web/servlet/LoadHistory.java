@@ -28,9 +28,6 @@ public class LoadHistory extends HttpServlet {
     @EJB
     private TransactionService transactionService;
 
-    @EJB
-    private InterestService interestService;
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         try {

@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 @WebFilter({"/customer/home.jsp","/customer/history.jsp","/customer/schedule.jsp"})
-public class DashboardFilter implements Filter {
+public class CustomerFilter implements Filter {
 
     @EJB
     private UserService userService;
@@ -41,8 +41,6 @@ public class DashboardFilter implements Filter {
             }
 
             session.setAttribute("user", fullUser);
-
-            System.out.println("Filtered user: " + fullUser.getName());
 
             chain.doFilter(request, response); // proceed to JSP
         } else {

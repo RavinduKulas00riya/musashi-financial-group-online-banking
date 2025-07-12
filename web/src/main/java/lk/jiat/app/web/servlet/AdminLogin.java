@@ -34,6 +34,8 @@ public class AdminLogin extends HttpServlet {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
+        System.out.println("email: " + email+", password: " + password);
+
 //        User user = userService.validate(emailOrMobile, password);
 //
 //        if(user != null) {
@@ -45,16 +47,16 @@ public class AdminLogin extends HttpServlet {
 
             if (status == AuthenticationStatus.SUCCESS) {
 
-                req.getSession().setAttribute("user", userService.getUserByEmail(email));
+                req.getSession().setAttribute("admin", userService.getUserByEmail(email));
                 req.getSession().setMaxInactiveInterval(15 * 60);
-                resp.sendRedirect(req.getContextPath() + "/admin/home.jsp");
+                resp.sendRedirect(req.getContextPath() + "/admin/admin_home.jsp");
 
 //                if(user.getUserType().equals(UserType.CUSTOMER)) {
 //                    System.out.println("Customer logged in");
-//                    resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
+//                    resp.sendRedirect(req.getContextPath() + "/customer/admin_home.jsp");
 //                }else{
 //                    System.out.println("Admin logged in");
-//                    resp.sendRedirect(req.getContextPath() + "/admin/home.jsp");
+//                    resp.sendRedirect(req.getContextPath() + "/admin/admin_home.jsp");
 //                }
 
             } else {
@@ -75,11 +77,11 @@ public class AdminLogin extends HttpServlet {
 //
 //            if(user.getUserType().equals(UserType.CUSTOMER)){
 //
-//                resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
+//                resp.sendRedirect(req.getContextPath() + "/customer/admin_home.jsp");
 //
 //            }else if(user.getUserType().equals(UserType.ADMIN)){
 //
-//                resp.sendRedirect(req.getContextPath() + "/admin/home.jsp");
+//                resp.sendRedirect(req.getContextPath() + "/admin/admin_home.jsp");
 //            }
 //
 //        }else{
