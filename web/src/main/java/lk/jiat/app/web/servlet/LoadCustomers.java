@@ -77,7 +77,6 @@ public class LoadCustomers extends HttpServlet {
                 jsonArray.put(jsonObject);
             }
 
-            System.out.println(jsonArray.toString());
             resp.getWriter().write(jsonArray.toString());
         } catch (Exception e) {
             System.out.println(e);

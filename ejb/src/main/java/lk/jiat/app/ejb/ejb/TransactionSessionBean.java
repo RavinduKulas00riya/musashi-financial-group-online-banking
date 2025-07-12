@@ -48,7 +48,11 @@ public class TransactionSessionBean implements TransactionService {
 
     @Override
     public List<Transfer> getAllTransactions() {
-        return List.of();
+        try {
+            return em.createNamedQuery("Transfer.findAll", Transfer.class).getResultList();
+        }catch (NoResultException e){
+            return List.of();
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package lk.jiat.app.ejb.ejb;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -58,6 +59,7 @@ public class UserSessionBean implements UserService {
         em.merge(user);
     }
 
+    @RolesAllowed({"ADMIN"})
     @Override
     public void deleteUser(User user) {
         em.remove(user);
