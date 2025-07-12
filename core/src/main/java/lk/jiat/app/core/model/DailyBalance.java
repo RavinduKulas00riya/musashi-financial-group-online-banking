@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "daily_balance")
 @NamedQueries({
-        @NamedQuery(name = "DailyBalance.findAllRecords", query = "select d from DailyBalance d"),
+        @NamedQuery(name = "DailyBalance.findAllRecords", query = "select d from DailyBalance d order by d.dateTime desc"),
 })
 public class DailyBalance implements Serializable {
 
