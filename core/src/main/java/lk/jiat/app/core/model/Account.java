@@ -10,7 +10,7 @@ import java.util.List;
 @Table(name = "accounts")
 @NamedQueries({
         @NamedQuery(name = "Account.findByAccountNumber",
-                query = "SELECT a FROM Account a LEFT JOIN FETCH a.interests LEFT JOIN FETCH a.user WHERE a.accountNo = :accountNo"),
+                query = "SELECT a FROM Account a WHERE a.accountNo = :accountNo"),
         @NamedQuery(name = "Account.findAll", query = "SELECT a FROM Account a"),
         @NamedQuery(name = "Account.findActiveAccounts", query = "SELECT a FROM Account a WHERE a.status=:status")
 })

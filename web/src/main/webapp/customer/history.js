@@ -47,7 +47,7 @@ async function searchHistory(status) {
 
 
 function fillTable(data) {
-    const tbody = document.querySelector('table tbody') || document.createElement('tbody');
+    const tbody = document.getElementById("history") || document.createElement('tbody');
     tbody.innerHTML = '';
 
     if(transactionStatus === 'COMPLETED') {
@@ -92,9 +92,10 @@ function fillTable(data) {
 
     }
 
-    if (!document.querySelector('table tbody')) {
-        document.querySelector('table').appendChild(tbody);
+    if (!document.getElementById("history")) {
+        document.getElementById("history-table").appendChild(tbody);
     }
+
 }
 
 async function cancelTransaction(transactionId) {
@@ -107,4 +108,40 @@ async function cancelTransaction(transactionId) {
         console.log(result);
         alert("Cancellation unsuccessful. Please try again later.");
     }
+}
+
+async function loadInterests(){
+    const response = await fetch('http://localhost:8080/musashi-banking-system/loadInterest');
+    const contentType = response.headers.get("Content-Type");
+    if (contentType.includes("application/json")) {
+        const result = await response.json();
+        fillInterestTable(result);
+
+    } else if (contentType.includes("text/plain")) {
+        const message = await response.text();
+        alert(message);
+    }
+}
+
+function fillInterestTable(data) {
+    const interest_tbody = document.getElementById("interest") || document.createElement('tbody');
+    interest_tbody.innerHTML = '';
+
+    data.forEach(item => {
+
+        const interestRow = document.createElement('tr');
+        interestRow.innerHTML = `
+        <td>${item.interestDateTime}</td>
+        <td>${item.interestRate}</td>
+        <td>${item.interestAmount}</td>
+        <td>${item.interestBalanceAfter}</td>
+    `;
+
+        interest_tbody.appendChild(interestRow);
+    });
+
+    if (!document.getElementById("interest")) {
+        document.getElementById("interest-table").appendChild(interest_tbody);
+    }
+
 }

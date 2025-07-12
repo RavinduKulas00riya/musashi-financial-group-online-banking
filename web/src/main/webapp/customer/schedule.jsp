@@ -1,6 +1,7 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Customer Dashboard</title>
+    <title>Scheduled Operations</title>
     <style>
         body {
             font-family: sans-serif;
@@ -63,13 +64,14 @@
         }
     </style>
 </head>
-<body onload="searchHistory('PENDING')">
+<body onload="searchHistory('PENDING');loadInterests()">
 <h1>Scheduled Transactions</h1>
 
 <div class="nav-buttons">
     <button onclick="location.href='home.jsp'">Dashboard</button>
     <button onclick="location.href='history.jsp'">Account Statement</button>
     <button onclick="location.href='schedule.jsp'">Scheduled Operations</button>
+    <button onclick="location.href='${pageContext.request.contextPath}/logout'">Logout</button>
 </div>
 
 <div class="search-section">
@@ -82,7 +84,7 @@
     </div>
 </div>
 
-<table>
+<table id="history-table">
     <thead>
     <tr>
         <th>Account Number</th>
@@ -91,14 +93,14 @@
         <th>Scheduled Date & Time</th>
     </tr>
     </thead>
-    <tbody>
+    <tbody id="history">
     <!-- Filled dynamically -->
     </tbody>
 </table>
 
 <!-- New Daily Interest History Table -->
 <div class="section-title">Daily Interest History</div>
-<table>
+<table id="interest-table">
     <thead>
     <tr>
         <th>Date & Time</th>
@@ -107,25 +109,8 @@
         <th>Balance After (USD)</th>
     </tr>
     </thead>
-    <tbody>
-    <tr>
-        <td>2025-07-08 00:00</td>
-        <td>3.5%</td>
-        <td>5.25</td>
-        <td>1505.25</td>
-    </tr>
-    <tr>
-        <td>2025-07-07 00:00</td>
-        <td>3.5%</td>
-        <td>5.15</td>
-        <td>1500.00</td>
-    </tr>
-    <tr>
-        <td>2025-07-06 00:00</td>
-        <td>3.5%</td>
-        <td>5.00</td>
-        <td>1494.85</td>
-    </tr>
+    <tbody id="interest">
+
     </tbody>
 </table>
 

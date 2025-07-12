@@ -91,7 +91,8 @@ public class Transaction extends HttpServlet {
 
         //instant
 
-        Account fromAccount = accountService.getAccount(fromUser.getAccounts().get(0).getAccountNo());
+        System.out.println(toAcc);
+        Account fromAccount = fromUser.getAccounts().get(0);
         Account toAccount = accountService.getAccount(toAcc);
 
 

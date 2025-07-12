@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "interests")
+@NamedQueries({
+        @NamedQuery(name = "Interest.findInterestsByAccount", query = "SELECT i FROM Interest i WHERE i.account=:account ORDER BY i.dateTime DESC")
+})
 public class Interest implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

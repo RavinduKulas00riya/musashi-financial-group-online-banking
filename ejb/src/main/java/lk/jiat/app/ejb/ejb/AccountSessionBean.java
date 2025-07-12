@@ -19,10 +19,11 @@ public class AccountSessionBean implements AccountService {
 
 
     @Override
-    public Account getAccount(String AccountNumber) {
+    public Account getAccount(String accountNumber) {
         try {
+            System.out.println(accountNumber);
             Account account = em.createNamedQuery("Account.findByAccountNumber", Account.class)
-                    .setParameter("accountNo", AccountNumber).getSingleResult();
+                    .setParameter("accountNo", accountNumber).getSingleResult();
 //            account.getUser();
 //            account.getInterests().size();
             if(account.getStatus().equals(AccountStatus.ACTIVE)) return account;

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Remote
 public interface AccountService {
-    Account getAccount(String AccountNumber);
+    Account getAccount(String accountNumber);
     void updateAccount(Account account);
     List<Account> getAllAccounts();
     List<Account> getActiveAccounts();

@@ -12,10 +12,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lk.jiat.app.core.model.TransactionStatus;
-import lk.jiat.app.core.model.Transfer;
-import lk.jiat.app.core.model.User;
+import lk.jiat.app.core.model.*;
 import lk.jiat.app.core.service.AccountService;
+import lk.jiat.app.core.service.InterestService;
 import lk.jiat.app.core.service.TransactionService;
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -28,6 +27,9 @@ public class LoadHistory extends HttpServlet {
 
     @EJB
     private TransactionService transactionService;
+
+    @EJB
+    private InterestService interestService;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -59,15 +61,33 @@ public class LoadHistory extends HttpServlet {
 
             JSONArray result = new JSONArray();
 
-            List<Transfer> transactions = transactionService.getTransactions(user.getAccounts().get(0));
+//            List<Transfer> transactions = transactionService.getTransactions(user.getAccounts().get(0));
+//
+//            if (!Objects.equals(accountNo, "") && accountService.getAccount(accountNo) == null) {
+//                sendError(response, "Account Number is invalid or suspended");
+//                return;
+//            }else{
+//                transactions = transactionService.getTransactions(user.getAccounts().get(0));
+//            }
+
+            List<Transfer> transactions;
+
+            if (!Objects.equals(accountNo, "")){
+
+                Account account = accountService.getAccount(accountNo);
+
+                if(account == null){
+                    sendError(response, "Account Number is invalid or suspended");
+                    return;
+                }else{
+                    transactions = transactionService.getTransactions(user.getAccounts().get(0), account);
+                }
+            }else{
+                transactions = transactionService.getTransactions(user.getAccounts().get(0));
+            }
 
             if (transactions.isEmpty()) {
                 sendError(response, "No transactions found");
-                return;
-            }
-
-            if (!Objects.equals(accountNo, "") && accountService.getAccount(accountNo) == null) {
-                sendError(response, "Account Number is invalid or suspended");
                 return;
             }
 
@@ -78,7 +98,7 @@ public class LoadHistory extends HttpServlet {
                     return;
                 }
 
-                if (status.equals(TransactionStatus.PENDING.name()) || transaction.getFromAccount().getAccountNo().equals(user.getAccounts().get(0).getAccountNo())) {
+                if (transaction.getFromAccount().getAccountNo().equals(user.getAccounts().get(0).getAccountNo())) {
                     json.put("accountNumber", transaction.getToAccount().getAccountNo());
                     json.put("name", transaction.getToAccount().getUser().getName());
                     json.put("transactionType", "Sent");
@@ -97,10 +117,20 @@ public class LoadHistory extends HttpServlet {
 
                 if(status.equals(TransactionStatus.PENDING.name())) {
 
-                    json.put("transactionId", transaction.getId());
                     if(json.getString("transactionType").equals("Received")){
                         return;
                     }
+
+                    System.out.println(user.getAccounts().get(0).getAccountNo()+" pending transaction");
+
+                    json.put("transactionId", transaction.getId());
+
+                    System.out.println(json.getString("transactionType"));
+
+                    if(json.getString("transactionType").equals("Received")){
+                        return;
+                    }
+
                 }else{
                     if (!Objects.equals(sentOrReceived, "") && !json.getString("transactionType").equals(sentOrReceived)) {
                         return;
@@ -109,6 +139,11 @@ public class LoadHistory extends HttpServlet {
 
                 result.put(json);
             });
+
+            if(result.isEmpty()){
+                sendError(response, "No transactions found");
+                return;
+            }
 
             response.setContentType("application/json");
             response.getWriter().write(result.toString());

@@ -73,6 +73,7 @@
     <button onclick="location.href='home.jsp'">Dashboard</button>
     <button onclick="location.href='history.jsp'">Account Statement</button>
     <button onclick="location.href='schedule.jsp'">Scheduled Operations</button>
+    <button onclick="location.href='${pageContext.request.contextPath}/logout'">Logout</button>
 </div>
 
 <div class="search-section">
@@ -89,7 +90,7 @@
     </div>
 </div>
 
-<table>
+<table id="history-table">
     <thead>
     <tr>
         <th>Account Number</th>
@@ -99,7 +100,7 @@
         <th>Date & Time</th>
     </tr>
     </thead>
-    <tbody>
+    <tbody id="history">
 
     </tbody>
 </table>

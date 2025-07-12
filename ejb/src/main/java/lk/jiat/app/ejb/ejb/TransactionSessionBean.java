@@ -37,6 +37,16 @@ public class TransactionSessionBean implements TransactionService {
     }
 
     @Override
+    public List<Transfer> getTransactions(Account account1, Account account2) {
+        try {
+            return em.createNamedQuery("Transfer.findByUsers", Transfer.class)
+                    .setParameter("account1", account1).setParameter("account2",account2).getResultList();
+        }catch (NoResultException e){
+            return List.of();
+        }
+    }
+
+    @Override
     public List<Transfer> getAllTransactions() {
         return List.of();
     }

@@ -12,6 +12,7 @@ import java.util.List;
 public interface TransactionService {
     void createTransaction(Transfer transfer);
     List<Transfer> getTransactions(Account customer);
+    List<Transfer> getTransactions(Account account1, Account account2);
     List<Transfer> getAllTransactions();
     void deleteTransaction(Transfer transfer);
     Transfer getTransaction(Integer id);

@@ -73,10 +73,13 @@ public class TimerSessionBean implements TimerService {
                         .setScale(2, RoundingMode.HALF_UP)
                         .doubleValue();
                 Double newBalance = oldBalance + formattedAmount;
+                Double finalBalance = BigDecimal.valueOf(newBalance)
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .doubleValue();
 
-                account.setBalance(newBalance);
+                account.setBalance(finalBalance);
                 accountService.updateAccount(account);
-                interestService.addInterest(new Interest(newBalance, account, LocalDateTime.now(), formattedAmount));
+                interestService.addInterest(new Interest(finalBalance, account, LocalDateTime.now(), formattedAmount));
 
             });
         }catch (Exception e){
