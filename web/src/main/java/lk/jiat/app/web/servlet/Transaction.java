@@ -96,13 +96,13 @@ public class Transaction extends HttpServlet {
         Account toAccount = accountService.getAccount(toAcc);
 
 
-        if (fromAccount == null ) {
+        if (fromAccount.getStatus().equals(AccountStatus.INACTIVE) ) {
             req.setAttribute("message", "Your account is suspended.");
             req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
             return;
         }
 
-        if (toAccount == null) {
+        if (toAccount.getStatus().equals(AccountStatus.INACTIVE)) {
             req.setAttribute("message", "Destination account is suspended or invalid.");
             req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
             return;

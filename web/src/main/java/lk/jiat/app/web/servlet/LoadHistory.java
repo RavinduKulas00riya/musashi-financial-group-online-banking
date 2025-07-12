@@ -73,7 +73,7 @@ public class LoadHistory extends HttpServlet {
 
                 Account account = accountService.getAccount(accountNo);
 
-                if(account == null){
+                if(account.getStatus().equals(AccountStatus.INACTIVE)){
                     sendError(response, "Account Number is invalid or suspended");
                     return;
                 }else{

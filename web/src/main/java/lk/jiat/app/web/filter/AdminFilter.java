@@ -11,7 +11,7 @@ import lk.jiat.app.core.service.UserService;
 
 import java.io.IOException;
 
-@WebFilter({"/admin/admin_home.jsp"})
+@WebFilter({"/admin/admin_home.jsp","/admin/customers.jsp","/admin/admin_history.jsp"})
 public class AdminFilter implements Filter {
 
     @Override

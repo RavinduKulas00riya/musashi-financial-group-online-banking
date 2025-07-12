@@ -96,6 +96,6 @@
     </tbody>
 </table>
 
-<script src="${pageContext.request.contextPath}/admin/admin.js"></script>
+<script src="${pageContext.request.contextPath}/admin/admin_home.js"></script>
 </body>
 </html>
