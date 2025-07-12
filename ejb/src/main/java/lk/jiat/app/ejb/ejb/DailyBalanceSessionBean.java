@@ -27,12 +27,22 @@ public class DailyBalanceSessionBean implements DailyBalanceService {
     }
 
     @Override
-    public List<DailyBalance> getDailyBalanceByDate(LocalDate date) {
-        return List.of();
+    public DailyBalance getDailyBalanceByDate(LocalDate date) {
+        try {
+            return em.createNamedQuery("DailyBalance.findByDate", DailyBalance.class)
+                    .setParameter("date",date).getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
     }
 
     @Override
     public void addDailyBalance(DailyBalance dailyBalance) {
+        try {
+            em.persist(dailyBalance);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
     }
 }

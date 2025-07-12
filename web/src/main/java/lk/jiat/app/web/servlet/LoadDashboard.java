@@ -26,8 +26,6 @@ public class LoadDashboard extends HttpServlet {
     @EJB
     private DailyBalanceService dailyBalanceService;
 
-    private Double totalBalance;
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -39,10 +37,11 @@ public class LoadDashboard extends HttpServlet {
 
             String allAccountsCount = String.valueOf(accounts.size());
             String activeAccountsCount = String.valueOf(accountService.getActiveAccounts().size());
-            totalBalance = 0.0;
-            accounts.forEach(account -> {
+            Double totalBalance = 0.0;
+
+            for (Account account : accounts) {
                 totalBalance += account.getBalance();
-            });
+            }
 
             JSONObject root = new JSONObject();
             JSONObject stats = new JSONObject();

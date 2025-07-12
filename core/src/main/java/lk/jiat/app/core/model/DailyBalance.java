@@ -3,12 +3,14 @@ package lk.jiat.app.core.model;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "daily_balance")
 @NamedQueries({
-        @NamedQuery(name = "DailyBalance.findAllRecords", query = "select d from DailyBalance d order by d.dateTime desc"),
+        @NamedQuery(name = "DailyBalance.findAllRecords", query = "select d from DailyBalance d order by d.date desc"),
+        @NamedQuery(name = "DailyBalance.findByDate", query = "select d from DailyBalance d where d.date=:date"),
 })
 public class DailyBalance implements Serializable {
 
@@ -16,14 +18,14 @@ public class DailyBalance implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "date_time")
-    private LocalDateTime dateTime;
+    @Column(name = "balance_date")
+    private LocalDate date;
 
     public DailyBalance() {
     }
 
-    public DailyBalance(LocalDateTime dateTime, Double balance, String profit) {
-        this.dateTime = dateTime;
+    public DailyBalance(LocalDate date, Double balance, String profit) {
+        this.date = date;
         this.balance = balance;
         this.profit = profit;
     }
@@ -36,12 +38,12 @@ public class DailyBalance implements Serializable {
         this.id = id;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDate getDateTime() {
+        return date;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setDateTime(LocalDate date) {
+        this.date = date;
     }
 
     public Double getBalance() {

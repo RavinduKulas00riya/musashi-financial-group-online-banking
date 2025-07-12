@@ -7,4 +7,5 @@ public interface TimerService {
 
     void checkPendingTransactions();
     void dailyInterestCalculation();
+    void dailyBalanceUpdate();
 }

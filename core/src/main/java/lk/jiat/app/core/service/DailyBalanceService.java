@@ -9,6 +9,6 @@ import java.util.List;
 @Remote
 public interface DailyBalanceService {
     List<DailyBalance> getAllDailyBalance();
-    List<DailyBalance> getDailyBalanceByDate(LocalDate date);
+    DailyBalance getDailyBalanceByDate(LocalDate date);
     void addDailyBalance(DailyBalance dailyBalance);
 }
