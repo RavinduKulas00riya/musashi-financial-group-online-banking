@@ -70,9 +70,9 @@
 <h1>Transaction History</h1>
 
 <div class="nav-buttons">
-    <button onclick="location.href='home.jsp'">Dashboard</button>
-    <button onclick="location.href='history.jsp'">Account Statement</button>
-    <button onclick="location.href='schedule.jsp'">Scheduled Operations</button>
+    <button onclick="location.href='${pageContext.request.contextPath}/customer/home.jsp'">Dashboard</button>
+    <button onclick="location.href='${pageContext.request.contextPath}/customer/history.jsp'">Account Statement</button>
+    <button onclick="location.href='${pageContext.request.contextPath}/customer/schedule.jsp'">Scheduled Operations</button>
     <button onclick="location.href='${pageContext.request.contextPath}/logout'">Logout</button>
 </div>
 

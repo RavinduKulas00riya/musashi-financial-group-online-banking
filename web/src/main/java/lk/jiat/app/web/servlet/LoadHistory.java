@@ -32,6 +32,7 @@ public class LoadHistory extends HttpServlet {
 
         try {
 
+            System.out.println("Load History doPost called");
 
             User user = (User) request.getSession().getAttribute("user");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

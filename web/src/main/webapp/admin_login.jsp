@@ -41,8 +41,8 @@
   <% if (msg != null) { %>
   <div><%= msg %></div>
   <% } %>
-  <input type="text" placeholder="Email" name="email" value="jane@gmail.com" required>
-  <input type="password" placeholder="Password" name="password" value="123" required>
+  <input type="text" placeholder="Email" name="email" required>
+  <input type="password" placeholder="Password" name="password" required>
   <button type="submit">Login</button>
 </form>
 </body>

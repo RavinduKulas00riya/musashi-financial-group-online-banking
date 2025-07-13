@@ -42,9 +42,6 @@
     </style>
 </head>
 <body>
-<%
-    response.sendRedirect("admin_login.jsp");
-%>
 <h1>Customer Login</h1>
 <% String msg = (String) request.getAttribute("message"); %>
 <form action="${pageContext.request.contextPath}/login" method="post">

@@ -35,120 +35,131 @@ public class Transaction extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String toAcc = req.getParameter("destination");
-        String amountParam = req.getParameter("amount");
-        String date = req.getParameter("date");
-        String time = req.getParameter("time");
-        User fromUser = (User) req.getSession().getAttribute("user");
-
-        if (fromUser != null && fromUser.getNotifications() != null) {
-            List<Notification> notifications = fromUser.getNotifications();
-            notifications.sort((n1, n2) -> n2.getDateTime().compareTo(n1.getDateTime()));
-            req.setAttribute("notifications", notifications);
-        }
-
-        String message = null;
-
-        // Trim and null-check
-        if (toAcc == null || toAcc.trim().isEmpty()) {
-            message = "Destination account is required.";
-        }
-
-        Double amount = null;
         try {
-            amount = Double.valueOf(amountParam);
-            if (amount <= 0) {
-                message = "Amount must be greater than zero.";
+
+            String toAcc = req.getParameter("destination");
+            String amountParam = req.getParameter("amount");
+            String date = req.getParameter("date");
+            String time = req.getParameter("time");
+            User fromUser = (User) req.getSession().getAttribute("user");
+
+            if (fromUser != null && fromUser.getNotifications() != null) {
+                List<Notification> notifications = fromUser.getNotifications();
+                notifications.sort((n1, n2) -> n2.getDateTime().compareTo(n1.getDateTime()));
+                req.setAttribute("notifications", notifications);
             }
+
+            String message = null;
+
+            // Trim and null-check
+            if (toAcc == null || toAcc.trim().isEmpty()) {
+                message = "Destination account is required.";
+            }
+
+
+            Double amount = null;
+            try {
+                amount = Double.valueOf(amountParam);
+                if (amount <= 0) {
+                    message = "Amount must be greater than zero.";
+                }
+            } catch (Exception e) {
+                message = "Invalid amount.";
+            }
+
+            // Check date-time combo logic
+            boolean hasDate = date != null && !date.trim().isEmpty();
+            boolean hasTime = time != null && !time.trim().isEmpty();
+
+            LocalDateTime dateTime = LocalDateTime.now();
+            TransactionStatus transactionStatus = TransactionStatus.COMPLETED;
+
+            if ((hasDate && !hasTime) || (!hasDate && hasTime)) {
+                message = "Both date and time must be filled if one is provided.";
+            } else if (hasDate && hasTime) {
+                dateTime = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
+
+                if (dateTime.isBefore(LocalDateTime.now())) {
+                    message = "Invalid date or time.";
+                }
+
+                transactionStatus = TransactionStatus.PENDING;
+            }
+
+            if (message != null) {
+                req.setAttribute("message", message);
+                req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+                return;
+            }
+
+            //instant
+
+            System.out.println(toAcc);
+            Account fromAccount = fromUser.getAccounts().get(0);
+            Account toAccount = accountService.getAccount(toAcc);
+
+            if (Objects.equals(toAccount.getAccountNo(), fromAccount.getAccountNo())) {
+                req.setAttribute("message", "Your account and destination account are the same.");
+                req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+                return;
+            }
+
+            if (fromAccount.getStatus().equals(AccountStatus.INACTIVE)) {
+                req.setAttribute("message", "Your account is suspended.");
+                req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+                return;
+            }
+
+            if (toAccount.getStatus().equals(AccountStatus.INACTIVE)) {
+                req.setAttribute("message", "Destination account is suspended or invalid.");
+                req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+                return;
+            }
+
+            if (fromAccount.getBalance() < amount) {
+                req.setAttribute("message", "Insufficient funds.");
+                req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+                return;
+            }
+
+            User toUser = toAccount.getUser();
+
+            transactionService.createTransaction(new Transfer(dateTime, transactionStatus, amount, toAccount, fromAccount));
+
+            if (transactionStatus == TransactionStatus.PENDING) {
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+                Notification notification = new Notification();
+                notification.setMessage("$" + amount + " has been scheduled to be transferred to " + toAccount.getAccountNo() + " on " + formatter.format(dateTime));
+                notification.setUser(fromUser);
+                notification.setDateTime(LocalDateTime.now());
+                notificationService.sendNotification(notification);
+
+            } else {
+
+                fromAccount.setBalance(fromAccount.getBalance() - amount);
+                accountService.updateAccount(fromAccount);
+
+                toAccount.setBalance(toAccount.getBalance() + amount);
+                accountService.updateAccount(toAccount);
+
+                Notification notification = new Notification();
+                notification.setMessage("$" + amount + " has been transferred to " + toAccount.getAccountNo());
+                notification.setUser(fromUser);
+                notification.setDateTime(LocalDateTime.now());
+                notificationService.sendNotification(notification);
+
+                notification.setMessage("$" + amount + " has been transferred to you by " + fromAccount.getAccountNo());
+                notification.setUser(toUser);
+                notificationService.sendNotification(notification);
+
+            }
+
+            resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
         } catch (Exception e) {
-            message = "Invalid amount.";
+            System.out.println(e);
         }
-
-        // Check date-time combo logic
-        boolean hasDate = date != null && !date.trim().isEmpty();
-        boolean hasTime = time != null && !time.trim().isEmpty();
-
-        LocalDateTime dateTime = LocalDateTime.now();
-        TransactionStatus transactionStatus = TransactionStatus.COMPLETED;
-
-        if ((hasDate && !hasTime) || (!hasDate && hasTime)) {
-            message = "Both date and time must be filled if one is provided.";
-        }else if (hasDate && hasTime) {
-            dateTime = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
-
-            if(dateTime.isBefore(LocalDateTime.now())) {
-                message = "Invalid date or time.";
-            }
-
-            transactionStatus = TransactionStatus.PENDING;
-        }
-
-        if (message != null) {
-            req.setAttribute("message", message);
-            req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
-            return;
-        }
-
-        //instant
-
-        System.out.println(toAcc);
-        Account fromAccount = fromUser.getAccounts().get(0);
-        Account toAccount = accountService.getAccount(toAcc);
-
-
-        if (fromAccount.getStatus().equals(AccountStatus.INACTIVE) ) {
-            req.setAttribute("message", "Your account is suspended.");
-            req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
-            return;
-        }
-
-        if (toAccount.getStatus().equals(AccountStatus.INACTIVE)) {
-            req.setAttribute("message", "Destination account is suspended or invalid.");
-            req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
-            return;
-        }
-
-        if(fromAccount.getBalance() < amount) {
-            req.setAttribute("message", "Insufficient funds.");
-            req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
-            return;
-        }
-
-        User toUser = toAccount.getUser();
-
-        transactionService.createTransaction(new Transfer(dateTime,transactionStatus,amount,toAccount,fromAccount));
-
-        if(transactionStatus == TransactionStatus.PENDING) {
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-            Notification notification = new Notification();
-            notification.setMessage("$"+amount+" has been scheduled to be transferred to "+toAccount.getAccountNo()+" on "+formatter.format(dateTime));
-            notification.setUser(fromUser);
-            notification.setDateTime(LocalDateTime.now());
-            notificationService.sendNotification(notification);
-
-        }else{
-
-            fromAccount.setBalance(fromAccount.getBalance() - amount);
-            accountService.updateAccount(fromAccount);
-
-            toAccount.setBalance(toAccount.getBalance() + amount);
-            accountService.updateAccount(toAccount);
-
-            Notification notification = new Notification();
-            notification.setMessage("$"+amount+" has been transferred to "+toAccount.getAccountNo());
-            notification.setUser(fromUser);
-            notification.setDateTime(LocalDateTime.now());
-            notificationService.sendNotification(notification);
-
-            notification.setMessage("$"+amount+" has been transferred to you by "+fromAccount.getAccountNo());
-            notification.setUser(toUser);
-            notificationService.sendNotification(notification);
-
-        }
-
-        resp.sendRedirect(req.getContextPath()+"/customer/home.jsp");
 
     }
 }
