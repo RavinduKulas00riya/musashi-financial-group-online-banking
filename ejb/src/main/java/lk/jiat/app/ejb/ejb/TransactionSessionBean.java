@@ -2,6 +2,8 @@ package lk.jiat.app.ejb.ejb;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -22,6 +24,7 @@ public class TransactionSessionBean implements TransactionService {
     private NotificationService notificationService;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void createTransaction(Transfer transfer) {
         em.persist(transfer);
     }

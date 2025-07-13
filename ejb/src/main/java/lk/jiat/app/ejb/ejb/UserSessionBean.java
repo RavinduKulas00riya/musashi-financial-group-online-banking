@@ -2,6 +2,8 @@ package lk.jiat.app.ejb.ejb;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -50,6 +52,7 @@ public class UserSessionBean implements UserService {
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void addUser(User user) {
         em.persist(user);
     }
