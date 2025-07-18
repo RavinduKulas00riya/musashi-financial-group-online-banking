@@ -1,6 +1,11 @@
 package lk.jiat.app.web.servlet;
 
 import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.security.enterprise.AuthenticationStatus;
+import jakarta.security.enterprise.SecurityContext;
+import jakarta.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
+import jakarta.security.enterprise.credential.UsernamePasswordCredential;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,6 +24,9 @@ public class Login extends HttpServlet {
     @EJB
     private UserService userService;
 
+    @Inject
+    private SecurityContext securityContext;
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -29,9 +37,17 @@ public class Login extends HttpServlet {
 
         if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
 
-            User user = userService.validate(email, Encryption.encrypt(password));
+            AuthenticationParameters parameters = AuthenticationParameters.withParams()
+                    .credential(new UsernamePasswordCredential(email, password));
 
-            if (user != null && user.getUserType().equals(UserType.CUSTOMER)) {
+            AuthenticationStatus status = securityContext.authenticate(req, resp, parameters);
+
+//            User user = userService.validate(email, Encryption.encrypt(password));
+
+            if (status == AuthenticationStatus.SUCCESS) {
+
+                User user = userService.getUserByEmail(email);
+
                 req.getSession().setAttribute("user_id", user.getId());
                 req.getSession().setMaxInactiveInterval(15 * 60);
                 resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
