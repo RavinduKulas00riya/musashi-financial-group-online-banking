@@ -33,8 +33,6 @@ public class Login extends HttpServlet {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        System.out.println("Login email: " + email);
-
         if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
 
             AuthenticationParameters parameters = AuthenticationParameters.withParams()
