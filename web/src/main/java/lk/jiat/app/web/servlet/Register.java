@@ -6,14 +6,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lk.jiat.app.core.model.Account;
 import lk.jiat.app.core.model.User;
 import lk.jiat.app.core.service.UserService;
 import lk.jiat.app.core.util.Encryption;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 @WebServlet("/register")
@@ -25,46 +29,86 @@ public class Register extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String name = req.getParameter("fullName");
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
-        String confirmPassword = req.getParameter("confirmPassword");
-        String mobile = req.getParameter("mobile");
-        String amount = req.getParameter("amount");
+        try {
 
-        System.out.println(name + " " + email + " " + password + " " + confirmPassword + " " + mobile + " " + amount);
+            HttpSession session = req.getSession();
 
-        if(mobile.matches("^[0]{1}[7]{1}[01245678]{1}[0-9]{7}$") && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader reader = req.getReader()) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+            }
+            JSONObject input = new JSONObject(sb.toString());
 
-            if (userService.getUserByMobile(mobile) == null && userService.getUserByEmail(email) == null) {
+            if (session.getAttribute("temp_user") == null) {
 
-                if (password.equals(confirmPassword)) {
+                String name = input.getString("name");
+                String email = input.getString("email");
+                String mobile = input.getString("mobile");
+                String amount = input.getString("amount");
 
-                    // Register
+                if(Objects.equals(name, "")){
+                    resp.getWriter().write("Name is empty");
+                }else if(Objects.equals(email, "")){
+                    resp.getWriter().write("Email is empty");
+                }else if(Objects.equals(mobile, "")){
+                    resp.getWriter().write("Mobile number is empty");
+                }else if(Objects.equals(amount, "")){
+                    resp.getWriter().write("Amount is empty");
+                }else {
 
-                    int number = ThreadLocalRandom.current().nextInt(1_000_000, 10_000_000);
+                    if (mobile.matches("^[0]{1}[7]{1}[01245678]{1}[0-9]{7}$") && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
 
-                    User user = new User(name, mobile, email, Encryption.encrypt(password), null, null);
+                        if (userService.getUserByMobile(mobile) == null && userService.getUserByEmail(email) == null) {
 
-                    Account account = new Account(String.valueOf(number), Double.valueOf(amount), user, LocalDateTime.now(), null);
+                            User user = new User();
+                            user.setName(name);
+                            user.setEmail(email);
+                            user.setMobile(mobile);
 
-                    user.setAccounts(List.of(account));
+                            int number = ThreadLocalRandom.current().nextInt(1_000_000, 10_000_000);
+                            Account account = new Account(String.valueOf(number), Double.valueOf(amount), user, LocalDateTime.now(), null);
+                            user.setAccounts(List.of(account));
+                            session.setAttribute("temp_user", user);
+
+                            resp.getWriter().write("success");
+                        } else {
+                            resp.getWriter().write("Email or mobile number already in use");
+                        }
+
+                    } else {
+                        resp.getWriter().write("Invalid email or mobile number");
+                    }
+                }
+
+            } else {
+
+                User user = (User) session.getAttribute("temp_user");
+
+                System.out.println(user.getEmail());
+
+                String password = input.getString("password");
+                String confirmPassword = input.getString("confirmPassword");
+
+                if (Objects.equals(password, "")) {
+
+                    resp.getWriter().write("Password is empty");
+
+                } else if (password.equals(confirmPassword)) {
+
+                    user.setPassword(Encryption.encrypt(password));
                     userService.addUser(user);
 
-                    resp.sendRedirect(req.getContextPath() + "/index.jsp");
+                    resp.getWriter().write("done");
 
                 } else {
-                    req.setAttribute("message", "Passwords do not match");
-                    req.getRequestDispatcher("register.jsp").forward(req, resp);
+                    resp.getWriter().write("Passwords do not match");
                 }
-            } else {
-                req.setAttribute("message", "Email or Mobile already exists");
-                req.getRequestDispatcher("register.jsp").forward(req, resp);
             }
-
-        }else{
-            req.setAttribute("message", "Email or Mobile is invalid");
-            req.getRequestDispatcher("register.jsp").forward(req, resp);
+        } catch (Exception e) {
+            System.out.println(e);
         }
 
     }

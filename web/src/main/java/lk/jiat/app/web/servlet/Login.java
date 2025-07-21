@@ -15,8 +15,11 @@ import lk.jiat.app.core.model.User;
 import lk.jiat.app.core.model.UserType;
 import lk.jiat.app.core.service.UserService;
 import lk.jiat.app.core.util.Encryption;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Objects;
 
 @WebServlet("/login")
 public class Login extends HttpServlet {
@@ -30,17 +33,34 @@ public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader reader = req.getReader()) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        JSONObject input = new JSONObject(sb.toString());
 
-        if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+        String email = input.getString("email");
+        String password = input.getString("password");
+
+        if(Objects.equals(email, "")){
+            resp.getWriter().write("Email cannot be empty");
+            return;
+        }
+
+        if(Objects.equals(password, "")){
+            resp.getWriter().write("Password cannot be empty");
+            return;
+        }
+
+        if (email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
 
             AuthenticationParameters parameters = AuthenticationParameters.withParams()
                     .credential(new UsernamePasswordCredential(email, password));
 
             AuthenticationStatus status = securityContext.authenticate(req, resp, parameters);
-
-//            User user = userService.validate(email, Encryption.encrypt(password));
 
             if (status == AuthenticationStatus.SUCCESS) {
 
@@ -48,14 +68,12 @@ public class Login extends HttpServlet {
 
                 req.getSession().setAttribute("user_id", user.getId());
                 req.getSession().setMaxInactiveInterval(15 * 60);
-                resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
-            } else {
-                req.setAttribute("message", "Incorrect email or password");
-                req.getRequestDispatcher("index.jsp").forward(req, resp);
+                resp.getWriter().write("success");
             }
         }else{
-            req.setAttribute("message", "Invalid email or password");
-            req.getRequestDispatcher("index.jsp").forward(req, resp);
+            resp.getWriter().write("Invalid email or password");
         }
+
+
     }
 }
