@@ -119,6 +119,7 @@
             position: relative;
             width: 380px;
             margin-bottom: 10px;
+            font-family: medium;
         }
 
         .buttons {
@@ -140,7 +141,7 @@
         .animated-input {
             width: 100%;
             height: 50px;
-            padding: 10px;
+            padding: 15px 10px 2px 10px;
             font-size: 17px;
             border: 2px solid #e9e9e9ff;
             border-radius: 10px;
@@ -169,7 +170,7 @@
         .animated-input:focus + .input-label,
         .animated-input:not(:placeholder-shown) + .input-label {
             top: 0;
-            transform: translateY(-1%);
+            transform: translateY(18%);
             font-size: 12px;
             padding: 0 5px;
         }
