@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import static lk.jiat.app.core.model.TransactionStatus.COMPLETED;
+
 @Entity
 @Table(name = "transfers")
 @NamedQueries({
@@ -18,7 +20,7 @@ import java.time.LocalDateTime;
         ),
         @NamedQuery(
                 name = "Transfer.findLatestSent",
-                query = "select t from Transfer t where t.fromAccount=:customer order by t.dateTime DESC"
+                query = "select t from Transfer t where t.fromAccount=:customer and t.transactionStatus=:status order by t.dateTime DESC"
         )
 })
 public class Transfer implements Serializable {

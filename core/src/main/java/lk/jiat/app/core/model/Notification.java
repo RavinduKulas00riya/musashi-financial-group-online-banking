@@ -16,14 +16,13 @@ public class Notification implements Serializable {
     }
 
     @Enumerated(EnumType.STRING)
-    private NotificationStatus status;
+    private NotificationStatus status = NotificationStatus.SENT;
     private String message;
 
     public Notification(String message, User user, LocalDateTime dateTime) {
         this.message = message;
         this.user = user;
         this.dateTime = dateTime;
-        this.status = NotificationStatus.SENT;
     }
 
     public NotificationStatus getStatus() {

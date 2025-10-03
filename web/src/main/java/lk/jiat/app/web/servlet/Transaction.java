@@ -11,12 +11,16 @@ import lk.jiat.app.core.service.AccountService;
 import lk.jiat.app.core.service.NotificationService;
 import lk.jiat.app.core.service.TransactionService;
 import lk.jiat.app.core.service.UserService;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,34 +41,46 @@ public class Transaction extends HttpServlet {
 
         try {
 
-            String toAcc = req.getParameter("destination");
-            String amountParam = req.getParameter("amount");
-            String date = req.getParameter("date");
-            String time = req.getParameter("time");
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader reader = req.getReader()) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+            }
+            JSONObject input = new JSONObject(sb.toString());
+
+            String toAcc = input.optString("destination",null);
+            String amountParam = input.optString("amount",null);
+            String date = input.optString("date",null);
+            String time = input.optString("time",null);
             User fromUser = (User) req.getSession().getAttribute("user");
 
-            if (fromUser != null && fromUser.getNotifications() != null) {
-                List<Notification> notifications = fromUser.getNotifications();
-                notifications.sort((n1, n2) -> n2.getDateTime().compareTo(n1.getDateTime()));
-                req.setAttribute("notifications", notifications);
-            }
+//            if (fromUser != null && fromUser.getNotifications() != null) {
+//                List<Notification> notifications = fromUser.getNotifications();
+//                notifications.sort((n1, n2) -> n2.getDateTime().compareTo(n1.getDateTime()));
+//                req.setAttribute("notifications", notifications);
+//            }
 
-            String message = null;
+            resp.setContentType("text/plain");
 
             // Trim and null-check
             if (toAcc == null || toAcc.trim().isEmpty()) {
-                message = "Destination account is required.";
+                resp.getWriter().write("Destination account is invalid.");
+                return;
             }
 
 
-            Double amount = null;
+            Double amount;
             try {
                 amount = Double.valueOf(amountParam);
                 if (amount <= 0) {
-                    message = "Amount must be greater than zero.";
+                    resp.getWriter().write("Amount must be greater than zero.");
+                    return;
                 }
             } catch (Exception e) {
-                message = "Invalid amount.";
+                resp.getWriter().write("Invalid amount.");
+                return;
             }
 
             // Check date-time combo logic
@@ -75,52 +91,59 @@ public class Transaction extends HttpServlet {
             TransactionStatus transactionStatus = TransactionStatus.COMPLETED;
 
             if ((hasDate && !hasTime) || (!hasDate && hasTime)) {
-                message = "Both date and time must be filled if one is provided.";
+                resp.getWriter().write("Both date and time must be filled if one is provided.");
+                return;
             } else if (hasDate && hasTime) {
-                dateTime = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
+
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+                        .withResolverStyle(ResolverStyle.STRICT);
+                DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+                        .withResolverStyle(ResolverStyle.STRICT);
+
+                try {
+                    LocalDate formattedDate = LocalDate.parse(date, dateFormatter);
+                    LocalTime formattedTime = LocalTime.parse(time, timeFormatter);
+
+                    dateTime = LocalDateTime.of(formattedDate, formattedTime);
+                } catch (Exception e) {
+                    resp.getWriter().write("Invalid date or time.");
+                    System.out.println(e.getMessage());
+                    return;
+                }
 
                 if (dateTime.isBefore(LocalDateTime.now())) {
-                    message = "Invalid date or time.";
+                    resp.getWriter().write("Date and Time must be after the current date and time.");
+                    return;
                 }
 
                 transactionStatus = TransactionStatus.PENDING;
             }
-
-            if (message != null) {
-                req.setAttribute("message", message);
-                req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
-                return;
-            }
-
-            //instant
 
             System.out.println(toAcc);
             Account fromAccount = fromUser.getAccounts().get(0);
             Account toAccount = accountService.getAccount(toAcc);
 
             if (Objects.equals(toAccount.getAccountNo(), fromAccount.getAccountNo())) {
-                req.setAttribute("message", "Your account and destination account are the same.");
-                req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+                resp.getWriter().write("Your account and destination account are the same.");
                 return;
             }
 
             if (fromAccount.getStatus().equals(AccountStatus.SUSPENDED)) {
-                req.setAttribute("message", "Your account is suspended.");
-                req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+                resp.getWriter().write("Your account is suspended.");
                 return;
             }
 
             if (toAccount.getStatus().equals(AccountStatus.SUSPENDED)) {
-                req.setAttribute("message", "Destination account is suspended or invalid.");
-                req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+                resp.getWriter().write("Destination account is suspended.");
                 return;
             }
 
             if (fromAccount.getBalance() < amount) {
-                req.setAttribute("message", "Insufficient funds.");
-                req.getRequestDispatcher("customer/home.jsp").forward(req, resp);
+                resp.getWriter().write("Insufficient funds.");
                 return;
             }
+
+            DecimalFormat df = new DecimalFormat("#0.00");
 
             User toUser = toAccount.getUser();
 
@@ -131,9 +154,10 @@ public class Transaction extends HttpServlet {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
                 Notification notification = new Notification();
-                notification.setMessage("$" + amount + " has been scheduled to be transferred to " + toAccount.getAccountNo() + " on " + formatter.format(dateTime));
+                notification.setMessage("$" + df.format(amount) + " has been scheduled to be transferred to " + toAccount.getAccountNo() + " on " + formatter.format(dateTime));
                 notification.setUser(fromUser);
                 notification.setDateTime(LocalDateTime.now());
+                System.out.println(notification.getStatus().toString());
                 notificationService.sendNotification(notification);
 
             } else {
@@ -145,18 +169,19 @@ public class Transaction extends HttpServlet {
                 accountService.updateAccount(toAccount);
 
                 Notification notification = new Notification();
-                notification.setMessage("$" + amount + " has been transferred to " + toAccount.getAccountNo());
+                notification.setMessage("$" + df.format(amount) + " has been transferred to " + toAccount.getAccountNo());
                 notification.setUser(fromUser);
                 notification.setDateTime(LocalDateTime.now());
+                System.out.println(notification.getStatus().toString());
                 notificationService.sendNotification(notification);
 
-                notification.setMessage("$" + amount + " has been transferred to you by " + fromAccount.getAccountNo());
+                notification.setMessage("$" + df.format(amount) + " has been transferred to you by " + fromAccount.getAccountNo());
                 notification.setUser(toUser);
                 notificationService.sendNotification(notification);
 
             }
 
-            resp.sendRedirect(req.getContextPath() + "/customer/home.jsp");
+            resp.getWriter().write("success");
         } catch (Exception e) {
             System.out.println(e);
         }

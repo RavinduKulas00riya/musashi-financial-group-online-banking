@@ -1,5 +1,4 @@
 const notificationsBtn = document.getElementById("notificationsBtn");
-const closeBtn = document.getElementById("closeBtn");
 const divC = document.getElementById("divC");
 const overlay = document.getElementById("overlay");
 const divA = document.getElementById("divA");
@@ -19,17 +18,18 @@ overlay.addEventListener("click", () => {
     divB.style.pointerEvents = "auto";
 });
 
-(async function () {
+async function sendRequest() {
     const response = await fetch("http://localhost:8080/musashi-banking-system/loadCustomerDashboard");
     const data = await response.json();
     console.log(data);
     loadData(data);
-})();
+}
 
 function loadData(data) {
 
     document.getElementById("balance").innerHTML = data.balance;
     const container = document.getElementById("status-div");
+    container.innerHTML = "";
 
     if (data.suspended) {
         const suspendedBox = document.createElement("div");
@@ -51,13 +51,13 @@ function loadData(data) {
 
     if (data.sent) {
         fillSent(data);
-    }else{
+    } else {
         emptySent();
     }
 
     if (data.received) {
         fillReceived(data);
-    }else{
+    } else {
         emptyReceived();
     }
 
@@ -65,7 +65,7 @@ function loadData(data) {
 
 }
 
-function fillSent(data){
+function fillSent(data) {
 
     const parentDiv = document.getElementById("latest-sent-div");
     parentDiv.innerHTML = "";
@@ -262,7 +262,7 @@ function fillReceived(data) {
     });
 }
 
-function emptyReceived(){
+function emptyReceived() {
     const parentDiv = document.getElementById("latest-received-div");
     parentDiv.innerHTML = "";
 
@@ -297,7 +297,7 @@ function emptyReceived(){
 
 }
 
-function emptySent(){
+function emptySent() {
     const parentDiv = document.getElementById("latest-sent-div");
     parentDiv.innerHTML = "";
 
@@ -473,7 +473,7 @@ function formatNotificationTime(dateStr) {
         dt.getMonth() === yesterday.getMonth() &&
         dt.getFullYear() === yesterday.getFullYear();
 
-    const optionsTime = { hour: "numeric", minute: "2-digit" };
+    const optionsTime = {hour: "numeric", minute: "2-digit"};
 
     if (isToday) {
         return dt.toLocaleTimeString([], optionsTime);
@@ -483,9 +483,9 @@ function formatNotificationTime(dateStr) {
         let optionsDate;
         if (dt.getFullYear() < now.getFullYear()) {
             // include year if it's before current year
-            optionsDate = { day: "numeric", month: "long", year: "numeric" };
+            optionsDate = {day: "numeric", month: "long", year: "numeric"};
         } else {
-            optionsDate = { day: "numeric", month: "long" };
+            optionsDate = {day: "numeric", month: "long"};
         }
 
         return (
@@ -565,12 +565,12 @@ checkbox.addEventListener("change", () => {
     dateInput.value = "";
     timeInput.value = "";
     const enabled = checkbox.checked;
-    if(enabled) {
+    if (enabled) {
         dateInput.disabled = false;
         timeInput.disabled = false;
         dateInput.style.cursor = "default";
         timeInput.style.cursor = "default";
-    }else{
+    } else {
         dateInput.disabled = true;
         timeInput.disabled = true;
         dateInput.style.cursor = "not-allowed";
@@ -578,6 +578,46 @@ checkbox.addEventListener("change", () => {
     }
 });
 
-function submit(){
+async function submit() {
 
+
+
+    let data;
+
+    if (document.getElementById("transferLaterCheckbox").checked) {
+        data = {
+            destination: document.getElementById("destination").value,
+            amount: document.getElementById("amount").value,
+            date: document.getElementById("dateInput").value,
+            time: document.getElementById("timeInput").value
+        };
+    } else {
+        data = {
+            destination: document.getElementById("destination").value,
+            amount: document.getElementById("amount").value
+        };
+    }
+
+    const response = await fetch('http://localhost:8080/musashi-banking-system/transaction', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    const message = await response.text();
+    if(message==="success"){
+        reset();
+        await sendRequest();
+    }else{
+        alert(message);
+    }
+}
+
+function reset() {
+    document.getElementById("destination").value = "";
+    document.getElementById("amount").value = "";
+    document.getElementById("dateInput").value = "";
+    document.getElementById("timeInput").value = "";
+    document.getElementById("transferLaterCheckbox").checked = false;
 }

@@ -27,56 +27,61 @@ public class LoadCustomerDashboard extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        User user = userService.getUserById(((User) req.getSession().getAttribute("user")).getId());
-        Account account = user.getAccounts().get(0);
-        Transfer sentTransfer = transactionService.getLatestSent(account);
-        Transfer receivedTransfer = transactionService.getLatestReceived(account);
+        try {
 
-        JSONObject json = new JSONObject();
-        DecimalFormat df = new DecimalFormat("#0.00");
-        String balanceFormatted = df.format(account.getBalance());
-        System.out.println("balanceFormatted: " + balanceFormatted);
-        json.put("balance", "USD "+balanceFormatted);
-        json.put("suspended", account.getStatus() != AccountStatus.ACTIVE);
-        if(sentTransfer != null) {
-            json.put("sent", true);
-            json.put("sentNumber", sentTransfer.getToAccount().getAccountNo());
-            json.put("sentName", sentTransfer.getToAccount().getUser().getName());
-            balanceFormatted = df.format(sentTransfer.getAmount());
+            User user = userService.getUserById(((User) req.getSession().getAttribute("user")).getId());
+            Account account = user.getAccounts().get(0);
+            Transfer sentTransfer = transactionService.getLatestSent(account);
+            Transfer receivedTransfer = transactionService.getLatestReceived(account);
+
+            JSONObject json = new JSONObject();
+            DecimalFormat df = new DecimalFormat("#0.00");
+            String balanceFormatted = df.format(account.getBalance());
             System.out.println("balanceFormatted: " + balanceFormatted);
-            json.put("sentAmount", "USD "+balanceFormatted);
-            json.put("sentDateTime", sentTransfer.getDateTime());
-        }else{
-            json.put("sent", false);
-        }
-
-        if(receivedTransfer != null) {
-            json.put("received", true);
-            json.put("receivedNumber", receivedTransfer.getFromAccount().getAccountNo());
-            json.put("receivedName", receivedTransfer.getFromAccount().getUser().getName());
-            balanceFormatted = df.format(receivedTransfer.getAmount());
-            System.out.println("balanceFormatted: " + balanceFormatted);
-            json.put("receivedAmount", "USD "+balanceFormatted);
-            json.put("receivedDateTime", receivedTransfer.getDateTime());
-        }else{
-            json.put("received", false);
-        }
-
-        JSONArray notificationsArray = new JSONArray();
-        if (user.getNotifications() != null) {
-            for (Notification n : user.getNotifications()) {
-                JSONObject notifJson = new JSONObject();
-                notifJson.put("id", n.getId());
-                notifJson.put("message", n.getMessage());
-                notifJson.put("status", n.getStatus().toString());
-                notifJson.put("dateTime", n.getDateTime().toString());
-                notificationsArray.put(notifJson);
+            json.put("balance", "USD " + balanceFormatted);
+            json.put("suspended", account.getStatus() != AccountStatus.ACTIVE);
+            if (sentTransfer != null) {
+                json.put("sent", true);
+                json.put("sentNumber", sentTransfer.getToAccount().getAccountNo());
+                json.put("sentName", sentTransfer.getToAccount().getUser().getName());
+                balanceFormatted = df.format(sentTransfer.getAmount());
+                System.out.println("balanceFormatted: " + balanceFormatted);
+                json.put("sentAmount", "USD " + balanceFormatted);
+                json.put("sentDateTime", sentTransfer.getDateTime());
+            } else {
+                json.put("sent", false);
             }
+
+            if (receivedTransfer != null) {
+                json.put("received", true);
+                json.put("receivedNumber", receivedTransfer.getFromAccount().getAccountNo());
+                json.put("receivedName", receivedTransfer.getFromAccount().getUser().getName());
+                balanceFormatted = df.format(receivedTransfer.getAmount());
+                System.out.println("balanceFormatted: " + balanceFormatted);
+                json.put("receivedAmount", "USD " + balanceFormatted);
+                json.put("receivedDateTime", receivedTransfer.getDateTime());
+            } else {
+                json.put("received", false);
+            }
+
+            JSONArray notificationsArray = new JSONArray();
+            if (user.getNotifications() != null) {
+                for (Notification n : user.getNotifications()) {
+                    JSONObject notifJson = new JSONObject();
+                    notifJson.put("id", n.getId());
+                    notifJson.put("message", n.getMessage());
+                    notifJson.put("status", n.getStatus().toString());
+                    notifJson.put("dateTime", n.getDateTime().toString());
+                    notificationsArray.put(notifJson);
+                }
+            }
+            json.put("notifications", notificationsArray);
+
+            resp.setContentType("application/json");
+            resp.getWriter().write(json.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        json.put("notifications", notificationsArray);
-
-        resp.setContentType("application/json");
-        resp.getWriter().write(json.toString());
-
     }
 }

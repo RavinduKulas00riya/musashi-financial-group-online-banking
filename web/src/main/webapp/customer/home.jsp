@@ -37,7 +37,7 @@
     }
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 %>
-<body>
+<body onload="sendRequest()">
 <div id="divA">
     <div style="height: 90px">
         <img
@@ -363,6 +363,7 @@
                                 class="form-control animated-input"
                                 name="accountNo"
                                 placeholder=" "
+                                id="destination"
                         />
                         <label class="input-label">Destination Account Number</label>
                     </div>
@@ -372,6 +373,7 @@
                                 type="text"
                                 class="form-control animated-input"
                                 name="amount"
+                                id="amount"
                                 placeholder=" "
                         />
                         <label class="input-label">Amount (USD)</label>
@@ -430,6 +432,8 @@
                 font-size: 17px;
                 border-radius: 10px;
               "
+                        id="submit-btn"
+                        onclick="submit()"
                 >
                     Submit
                 </button>
