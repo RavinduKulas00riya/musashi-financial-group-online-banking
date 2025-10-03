@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 @WebServlet("/loadCustomerDashboard")
 public class LoadCustomerDashboard extends HttpServlet {
@@ -32,13 +33,18 @@ public class LoadCustomerDashboard extends HttpServlet {
         Transfer receivedTransfer = transactionService.getLatestReceived(account);
 
         JSONObject json = new JSONObject();
-        json.put("balance", "USD "+account.getBalance());
+        DecimalFormat df = new DecimalFormat("#0.00");
+        String balanceFormatted = df.format(account.getBalance());
+        System.out.println("balanceFormatted: " + balanceFormatted);
+        json.put("balance", "USD "+balanceFormatted);
         json.put("suspended", account.getStatus() != AccountStatus.ACTIVE);
         if(sentTransfer != null) {
             json.put("sent", true);
             json.put("sentNumber", sentTransfer.getToAccount().getAccountNo());
             json.put("sentName", sentTransfer.getToAccount().getUser().getName());
-            json.put("sentAmount", "USD "+sentTransfer.getAmount());
+            balanceFormatted = df.format(sentTransfer.getAmount());
+            System.out.println("balanceFormatted: " + balanceFormatted);
+            json.put("sentAmount", "USD "+balanceFormatted);
             json.put("sentDateTime", sentTransfer.getDateTime());
         }else{
             json.put("sent", false);
@@ -48,7 +54,9 @@ public class LoadCustomerDashboard extends HttpServlet {
             json.put("received", true);
             json.put("receivedNumber", receivedTransfer.getFromAccount().getAccountNo());
             json.put("receivedName", receivedTransfer.getFromAccount().getUser().getName());
-            json.put("receivedAmount", "USD "+receivedTransfer.getAmount());
+            balanceFormatted = df.format(receivedTransfer.getAmount());
+            System.out.println("balanceFormatted: " + balanceFormatted);
+            json.put("receivedAmount", "USD "+balanceFormatted);
             json.put("receivedDateTime", receivedTransfer.getDateTime());
         }else{
             json.put("received", false);
@@ -68,7 +76,6 @@ public class LoadCustomerDashboard extends HttpServlet {
         json.put("notifications", notificationsArray);
 
         resp.setContentType("application/json");
-        System.out.println(json);
         resp.getWriter().write(json.toString());
 
     }

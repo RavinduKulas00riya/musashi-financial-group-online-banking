@@ -282,6 +282,7 @@ body {
     outline: none;
     background: #f5f5f5;
     transition: border-color 0.3s ease;
+    cursor: default;
 }
 
 .animated-input:focus {

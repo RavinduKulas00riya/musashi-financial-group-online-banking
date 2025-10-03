@@ -35,7 +35,7 @@
     if (user != null && user.getAccounts() != null && !user.getAccounts().isEmpty()) {
         account = user.getAccounts().get(0); // assuming only one account per user
     }
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 %>
 <body>
 <div id="divA">
@@ -134,12 +134,12 @@
         <h1 style="font-family: medium">Dashboard</h1>
         <div class="horizontal-div" style="gap: 35px">
             <button class="horizontal-div top-btn help-btn">
-                <i class="fa fa-question-circle-o" style="font-size: 15px; margin-top: 1.6px" ></i>
+                <i class="fa fa-question-circle-o" style="font-size: 15px; margin-top: 1.6px"></i>
                 <span style="font-size: 12.7px">help?</span>
             </button>
             <button class="horizontal-div top-btn logout-btn"
                     onclick="location.href='${pageContext.request.contextPath}/logout'">
-                <i class="fa fa-sign-out" style="font-size: 15px; margin-top: 1.6px" ></i>
+                <i class="fa fa-sign-out" style="font-size: 15px; margin-top: 1.6px"></i>
                 <span style="font-size: 12.7px">Log out</span>
             </button>
         </div>
@@ -382,12 +382,10 @@
                             class="horizontal-div"
                             style="gap: 10px; align-items: center"
                     >
-                <span
-                        style="font-family: medium; font-size: 12px; color: #6c757d"
-                >Transfer Later?</span
-                >
-                        <input type="checkbox"/>
+                        <span style="font-family: medium; font-size: 12px; color: #6c757d">Transfer Later?</span>
+                        <input type="checkbox" id="transferLaterCheckbox"/>
                     </div>
+
                     <div class="input-container" style="width: 160px">
                         <input
                                 id="dateInput"
@@ -399,6 +397,8 @@
                                 maxlength="10"
                                 inputmode="numeric"
                                 autocomplete="off"
+                                disabled
+                                style="cursor: not-allowed"
                         />
                         <label class="input-label">Date (D/M/Y)</label>
                     </div>
@@ -414,6 +414,8 @@
                                 maxlength="5"
                                 inputmode="numeric"
                                 autocomplete="off"
+                                disabled
+                                style="cursor: not-allowed"
                         />
                         <label class="input-label">Time (H:M)</label>
                     </div>
@@ -564,24 +566,24 @@
 </div>
 
 <div id="divC">
-<%--      <span style="font-family: medium; font-size: 12px; color: #727272"--%>
-<%--      >New</span--%>
-<%--      >--%>
-<%--    <div class="notification">--%>
-<%--        <span>USD 200.0 has been transferred to you by 8436543</span>--%>
-<%--        <span class="notification-time">Today</span>--%>
-<%--    </div>--%>
-<%--    <div class="notification">--%>
-<%--        <span>$0.3 of daily interest has been added to your balance.</span>--%>
-<%--        <span class="notification-time">Yesterday</span>--%>
-<%--    </div>--%>
-<%--    <span style="font-family: medium; font-size: 12px; color: #727272"--%>
-<%--    >Old</span--%>
-<%--    >--%>
-<%--    <div class="notification">--%>
-<%--        <span>USD 400.0 has been transferred to you by 8436543</span>--%>
-<%--        <span class="notification-time">This Week</span>--%>
-<%--    </div>--%>
+    <%--      <span style="font-family: medium; font-size: 12px; color: #727272"--%>
+    <%--      >New</span--%>
+    <%--      >--%>
+    <%--    <div class="notification">--%>
+    <%--        <span>USD 200.0 has been transferred to you by 8436543</span>--%>
+    <%--        <span class="notification-time">Today</span>--%>
+    <%--    </div>--%>
+    <%--    <div class="notification">--%>
+    <%--        <span>$0.3 of daily interest has been added to your balance.</span>--%>
+    <%--        <span class="notification-time">Yesterday</span>--%>
+    <%--    </div>--%>
+    <%--    <span style="font-family: medium; font-size: 12px; color: #727272"--%>
+    <%--    >Old</span--%>
+    <%--    >--%>
+    <%--    <div class="notification">--%>
+    <%--        <span>USD 400.0 has been transferred to you by 8436543</span>--%>
+    <%--        <span class="notification-time">This Week</span>--%>
+    <%--    </div>--%>
 </div>
 <div class="overlay" id="overlay"></div>
 

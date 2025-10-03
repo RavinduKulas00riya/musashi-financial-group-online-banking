@@ -441,19 +441,19 @@ function emptySent(){
     });
 
     // Optional: basic validation on blur
-    input.addEventListener("blur", () => {
-        const val = input.value;
-        if (/^\d{2}:\d{2}$/.test(val)) {
-            let [h, m] = val.split(":").map(Number);
-            if (h > 23 || m > 59) {
-                input.style.borderColor = "#dc2626"; // red if invalid
-            } else {
-                input.style.borderColor = ""; // reset
-            }
-        } else if (val !== "") {
-            input.style.borderColor = "#dc2626";
-        }
-    });
+    // input.addEventListener("blur", () => {
+    //     const val = input.value;
+    //     if (/^\d{2}:\d{2}$/.test(val)) {
+    //         let [h, m] = val.split(":").map(Number);
+    //         if (h > 23 || m > 59) {
+    //             input.style.borderColor = "#dc2626"; // red if invalid
+    //         } else {
+    //             input.style.borderColor = ""; // reset
+    //         }
+    //     } else if (val !== "") {
+    //         input.style.borderColor = "#dc2626";
+    //     }
+    // });
 })();
 
 function formatNotificationTime(dateStr) {
@@ -495,7 +495,6 @@ function formatNotificationTime(dateStr) {
         );
     }
 }
-
 
 function renderNotifications(data) {
     const newContainer = document.createElement("div");
@@ -558,3 +557,27 @@ function renderNotifications(data) {
     }
 }
 
+const checkbox = document.getElementById("transferLaterCheckbox");
+const dateInput = document.getElementById("dateInput");
+const timeInput = document.getElementById("timeInput");
+
+checkbox.addEventListener("change", () => {
+    dateInput.value = "";
+    timeInput.value = "";
+    const enabled = checkbox.checked;
+    if(enabled) {
+        dateInput.disabled = false;
+        timeInput.disabled = false;
+        dateInput.style.cursor = "default";
+        timeInput.style.cursor = "default";
+    }else{
+        dateInput.disabled = true;
+        timeInput.disabled = true;
+        dateInput.style.cursor = "not-allowed";
+        timeInput.style.cursor = "not-allowed";
+    }
+});
+
+function submit(){
+
+}
