@@ -6,10 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lk.jiat.app.core.model.Account;
-import lk.jiat.app.core.model.AccountStatus;
-import lk.jiat.app.core.model.Transfer;
-import lk.jiat.app.core.model.User;
+import lk.jiat.app.core.model.*;
 import lk.jiat.app.core.service.TransactionService;
 import lk.jiat.app.core.service.UserService;
 import org.json.JSONArray;
@@ -34,7 +31,6 @@ public class LoadCustomerDashboard extends HttpServlet {
         Transfer sentTransfer = transactionService.getLatestSent(account);
         Transfer receivedTransfer = transactionService.getLatestReceived(account);
 
-        JSONArray jsonArray = new JSONArray();
         JSONObject json = new JSONObject();
         json.put("balance", "USD "+account.getBalance());
         json.put("suspended", account.getStatus() != AccountStatus.ACTIVE);
@@ -58,7 +54,18 @@ public class LoadCustomerDashboard extends HttpServlet {
             json.put("received", false);
         }
 
-
+        JSONArray notificationsArray = new JSONArray();
+        if (user.getNotifications() != null) {
+            for (Notification n : user.getNotifications()) {
+                JSONObject notifJson = new JSONObject();
+                notifJson.put("id", n.getId());
+                notifJson.put("message", n.getMessage());
+                notifJson.put("status", n.getStatus().toString());
+                notifJson.put("dateTime", n.getDateTime().toString());
+                notificationsArray.put(notifJson);
+            }
+        }
+        json.put("notifications", notificationsArray);
 
         resp.setContentType("application/json");
         System.out.println(json);

@@ -264,6 +264,7 @@ body {
     border: 1px solid #dedede;
     border-radius: 0.4rem;
     gap: 25px;
+    min-height: 130px;
 }
 
 .input-container {

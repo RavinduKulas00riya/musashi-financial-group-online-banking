@@ -16,14 +16,18 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Dynamic Web Page</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/common.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/common.css"/>
     <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
+    <script
+            src="https://kit.fontawesome.com/52e3cc1234.js"
+            crossorigin="anonymous"
+    ></script>
 </head>
 <%
     User user = (User) session.getAttribute("user");
@@ -46,7 +50,8 @@
         <div class="header-titles-div">
             <span class="header-titles">PAGES</span>
         </div>
-        <button class="header active-header" onclick="location.href='${pageContext.request.contextPath}/customer/home.jsp'">
+        <button class="header active-header"
+                onclick="location.href='${pageContext.request.contextPath}/customer/home.jsp'">
             <img
                     src="${pageContext.request.contextPath}/images/dashboard2.png"
                     width="16"
@@ -55,7 +60,8 @@
             />
             <span>Dashboard</span>
         </button>
-        <button class="header inactive-header" onclick="location.href='${pageContext.request.contextPath}/customer/history.jsp'">
+        <button class="header inactive-header"
+                onclick="location.href='${pageContext.request.contextPath}/customer/history.jsp'">
             <img
                     src="${pageContext.request.contextPath}/images/file.png"
                     width="16"
@@ -64,7 +70,8 @@
             />
             <span>Transfer History</span>
         </button>
-        <button class="header inactive-header" onclick="location.href='${pageContext.request.contextPath}/customer/schedule.jsp'">
+        <button class="header inactive-header"
+                onclick="location.href='${pageContext.request.contextPath}/customer/schedule.jsp'">
             <img
                     src="${pageContext.request.contextPath}/images/stopwatch.png"
                     width="16"
@@ -127,11 +134,12 @@
         <h1 style="font-family: medium">Dashboard</h1>
         <div class="horizontal-div" style="gap: 35px">
             <button class="horizontal-div top-btn help-btn">
-                <i class="bi bi-question-circle" style="font-size: 14px"></i>
+                <i class="fa fa-question-circle-o" style="font-size: 15px; margin-top: 1.6px" ></i>
                 <span style="font-size: 12.7px">help?</span>
             </button>
-            <button class="horizontal-div top-btn logout-btn" onclick="location.href='${pageContext.request.contextPath}/logout'">
-                <i class="bi bi-box-arrow-right" style="font-size: 14px"></i>
+            <button class="horizontal-div top-btn logout-btn"
+                    onclick="location.href='${pageContext.request.contextPath}/logout'">
+                <i class="fa fa-sign-out" style="font-size: 15px; margin-top: 1.6px" ></i>
                 <span style="font-size: 12.7px">Log out</span>
             </button>
         </div>
@@ -318,18 +326,18 @@
                 <div class="info-box">
                     <span class="info-box-title">Status</span>
                     <div style="display: flex; flex-direction: row" id="status-div">
-<%--                        <% if(account.getStatus().equals(AccountStatus.ACTIVE)){--%>
-<%--                            %>--%>
-<%--                        <div class="status-box active-status">--%>
-<%--                            <span style="font-family: medium">Active</span>--%>
-<%--                            <i style="height: 14px" class="bi bi-check-lg"></i>--%>
-<%--                        </div>--%>
-<%--                        <% } else { %>--%>
-<%--                        <div class="status-box suspended-status">--%>
-<%--                            <span style="font-family: medium">Suspended</span>--%>
-<%--                            <i style="height: 14px" class="bi bi-x-lg"></i>--%>
-<%--                        </div>--%>
-<%--                        <% } %>--%>
+                        <%--                        <% if(account.getStatus().equals(AccountStatus.ACTIVE)){--%>
+                        <%--                            %>--%>
+                        <%--                        <div class="status-box active-status">--%>
+                        <%--                            <span style="font-family: medium">Active</span>--%>
+                        <%--                            <i style="height: 14px" class="bi bi-check-lg"></i>--%>
+                        <%--                        </div>--%>
+                        <%--                        <% } else { %>--%>
+                        <%--                        <div class="status-box suspended-status">--%>
+                        <%--                            <span style="font-family: medium">Suspended</span>--%>
+                        <%--                            <i style="height: 14px" class="bi bi-x-lg"></i>--%>
+                        <%--                        </div>--%>
+                        <%--                        <% } %>--%>
                     </div>
                 </div>
             </div>
@@ -378,7 +386,7 @@
                         style="font-family: medium; font-size: 12px; color: #6c757d"
                 >Transfer Later?</span
                 >
-                        <input type="checkbox" />
+                        <input type="checkbox"/>
                     </div>
                     <div class="input-container" style="width: 160px">
                         <input
@@ -392,7 +400,7 @@
                                 inputmode="numeric"
                                 autocomplete="off"
                         />
-                        <label class="input-label">Date (dd/MM/yyyy)</label>
+                        <label class="input-label">Date (D/M/Y)</label>
                     </div>
 
                     <div class="input-container" style="width: 150px">
@@ -407,7 +415,7 @@
                                 inputmode="numeric"
                                 autocomplete="off"
                         />
-                        <label class="input-label">Time (HH:mm)</label>
+                        <label class="input-label">Time (H:M)</label>
                     </div>
                 </div>
             </div>
@@ -427,7 +435,7 @@
         </div>
 
         <div class="vertical-div" style="width: 100%; gap: 35px;">
-            <div class="vertical-div latest-div">
+            <div id="latest-sent-div" class="vertical-div latest-div">
                 <span class="info-box-title">Latest Sent Transfer</span>
                 <div class="vertical-div" style="gap: 20px">
                     <div
@@ -489,7 +497,7 @@
                 </div>
             </div>
 
-            <div class="vertical-div latest-div">
+            <div id="latest-received-div" class="vertical-div latest-div">
                 <span class="info-box-title">Latest Received Transfer</span>
                 <div class="vertical-div" style="gap: 20px">
                     <div
@@ -505,7 +513,8 @@
                   <span style="margin-left: 4px; font-size: 15px; color: #6c757d"
                   >Account Number</span
                   >
-                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedNumber">N/A</span>
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000"
+                                  id="receivedNumber">N/A</span>
                         </div>
                         <div>
                   <span style="margin-left: 4px; font-size: 15px; color: #6c757d"
@@ -555,207 +564,28 @@
 </div>
 
 <div id="divC">
-      <span style="font-family: medium; font-size: 12px; color: #727272"
-      >New</span
-      >
-    <div class="notification">
-        <span>USD 200.0 has been transferred to you by 8436543</span>
-        <span class="notification-time">Today</span>
-    </div>
-    <div class="notification">
-        <span>$0.3 of daily interest has been added to your balance.</span>
-        <span class="notification-time">Yesterday</span>
-    </div>
-    <span style="font-family: medium; font-size: 12px; color: #727272"
-    >Old</span
-    >
-    <div class="notification">
-        <span>USD 400.0 has been transferred to you by 8436543</span>
-        <span class="notification-time">This Week</span>
-    </div>
+<%--      <span style="font-family: medium; font-size: 12px; color: #727272"--%>
+<%--      >New</span--%>
+<%--      >--%>
+<%--    <div class="notification">--%>
+<%--        <span>USD 200.0 has been transferred to you by 8436543</span>--%>
+<%--        <span class="notification-time">Today</span>--%>
+<%--    </div>--%>
+<%--    <div class="notification">--%>
+<%--        <span>$0.3 of daily interest has been added to your balance.</span>--%>
+<%--        <span class="notification-time">Yesterday</span>--%>
+<%--    </div>--%>
+<%--    <span style="font-family: medium; font-size: 12px; color: #727272"--%>
+<%--    >Old</span--%>
+<%--    >--%>
+<%--    <div class="notification">--%>
+<%--        <span>USD 400.0 has been transferred to you by 8436543</span>--%>
+<%--        <span class="notification-time">This Week</span>--%>
+<%--    </div>--%>
 </div>
 <div class="overlay" id="overlay"></div>
 
-<script>
-    const notificationsBtn = document.getElementById("notificationsBtn");
-    const closeBtn = document.getElementById("closeBtn");
-    const divC = document.getElementById("divC");
-    const overlay = document.getElementById("overlay");
-    const divA = document.getElementById("divA");
-    const divB = document.getElementById("divB");
-
-    notificationsBtn.addEventListener("click", () => {
-        divC.classList.add("open");
-        overlay.classList.add("active");
-        divA.style.pointerEvents = "none";
-        divB.style.pointerEvents = "none";
-    });
-
-    overlay.addEventListener("click", () => {
-        divC.classList.remove("open");
-        overlay.classList.remove("active");
-        divA.style.pointerEvents = "auto";
-        divB.style.pointerEvents = "auto";
-    });
-
-    (async function () {
-        const response = await fetch("http://localhost:8080/musashi-banking-system/loadCustomerDashboard");
-        const data = await response.json();
-        console.log(data);
-        loadData(data);
-    })();
-
-    function loadData(data) {
-
-        // console.log(data);
-
-        document.getElementById("balance").innerHTML = data.balance;
-        const container = document.getElementById("status-div");
-
-        if(data.suspended){
-            const suspendedBox = document.createElement("div");
-            suspendedBox.className = "status-box suspended-status";
-            suspendedBox.innerHTML = `
-            <span style="font-family: medium">Suspended</span>
-            <i style="height: 14px" class="bi bi-x-lg"></i>
-        `;
-            container.appendChild(suspendedBox);
-        }else{
-            const activeBox = document.createElement("div");
-            activeBox.className = "status-box active-status";
-            activeBox.innerHTML = `
-            <span style="font-family: medium">Active</span>
-            <i style="height: 14px" class="bi bi-check-lg"></i>
-        `;
-            container.appendChild(activeBox);
-        }
-
-        if(data.sent){
-            document.getElementById("sentNumber").innerHTML = data.sentNumber;
-            document.getElementById("sentName").innerHTML = data.sentName;
-            document.getElementById("sentAmount").innerHTML = data.sentAmount;
-            const date = new Date(data.sentDateTime);
-            document.getElementById("sentDate").innerHTML = date.toLocaleDateString();
-            document.getElementById("sentTime").innerHTML = date.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false
-            });
-        }
-
-        if(data.received){
-            document.getElementById("receivedNumber").innerHTML = data.sentNumber;
-            document.getElementById("receivedName").innerHTML = data.sentName;
-            document.getElementById("receivedAmount").innerHTML = data.sentAmount;
-            const date = new Date(data.receivedDateTime);
-            document.getElementById("receivedDate").innerHTML = date.toLocaleDateString();
-            document.getElementById("receivedTime").innerHTML = date.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false
-            });
-        }
-
-    }
-
-    (function () {
-        const input = document.getElementById("dateInput");
-
-        function formatDate(digits) {
-            const parts = [];
-            if (digits.length > 0) parts.push(digits.slice(0, 2));
-            if (digits.length > 2) parts.push(digits.slice(2, 4));
-            if (digits.length > 4) parts.push(digits.slice(4, 8));
-            return parts.join("/");
-        }
-
-        input.addEventListener("input", () => {
-            const raw = input.value;
-            const digits = raw.replace(/\D/g, "").slice(0, 8); // only numbers, max 8
-            input.value = formatDate(digits);
-        });
-
-        input.addEventListener("keydown", (e) => {
-            const allowed = [
-                "Backspace",
-                "Delete",
-                "ArrowLeft",
-                "ArrowRight",
-                "Tab",
-                "Home",
-                "End",
-            ];
-            if (allowed.includes(e.key)) return;
-            if (/^[0-9]$/.test(e.key)) return;
-            e.preventDefault(); // block letters/symbols
-        });
-
-        input.addEventListener("paste", (e) => {
-            e.preventDefault();
-            const text = (e.clipboardData || window.clipboardData).getData(
-                "text"
-            );
-            const digits = text.replace(/\D/g, "").slice(0, 8);
-            input.value = formatDate(digits);
-        });
-    })();
-
-    (function () {
-        const input = document.getElementById("timeInput");
-
-        function formatTime(digits) {
-            let h = digits.slice(0, 2);
-            let m = digits.slice(2, 4);
-            let out = h;
-            if (digits.length > 2) out += ":" + m;
-            return out;
-        }
-
-        input.addEventListener("input", () => {
-            const raw = input.value;
-            const digits = raw.replace(/\D/g, "").slice(0, 4); // max 4 digits HHMM
-            input.value = formatTime(digits);
-        });
-
-        input.addEventListener("keydown", (e) => {
-            const allowed = [
-                "Backspace",
-                "Delete",
-                "ArrowLeft",
-                "ArrowRight",
-                "Tab",
-                "Home",
-                "End",
-            ];
-            if (allowed.includes(e.key)) return;
-            if (/^[0-9]$/.test(e.key)) return;
-            e.preventDefault(); // block letters & symbols
-        });
-
-        input.addEventListener("paste", (e) => {
-            e.preventDefault();
-            const text = (e.clipboardData || window.clipboardData).getData(
-                "text"
-            );
-            const digits = text.replace(/\D/g, "").slice(0, 4);
-            input.value = formatTime(digits);
-        });
-
-        // Optional: basic validation on blur
-        input.addEventListener("blur", () => {
-            const val = input.value;
-            if (/^\d{2}:\d{2}$/.test(val)) {
-                let [h, m] = val.split(":").map(Number);
-                if (h > 23 || m > 59) {
-                    input.style.borderColor = "#dc2626"; // red if invalid
-                } else {
-                    input.style.borderColor = ""; // reset
-                }
-            } else if (val !== "") {
-                input.style.borderColor = "#dc2626";
-            }
-        });
-    })();
+<script src="${pageContext.request.contextPath}/dashboard.js">
 </script>
 </body>
 </html>
