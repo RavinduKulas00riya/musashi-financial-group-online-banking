@@ -580,7 +580,16 @@ checkbox.addEventListener("change", () => {
 
 async function submit() {
 
+    const btnText = document.getElementById("submit-text");
+    const btnIcon = document.getElementById("submit-icon");
 
+    btnText.textContent = "Transferring Funds";
+    btnIcon.style.display = "inline-block";
+
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    btnText.textContent = "Submit";
+    btnIcon.style.display = "none";
 
     let data;
 
@@ -606,10 +615,10 @@ async function submit() {
         body: JSON.stringify(data)
     });
     const message = await response.text();
-    if(message==="success"){
+    if (message === "success") {
         reset();
         await sendRequest();
-    }else{
+    } else {
         alert(message);
     }
 }

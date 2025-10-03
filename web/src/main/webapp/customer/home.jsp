@@ -435,7 +435,12 @@
                         id="submit-btn"
                         onclick="submit()"
                 >
-                    Submit
+                    <i
+                            class="fa-solid fa-circle-notch fa-spin"
+                            id="submit-icon"
+                            style="margin-right: 5px"
+                    ></i>
+                    <span id="submit-text">Submit</span>
                 </button>
             </div>
         </div>
