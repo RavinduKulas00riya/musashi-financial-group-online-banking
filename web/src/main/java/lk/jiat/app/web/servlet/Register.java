@@ -50,13 +50,13 @@ public class Register extends HttpServlet {
                 String amount = input.getString("amount");
 
                 if(Objects.equals(name, "")){
-                    resp.getWriter().write("Name is empty");
+                    resp.getWriter().write("Name Cannot Be Empty");
                 }else if(Objects.equals(email, "")){
-                    resp.getWriter().write("Email is empty");
+                    resp.getWriter().write("Email Cannot Be Empty");
                 }else if(Objects.equals(mobile, "")){
-                    resp.getWriter().write("Mobile number is empty");
+                    resp.getWriter().write("Mobile number Cannot Be Empty");
                 }else if(Objects.equals(amount, "")){
-                    resp.getWriter().write("Amount is empty");
+                    resp.getWriter().write("Amount Cannot Be Empty");
                 }else {
 
                     if (mobile.matches("^[0]{1}[7]{1}[01245678]{1}[0-9]{7}$") && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
@@ -75,11 +75,11 @@ public class Register extends HttpServlet {
 
                             resp.getWriter().write("success");
                         } else {
-                            resp.getWriter().write("Email or mobile number already in use");
+                            resp.getWriter().write("Email or Mobile Number Already in Use");
                         }
 
                     } else {
-                        resp.getWriter().write("Invalid email or mobile number");
+                        resp.getWriter().write("Invalid Email or Mobile Number");
                     }
                 }
 
@@ -94,7 +94,7 @@ public class Register extends HttpServlet {
 
                 if (Objects.equals(password, "")) {
 
-                    resp.getWriter().write("Password is empty");
+                    resp.getWriter().write("Password Cannot Be Empty");
 
                 } else if (password.equals(confirmPassword)) {
 
@@ -104,7 +104,7 @@ public class Register extends HttpServlet {
                     resp.getWriter().write("done");
 
                 } else {
-                    resp.getWriter().write("Passwords do not match");
+                    resp.getWriter().write("Passwords Do Not Match");
                 }
             }
         } catch (Exception e) {

@@ -59,6 +59,26 @@ public class TransactionSessionBean implements TransactionService {
     }
 
     @Override
+    public Transfer getLatestReceived(Account customer) {
+        try {
+            return em.createNamedQuery("Transfer.findLatestReceived", Transfer.class)
+                    .setParameter("customer", customer).setMaxResults(1).getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+    }
+
+    @Override
+    public Transfer getLatestSent(Account customer) {
+        try {
+            return em.createNamedQuery("Transfer.findLatestSent", Transfer.class)
+                    .setParameter("customer", customer).setMaxResults(1).getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+    }
+
+    @Override
     public void deleteTransaction(Transfer transfer) {
         Transfer managedTransfer = em.merge(transfer);
         em.remove(managedTransfer);

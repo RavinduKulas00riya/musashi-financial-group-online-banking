@@ -5,6 +5,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="lk.jiat.app.core.model.User" %>
 <%@ page import="lk.jiat.app.core.model.Account" %>
+<%@ page import="lk.jiat.app.core.model.AccountStatus" %>
 <%--
   Created by IntelliJ IDEA.
   User: Ravindu Kulasooriya
@@ -13,150 +14,748 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<html lang="en">
 <head>
-    <title>Customer Dashboard</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            padding: 50px;
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-        .nav-buttons {
-            margin-bottom: 30px;
-        }
-        .nav-buttons button {
-            margin-right: 10px;
-            padding: 8px 12px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .section {
-            border: 1px solid #aaa;
-            padding: 20px;
-            max-width: 400px;
-            margin-bottom: 30px;
-        }
-        .section h2 {
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin-bottom: 5px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        input {
-            margin-bottom: 10px;
-            padding: 8px;
-            font-size: 14px;
-        }
-        button[type="submit"] {
-            padding: 8px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .notifications {
-            max-width: 400px;
-        }
-        .notifications h2 {
-            margin-bottom: 10px;
-        }
-        ul {
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        .msg {
-            margin-bottom: 10px;
-            margin-top: 10px;
-            color: red;
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Web Page</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/common.css" />
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
 </head>
-<body>
-<h1>Customer Dashboard</h1>
-
-<div class="nav-buttons">
-    <button onclick="location.href='${pageContext.request.contextPath}/customer/home.jsp'">Dashboard</button>
-    <button onclick="location.href='${pageContext.request.contextPath}/customer/history.jsp'">Account Statement</button>
-    <button onclick="location.href='${pageContext.request.contextPath}/customer/schedule.jsp'">Scheduled Operations</button>
-    <button onclick="location.href='${pageContext.request.contextPath}/logout'">Logout</button>
-</div>
-
 <%
     User user = (User) session.getAttribute("user");
     Account account = null;
     if (user != null && user.getAccounts() != null && !user.getAccounts().isEmpty()) {
         account = user.getAccounts().get(0); // assuming only one account per user
     }
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 %>
-
-<div class="section">
-    <h2>Profile</h2>
-    <div><strong>Full Name:</strong> <%= user != null ? user.getName() : "N/A" %></div>
-    <div><strong>Email:</strong> <%= user != null ? user.getEmail() : "N/A" %></div>
-    <div><strong>Mobile:</strong> <%= user != null ? user.getMobile() : "N/A" %></div>
-
-    <hr style="margin: 15px 0;">
-
-    <h2>Account</h2>
-    <div><strong>Account Number:</strong> <%= account != null ? account.getAccountNo() : "N/A" %></div>
-    <div><strong>Balance:</strong> <%= account != null ? "USD " + account.getBalance() : "N/A" %></div>
-    <div><strong>Status:</strong> <%= account != null ? account.getStatus() : "N/A" %></div>
-    <div><strong>Created:</strong> <%= account != null && account.getCreatedDateTime() != null
-            ? account.getCreatedDateTime().format(dtf) : "N/A" %></div>
+<body>
+<div id="divA">
+    <div style="height: 90px">
+        <img
+                src="${pageContext.request.contextPath}/images/logo.png"
+                style="width: 60px; height: 60px"
+                alt=""
+        />
+    </div>
+    <div style="padding-left: 10px">
+        <div class="header-titles-div">
+            <span class="header-titles">PAGES</span>
+        </div>
+        <button class="header active-header" onclick="location.href='${pageContext.request.contextPath}/customer/home.jsp'">
+            <img
+                    src="${pageContext.request.contextPath}/images/dashboard2.png"
+                    width="16"
+                    height="16"
+                    alt=""
+            />
+            <span>Dashboard</span>
+        </button>
+        <button class="header inactive-header" onclick="location.href='${pageContext.request.contextPath}/customer/history.jsp'">
+            <img
+                    src="${pageContext.request.contextPath}/images/file.png"
+                    width="16"
+                    height="16"
+                    alt=""
+            />
+            <span>Transfer History</span>
+        </button>
+        <button class="header inactive-header" onclick="location.href='${pageContext.request.contextPath}/customer/schedule.jsp'">
+            <img
+                    src="${pageContext.request.contextPath}/images/stopwatch.png"
+                    width="16"
+                    height="16"
+                    alt=""
+            />
+            <span>Timely Operations</span>
+        </button>
+    </div>
+    <div style="padding-left: 12px">
+        <div class="header-titles-div">
+            <span class="header-titles">SETTINGS</span>
+        </div>
+        <button class="header inactive-header">
+            <img
+                    src="${pageContext.request.contextPath}/images/settings.png"
+                    width="16"
+                    height="16"
+                    alt=""
+            />
+            <span>Preferences</span>
+        </button>
+    </div>
+    <div style="padding-left: 12px">
+        <div class="header-titles-div">
+            <span class="header-titles">NOTIFICATIONS</span>
+        </div>
+        <button class="header inbox-div" id="notificationsBtn">
+            <img
+                    src="${pageContext.request.contextPath}/images/notification2.png"
+                    width="16"
+                    height="16"
+                    alt=""
+            />
+            <span>Inbox</span>
+            <div
+                    class="center-div"
+                    style="
+              border: 1px solid #0d0d0d46;
+              border-radius: 0.4rem;
+              width: 45px;
+              height: 23px;
+            "
+            >
+                <p style="font-size: 12px; color: #2b2b2bda">New!</p>
+            </div>
+        </button>
+    </div>
 </div>
 
-<div class="section">
-    <h2>Transfer Funds</h2>
-    <% String msg = (String) request.getAttribute("message"); %>
-    <form action="${pageContext.request.contextPath}/transaction" method="post">
-        <% if (msg != null) { %>
-        <div class="msg"><%= msg %></div>
-        <% } %>
-        <label for="destination">Destination Account No.</label>
-        <input type="text" id="destination" name="destination" required>
-        <label for="amount">Amount</label>
-        <input type="number" id="amount" name="amount" required>
-        <label for="date">Date (Optional)</label>
-        <input type="date" id="date" name="date">
-        <label for="time">Time (Optional)</label>
-        <input type="time" id="time" name="time">
-        <button type="submit">Submit</button>
-    </form>
+<div id="divB">
+    <div
+            style="
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+    >
+        <h1 style="font-family: medium">Dashboard</h1>
+        <div class="horizontal-div" style="gap: 35px">
+            <button class="horizontal-div top-btn help-btn">
+                <i class="bi bi-question-circle" style="font-size: 14px"></i>
+                <span style="font-size: 12.7px">help?</span>
+            </button>
+            <button class="horizontal-div top-btn logout-btn" onclick="location.href='${pageContext.request.contextPath}/logout'">
+                <i class="bi bi-box-arrow-right" style="font-size: 14px"></i>
+                <span style="font-size: 12.7px">Log out</span>
+            </button>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 35px">
+        <!-- <div style="border: 1px solid black; width: 40px; height: 1px"></div> -->
+        <!-- <span style="font-size: 20px; font-family: regular"
+          >Welcome John Doe.</span
+        > -->
+
+        <div class="dashboard-div">
+            <div
+                    style="
+              display: flex;
+              flex: 1;
+              align-items: center;
+              font-size: 35px;
+              font-family: bold;
+              margin-left: 10px;
+              color: white;
+              gap: 40px;
+            "
+            >
+                <span>Hello, <%= user != null ? user.getName() : "N/A" %></span>
+            </div>
+            <div style="flex: 1; position: relative">
+                <img
+                        src="${pageContext.request.contextPath}/images/dollar.png"
+                        width="76"
+                        height="76"
+                        alt=""
+                        class="dashboard-icon"
+                        style="
+                top: 33%;
+                right: 25%;
+                animation-duration: 7s;
+                animation-delay: 1s;
+              "
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/dong.png"
+                        width="70"
+                        height="70"
+                        alt=""
+                        class="dashboard-icon"
+                        style="
+                top: -5%;
+                right: 5%;
+                animation-duration: 6s;
+                animation-delay: 1s;
+              "
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/euro.png"
+                        width="54"
+                        height="54"
+                        alt=""
+                        class="dashboard-icon"
+                        style="
+                top: 49%;
+                right: 4%;
+                animation-duration: 7s;
+                animation-delay: 2s;
+              "
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/franc.png"
+                        width="60"
+                        height="60"
+                        alt=""
+                        class="dashboard-icon"
+                        style="bottom: -9%; right: 18%; animation-duration: 6.5s"
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/yen.png"
+                        width="56"
+                        height="56"
+                        alt=""
+                        class="dashboard-icon"
+                        style="
+                top: 2%;
+                right: 40%;
+                animation-duration: 6s;
+                animation-delay: 1s;
+              "
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/peso.png"
+                        width="50"
+                        height="50"
+                        alt=""
+                        class="dashboard-icon"
+                        style="
+                bottom: 6%;
+                left: 40%;
+                animation-duration: 5s;
+                animation-delay: 2s;
+              "
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/yuan.png"
+                        width="40"
+                        height="40"
+                        alt=""
+                        class="dashboard-icon"
+                        style="
+                top: 33%;
+                left: 30%;
+                animation-duration: 5s;
+                animation-delay: 3s;
+              "
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/lira.png"
+                        width="35"
+                        height="35"
+                        alt=""
+                        class="dashboard-icon"
+                        style="bottom: 1%; left: 20%; animation-duration: 7s"
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/naira.png"
+                        width="40"
+                        height="40"
+                        alt=""
+                        class="dashboard-icon"
+                        style="
+                top: -1%;
+                left: 25%;
+                animation-duration: 7s;
+                animation-delay: 1s;
+              "
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/pound.png"
+                        width="35"
+                        height="35"
+                        alt=""
+                        class="dashboard-icon"
+                        style="top: 32%; left: 10%; animation-duration: 6s"
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/ruble.png"
+                        width="32"
+                        height="32"
+                        alt=""
+                        class="dashboard-icon"
+                        style="
+                bottom: 20%;
+                left: 6%;
+                animation-duration: 4s;
+                animation-delay: 3s;
+              "
+                />
+                <img
+                        src="${pageContext.request.contextPath}/images/rupee.png"
+                        width="40"
+                        height="40"
+                        alt=""
+                        class="dashboard-icon"
+                        style="top: 5%; left: 5%; animation-delay: 7.5s"
+                />
+            </div>
+        </div>
+
+        <div class="vertical-div" style="flex: 1; gap: 35px">
+            <div class="horizontal-div" style="gap: 35px">
+                <div class="info-box">
+                    <span class="info-box-title">Account Number</span>
+                    <span class="info-box-details"><%= account != null ? account.getAccountNo() : "N/A" %></span>
+                </div>
+                <div class="info-box">
+                    <span class="info-box-title">Balance</span>
+                    <span class="info-box-details" id="balance">N/A</span>
+                </div>
+            </div>
+            <div class="horizontal-div" style="gap: 35px">
+                <div class="info-box">
+                    <span class="info-box-title">Account Opened</span>
+                    <span class="info-box-details"><%= account != null && account.getCreatedDateTime() != null
+                            ? account.getCreatedDateTime().format(dtf) : "N/A" %></span>
+                </div>
+                <div class="info-box">
+                    <span class="info-box-title">Status</span>
+                    <div style="display: flex; flex-direction: row" id="status-div">
+<%--                        <% if(account.getStatus().equals(AccountStatus.ACTIVE)){--%>
+<%--                            %>--%>
+<%--                        <div class="status-box active-status">--%>
+<%--                            <span style="font-family: medium">Active</span>--%>
+<%--                            <i style="height: 14px" class="bi bi-check-lg"></i>--%>
+<%--                        </div>--%>
+<%--                        <% } else { %>--%>
+<%--                        <div class="status-box suspended-status">--%>
+<%--                            <span style="font-family: medium">Suspended</span>--%>
+<%--                            <i style="height: 14px" class="bi bi-x-lg"></i>--%>
+<%--                        </div>--%>
+<%--                        <% } %>--%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="horizontal-div" style="gap: 35px">
+        <div class="vertical-div submit-div">
+            <span class="info-box-title">Submit Transaction</span>
+            <div
+                    style="
+              padding: 20px;
+              display: flex;
+              flex-direction: column;
+              gap: 20px;
+            "
+            >
+                <div class="horizontal-div" style="gap: 20px">
+                    <div class="input-container" style="width: 330px">
+                        <input
+                                spellcheck="false"
+                                type="text"
+                                class="form-control animated-input"
+                                name="accountNo"
+                                placeholder=" "
+                        />
+                        <label class="input-label">Destination Account Number</label>
+                    </div>
+                    <div class="input-container" style="width: 200px">
+                        <input
+                                spellcheck="false"
+                                type="text"
+                                class="form-control animated-input"
+                                name="amount"
+                                placeholder=" "
+                        />
+                        <label class="input-label">Amount (USD)</label>
+                    </div>
+                </div>
+                <div class="horizontal-div" style="gap: 20px">
+                    <div
+                            class="horizontal-div"
+                            style="gap: 10px; align-items: center"
+                    >
+                <span
+                        style="font-family: medium; font-size: 12px; color: #6c757d"
+                >Transfer Later?</span
+                >
+                        <input type="checkbox" />
+                    </div>
+                    <div class="input-container" style="width: 160px">
+                        <input
+                                id="dateInput"
+                                spellcheck="false"
+                                type="text"
+                                class="form-control animated-input"
+                                name="date"
+                                placeholder=" "
+                                maxlength="10"
+                                inputmode="numeric"
+                                autocomplete="off"
+                        />
+                        <label class="input-label">Date (dd/MM/yyyy)</label>
+                    </div>
+
+                    <div class="input-container" style="width: 150px">
+                        <input
+                                id="timeInput"
+                                spellcheck="false"
+                                type="text"
+                                class="form-control animated-input"
+                                name="time"
+                                placeholder=" "
+                                maxlength="5"
+                                inputmode="numeric"
+                                autocomplete="off"
+                        />
+                        <label class="input-label">Time (HH:mm)</label>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 100px; padding-left: 20px">
+                <button
+                        class="submit-btn"
+                        style="
+                height: 45px;
+                min-width: 120px;
+                font-size: 17px;
+                border-radius: 10px;
+              "
+                >
+                    Submit
+                </button>
+            </div>
+        </div>
+
+        <div class="vertical-div" style="width: 100%; gap: 35px;">
+            <div class="vertical-div latest-div">
+                <span class="info-box-title">Latest Sent Transfer</span>
+                <div class="vertical-div" style="gap: 20px">
+                    <div
+                            class="horizontal-div"
+                            style="
+                  margin-left: 12px;
+                  margin-right: 12px;
+                  gap: 28px;
+                  font-family: medium;
+                "
+                    >
+                        <div>
+                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"
+                  >Account Number</span
+                  >
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentNumber">N/A</span>
+                        </div>
+                        <div>
+                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"
+                  >Receiver's Name</span
+                  >
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentName"
+                            >N/A</span
+                            >
+                        </div>
+                    </div>
+                    <div
+                            class="horizontal-div"
+                            style="
+                  margin-left: 12px;
+                  margin-right: 12px;
+                  gap: 28px;
+                  font-family: medium;
+                "
+                    >
+                        <div>
+                            <span style="margin-left: 4px; font-size: 15px; color: #6c757d">Amount</span>
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentAmount"
+                            >N/A</span
+                            >
+                        </div>
+                        <div>
+                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"
+                  >Date</span
+                  >
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentDate"
+                            >N/A</span
+                            >
+                        </div>
+                        <div>
+                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"
+                  >Time</span
+                  >
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentTime"
+                            >N/A</span
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vertical-div latest-div">
+                <span class="info-box-title">Latest Received Transfer</span>
+                <div class="vertical-div" style="gap: 20px">
+                    <div
+                            class="horizontal-div"
+                            style="
+                  margin-left: 12px;
+                  margin-right: 12px;
+                  gap: 28px;
+                  font-family: medium;
+                "
+                    >
+                        <div>
+                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"
+                  >Account Number</span
+                  >
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedNumber">N/A</span>
+                        </div>
+                        <div>
+                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"
+                  >Sender's Name</span
+                  >
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedName"
+                            >N/A</span
+                            >
+                        </div>
+                    </div>
+                    <div
+                            class="horizontal-div"
+                            style="
+                  margin-left: 12px;
+                  margin-right: 12px;
+                  gap: 28px;
+                  font-family: medium;
+                "
+                    >
+                        <div>
+                            <span style="margin-left: 4px; font-size: 15px; color: #6c757d">Amount</span>
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedAmount"
+                            >N/A</span
+                            >
+                        </div>
+                        <div>
+                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"
+                  >Date</span
+                  >
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedDate"
+                            >N/A</span
+                            >
+                        </div>
+                        <div>
+                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"
+                  >Time</span
+                  >
+                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedTime"
+                            >N/A</span
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="notifications">
-    <h2>Notifications</h2>
-    <%
-        List<Notification> notifications = (List<Notification>) request.getAttribute("notifications");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    %>
-    <ul>
-        <%
-            if (notifications != null && !notifications.isEmpty()) {
-                for (Notification n : notifications) {
-                    String time = n.getDateTime() != null ? n.getDateTime().format(formatter) : "Unknown time";
-        %>
-        <li><%= n.getMessage() %> — <strong><%= time %></strong></li>
-        <%
+<div id="divC">
+      <span style="font-family: medium; font-size: 12px; color: #727272"
+      >New</span
+      >
+    <div class="notification">
+        <span>USD 200.0 has been transferred to you by 8436543</span>
+        <span class="notification-time">Today</span>
+    </div>
+    <div class="notification">
+        <span>$0.3 of daily interest has been added to your balance.</span>
+        <span class="notification-time">Yesterday</span>
+    </div>
+    <span style="font-family: medium; font-size: 12px; color: #727272"
+    >Old</span
+    >
+    <div class="notification">
+        <span>USD 400.0 has been transferred to you by 8436543</span>
+        <span class="notification-time">This Week</span>
+    </div>
+</div>
+<div class="overlay" id="overlay"></div>
+
+<script>
+    const notificationsBtn = document.getElementById("notificationsBtn");
+    const closeBtn = document.getElementById("closeBtn");
+    const divC = document.getElementById("divC");
+    const overlay = document.getElementById("overlay");
+    const divA = document.getElementById("divA");
+    const divB = document.getElementById("divB");
+
+    notificationsBtn.addEventListener("click", () => {
+        divC.classList.add("open");
+        overlay.classList.add("active");
+        divA.style.pointerEvents = "none";
+        divB.style.pointerEvents = "none";
+    });
+
+    overlay.addEventListener("click", () => {
+        divC.classList.remove("open");
+        overlay.classList.remove("active");
+        divA.style.pointerEvents = "auto";
+        divB.style.pointerEvents = "auto";
+    });
+
+    (async function () {
+        const response = await fetch("http://localhost:8080/musashi-banking-system/loadCustomerDashboard");
+        const data = await response.json();
+        console.log(data);
+        loadData(data);
+    })();
+
+    function loadData(data) {
+
+        // console.log(data);
+
+        document.getElementById("balance").innerHTML = data.balance;
+        const container = document.getElementById("status-div");
+
+        if(data.suspended){
+            const suspendedBox = document.createElement("div");
+            suspendedBox.className = "status-box suspended-status";
+            suspendedBox.innerHTML = `
+            <span style="font-family: medium">Suspended</span>
+            <i style="height: 14px" class="bi bi-x-lg"></i>
+        `;
+            container.appendChild(suspendedBox);
+        }else{
+            const activeBox = document.createElement("div");
+            activeBox.className = "status-box active-status";
+            activeBox.innerHTML = `
+            <span style="font-family: medium">Active</span>
+            <i style="height: 14px" class="bi bi-check-lg"></i>
+        `;
+            container.appendChild(activeBox);
+        }
+
+        if(data.sent){
+            document.getElementById("sentNumber").innerHTML = data.sentNumber;
+            document.getElementById("sentName").innerHTML = data.sentName;
+            document.getElementById("sentAmount").innerHTML = data.sentAmount;
+            const date = new Date(data.sentDateTime);
+            document.getElementById("sentDate").innerHTML = date.toLocaleDateString();
+            document.getElementById("sentTime").innerHTML = date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false
+            });
+        }
+
+        if(data.received){
+            document.getElementById("receivedNumber").innerHTML = data.sentNumber;
+            document.getElementById("receivedName").innerHTML = data.sentName;
+            document.getElementById("receivedAmount").innerHTML = data.sentAmount;
+            const date = new Date(data.receivedDateTime);
+            document.getElementById("receivedDate").innerHTML = date.toLocaleDateString();
+            document.getElementById("receivedTime").innerHTML = date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false
+            });
+        }
+
+    }
+
+    (function () {
+        const input = document.getElementById("dateInput");
+
+        function formatDate(digits) {
+            const parts = [];
+            if (digits.length > 0) parts.push(digits.slice(0, 2));
+            if (digits.length > 2) parts.push(digits.slice(2, 4));
+            if (digits.length > 4) parts.push(digits.slice(4, 8));
+            return parts.join("/");
+        }
+
+        input.addEventListener("input", () => {
+            const raw = input.value;
+            const digits = raw.replace(/\D/g, "").slice(0, 8); // only numbers, max 8
+            input.value = formatDate(digits);
+        });
+
+        input.addEventListener("keydown", (e) => {
+            const allowed = [
+                "Backspace",
+                "Delete",
+                "ArrowLeft",
+                "ArrowRight",
+                "Tab",
+                "Home",
+                "End",
+            ];
+            if (allowed.includes(e.key)) return;
+            if (/^[0-9]$/.test(e.key)) return;
+            e.preventDefault(); // block letters/symbols
+        });
+
+        input.addEventListener("paste", (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData(
+                "text"
+            );
+            const digits = text.replace(/\D/g, "").slice(0, 8);
+            input.value = formatDate(digits);
+        });
+    })();
+
+    (function () {
+        const input = document.getElementById("timeInput");
+
+        function formatTime(digits) {
+            let h = digits.slice(0, 2);
+            let m = digits.slice(2, 4);
+            let out = h;
+            if (digits.length > 2) out += ":" + m;
+            return out;
+        }
+
+        input.addEventListener("input", () => {
+            const raw = input.value;
+            const digits = raw.replace(/\D/g, "").slice(0, 4); // max 4 digits HHMM
+            input.value = formatTime(digits);
+        });
+
+        input.addEventListener("keydown", (e) => {
+            const allowed = [
+                "Backspace",
+                "Delete",
+                "ArrowLeft",
+                "ArrowRight",
+                "Tab",
+                "Home",
+                "End",
+            ];
+            if (allowed.includes(e.key)) return;
+            if (/^[0-9]$/.test(e.key)) return;
+            e.preventDefault(); // block letters & symbols
+        });
+
+        input.addEventListener("paste", (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData(
+                "text"
+            );
+            const digits = text.replace(/\D/g, "").slice(0, 4);
+            input.value = formatTime(digits);
+        });
+
+        // Optional: basic validation on blur
+        input.addEventListener("blur", () => {
+            const val = input.value;
+            if (/^\d{2}:\d{2}$/.test(val)) {
+                let [h, m] = val.split(":").map(Number);
+                if (h > 23 || m > 59) {
+                    input.style.borderColor = "#dc2626"; // red if invalid
+                } else {
+                    input.style.borderColor = ""; // reset
+                }
+            } else if (val !== "") {
+                input.style.borderColor = "#dc2626";
             }
-        } else {
-        %>
-        <li>No notifications found.</li>
-        <%
-            }
-        %>
-    </ul>
-</div>
+        });
+    })();
+</script>
 </body>
 </html>

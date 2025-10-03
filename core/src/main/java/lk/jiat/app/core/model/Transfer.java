@@ -12,6 +12,14 @@ import java.time.LocalDateTime;
         @NamedQuery(name = "Transfer.findByUsers", query = "select t from Transfer t where (t.toAccount=:account1 and t.fromAccount=:account2) or (t.toAccount=:account2 and t.fromAccount=:account1) order by t.dateTime DESC"),
         @NamedQuery(name = "Transfer.findPendingTransactions", query = "select t from Transfer t where t.transactionStatus=:status"),
         @NamedQuery(name = "Transfer.findAll", query = "select t from Transfer t order by t.dateTime DESC"),
+        @NamedQuery(
+                name = "Transfer.findLatestReceived",
+                query = "select t from Transfer t where t.toAccount=:customer order by t.dateTime DESC"
+        ),
+        @NamedQuery(
+                name = "Transfer.findLatestSent",
+                query = "select t from Transfer t where t.fromAccount=:customer order by t.dateTime DESC"
+        )
 })
 public class Transfer implements Serializable {
     @Id

@@ -28,7 +28,7 @@ public class ChangeAccountStatus extends HttpServlet {
             if (account != null) {
 
                 if (account.getStatus().equals(AccountStatus.ACTIVE)) {
-                    account.setStatus(AccountStatus.INACTIVE);
+                    account.setStatus(AccountStatus.SUSPENDED);
                 } else {
                     account.setStatus(AccountStatus.ACTIVE);
                 }

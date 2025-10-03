@@ -46,12 +46,12 @@ public class Login extends HttpServlet {
         String password = input.getString("password");
 
         if(Objects.equals(email, "")){
-            resp.getWriter().write("Email cannot be empty");
+            resp.getWriter().write("Email Cannot Be Empty");
             return;
         }
 
         if(Objects.equals(password, "")){
-            resp.getWriter().write("Password cannot be empty");
+            resp.getWriter().write("Password Cannot Be Empty");
             return;
         }
 
@@ -71,7 +71,7 @@ public class Login extends HttpServlet {
                 resp.getWriter().write("success");
             }
         }else{
-            resp.getWriter().write("Invalid email or password");
+            resp.getWriter().write("Invalid Email or Password");
         }
 
 

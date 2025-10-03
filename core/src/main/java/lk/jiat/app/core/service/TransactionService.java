@@ -18,4 +18,6 @@ public interface TransactionService {
     Transfer getTransaction(Integer id);
     List<Transfer> getPendingTransactions();
     void updateTransaction(Transfer transfer);
+    Transfer getLatestSent(Account customer);
+    Transfer getLatestReceived(Account customer);
 }
