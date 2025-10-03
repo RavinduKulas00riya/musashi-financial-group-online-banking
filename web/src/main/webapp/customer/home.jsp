@@ -99,12 +99,13 @@
         <div class="header-titles-div">
             <span class="header-titles">NOTIFICATIONS</span>
         </div>
-        <button class="header inbox-div" id="notificationsBtn">
+        <button class="header inactive-header inbox-div" id="notificationsBtn">
             <img
-                    src="${pageContext.request.contextPath}/images/notification2.png"
+                    src="${pageContext.request.contextPath}/images/notification.png"
                     width="16"
                     height="16"
                     alt=""
+                    id="notification-icon"
             />
             <span>Inbox</span>
             <div
@@ -114,7 +115,9 @@
               border-radius: 0.4rem;
               width: 45px;
               height: 23px;
+              display: none;
             "
+                    id="notification-new-div"
             >
                 <p style="font-size: 12px; color: #2b2b2bda">New!</p>
             </div>

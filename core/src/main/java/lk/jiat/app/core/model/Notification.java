@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
+@NamedQueries({
+        @NamedQuery(name = "Notification.markAllAsSeen", query = "UPDATE Notification n SET n.status = :status WHERE n.user = :user")
+})
 public class Notification implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,5 +75,4 @@ public class Notification implements Serializable {
     @Column(name = "date_time")
     private LocalDateTime dateTime;
 
-    // Getters and setters
 }

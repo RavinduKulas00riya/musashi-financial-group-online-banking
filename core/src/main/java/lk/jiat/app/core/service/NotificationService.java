@@ -9,4 +9,5 @@ import java.util.List;
 @Remote
 public interface NotificationService {
     void sendNotification(Notification notification);
+    void markAllAsSeen(User user);
 }

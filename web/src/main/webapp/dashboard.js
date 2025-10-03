@@ -9,6 +9,7 @@ notificationsBtn.addEventListener("click", () => {
     overlay.classList.add("active");
     divA.style.pointerEvents = "none";
     divB.style.pointerEvents = "none";
+    noNewNotification();
 });
 
 overlay.addEventListener("click", () => {
@@ -16,7 +17,20 @@ overlay.addEventListener("click", () => {
     overlay.classList.remove("active");
     divA.style.pointerEvents = "auto";
     divB.style.pointerEvents = "auto";
+    updateNotifications();
+
 });
+
+async function updateNotifications() {
+    const response = await fetch("http://localhost:8080/musashi-banking-system/updateNotifications");
+    const message = await response.text();
+    if(message !== "success") {
+        alert(message);
+        console.log(message);
+    }else{
+        await sendRequest();
+    }
+}
 
 async function sendRequest() {
     const response = await fetch("http://localhost:8080/musashi-banking-system/loadCustomerDashboard");
@@ -65,6 +79,28 @@ function loadData(data) {
 
 }
 
+function newNotification() {
+    const btn = document.getElementById("notificationsBtn");
+    btn.classList.remove("inactive-header");
+    const img = document.getElementById("notification-icon");
+    const newDiv = document.getElementById("notification-new-div");
+    if(img.src.includes("notification.png")){
+        img.src = img.src.replace("notification.png", "notification2.png");
+        newDiv.style.display = "flex";
+    }
+}
+
+function noNewNotification() {
+    const btn = document.getElementById("notificationsBtn");
+    btn.classList.add("inactive-header");
+    const img = document.getElementById("notification-icon");
+    const newDiv = document.getElementById("notification-new-div");
+    if(img.src.includes("notification2.png")){
+        img.src = img.src.replace("notification2.png", "notification.png");
+        newDiv.style.display = "none";
+    }
+}
+
 function fillSent(data) {
 
     const parentDiv = document.getElementById("latest-sent-div");
@@ -89,7 +125,6 @@ function fillSent(data) {
     const accountValue = document.createElement("span");
     accountValue.style.cssText = "margin-left: 4px; font-size: 18px; color: #000000";
     accountValue.id = "sentNumber";
-    accountValue.textContent = "N/A";
     accountDiv.appendChild(accountLabel);
     accountDiv.appendChild(accountValue);
 
@@ -100,7 +135,6 @@ function fillSent(data) {
     const nameValue = document.createElement("span");
     nameValue.style.cssText = "margin-left: 4px; font-size: 18px; color: #000000";
     nameValue.id = "sentName";
-    nameValue.textContent = "N/A";
     nameDiv.appendChild(nameLabel);
     nameDiv.appendChild(nameValue);
 
@@ -118,7 +152,6 @@ function fillSent(data) {
     const amountValue = document.createElement("span");
     amountValue.style.cssText = "margin-left: 4px; font-size: 18px; color: #000000";
     amountValue.id = "sentAmount";
-    amountValue.textContent = "N/A";
     amountDiv.appendChild(amountLabel);
     amountDiv.appendChild(amountValue);
 
@@ -129,7 +162,6 @@ function fillSent(data) {
     const dateValue = document.createElement("span");
     dateValue.style.cssText = "margin-left: 4px; font-size: 18px; color: #000000";
     dateValue.id = "sentDate";
-    dateValue.textContent = "N/A";
     dateDiv.appendChild(dateLabel);
     dateDiv.appendChild(dateValue);
 
@@ -140,7 +172,6 @@ function fillSent(data) {
     const timeValue = document.createElement("span");
     timeValue.style.cssText = "margin-left: 4px; font-size: 18px; color: #000000";
     timeValue.id = "sentTime";
-    timeValue.textContent = "N/A";
     timeDiv.appendChild(timeLabel);
     timeDiv.appendChild(timeValue);
 
@@ -158,7 +189,11 @@ function fillSent(data) {
     document.getElementById("sentName").innerHTML = data.sentName;
     document.getElementById("sentAmount").innerHTML = data.sentAmount;
     const date = new Date(data.sentDateTime);
-    document.getElementById("sentDate").innerHTML = date.toLocaleDateString();
+    document.getElementById("sentDate").innerHTML = date.toLocaleDateString("en-US", {
+        month: "short", // short month name → "Oct"
+        day: "numeric", // day number → "4"
+        year: "numeric" // year → "2025"
+    });
     document.getElementById("sentTime").innerHTML = date.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
@@ -254,7 +289,11 @@ function fillReceived(data) {
     document.getElementById("receivedName").innerHTML = data.receivedName;
     document.getElementById("receivedAmount").innerHTML = data.receivedAmount;
     const date = new Date(data.receivedDateTime);
-    document.getElementById("receivedDate").innerHTML = date.toLocaleDateString();
+    document.getElementById("receivedDate").innerHTML = date.toLocaleDateString("en-US", {
+        month: "short", // short month name → "Oct"
+        day: "numeric", // day number → "4"
+        year: "numeric" // year → "2025"
+    });
     document.getElementById("receivedTime").innerHTML = date.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
@@ -544,11 +583,12 @@ function renderNotifications(data) {
     });
 
     const divC = document.getElementById("divC");
-    divC.innerHTML = ""; // clear sample data
+    divC.innerHTML = "";
 
     if (newContainer.hasChildNodes()) {
         divC.appendChild(newHeading);
         divC.appendChild(newContainer);
+        newNotification();
     }
 
     if (oldContainer.hasChildNodes()) {

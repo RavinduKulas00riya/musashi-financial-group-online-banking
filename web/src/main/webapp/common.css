@@ -139,6 +139,7 @@ body {
     gap: 15px;
     cursor: pointer;
     transition: all 0.1s ease-in-out;
+    font-family: medium;
 }
 .header span {
     font-size: 14px;
@@ -152,12 +153,10 @@ body {
     background-color: #0505050d;
     border: 1px solid transparent;
     border-radius: 0.4rem;
-    font-family: medium;
     color: black;
 }
 .inactive-header {
     border: 1px solid #fefdfc;
-    font-family: medium;
     background: none;
     color: #2f2f2f;
 }
