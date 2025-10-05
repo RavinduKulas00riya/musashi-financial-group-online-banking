@@ -64,19 +64,6 @@ public class LoadCustomerDashboard extends HttpServlet {
                 json.put("received", false);
             }
 
-            JSONArray notificationsArray = new JSONArray();
-            if (user.getNotifications() != null) {
-                for (Notification n : user.getNotifications()) {
-                    JSONObject notifJson = new JSONObject();
-                    notifJson.put("id", n.getId());
-                    notifJson.put("message", n.getMessage());
-                    notifJson.put("status", n.getStatus().toString());
-                    notifJson.put("dateTime", n.getDateTime().toString());
-                    notificationsArray.put(notifJson);
-                }
-            }
-            json.put("notifications", notificationsArray);
-
             resp.setContentType("application/json");
             resp.getWriter().write(json.toString());
 
