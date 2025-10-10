@@ -29,6 +29,11 @@
             crossorigin="anonymous"
     ></script>
 </head>
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.setHeader("Pragma", "no-cache");
+    response.setHeader("Expires", "0");
+%>
 <body onload="loadDashboard()">
 <div id="divA" data-context-path="${pageContext.request.contextPath}">
     <div style="height: 90px">

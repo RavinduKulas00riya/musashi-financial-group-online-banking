@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lk.jiat.app.core.model.*;
 import lk.jiat.app.core.service.AccountService;
 import lk.jiat.app.core.service.NotificationService;
@@ -54,13 +55,13 @@ public class Transaction extends HttpServlet {
             String amountParam = input.optString("amount",null);
             String date = input.optString("date",null);
             String time = input.optString("time",null);
-            User fromUser = (User) req.getSession().getAttribute("user");
+            HttpSession session = req.getSession(false);
+            User fromUser = (session != null) ? (User) session.getAttribute("user") : null;
 
-//            if (fromUser != null && fromUser.getNotifications() != null) {
-//                List<Notification> notifications = fromUser.getNotifications();
-//                notifications.sort((n1, n2) -> n2.getDateTime().compareTo(n1.getDateTime()));
-//                req.setAttribute("notifications", notifications);
-//            }
+            if (fromUser == null) {
+                resp.getWriter().write("redirect");
+                return;
+            }
 
             resp.setContentType("text/plain");
 

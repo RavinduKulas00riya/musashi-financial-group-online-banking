@@ -489,7 +489,10 @@ async function submit() {
     if (message === "success") {
         reset();
         await sendRequest();
-    } else {
+    } else if(message === "redirect") {
+        await fetch(`${window.CONTEXT_PATH}/logout`);
+        window.location.href = `${window.CONTEXT_PATH}/index.jsp`;
+    }else{
         showError(message);
     }
 }

@@ -58,10 +58,11 @@
 .submit-div {
     width: 100%;
     padding: 12px;
-    border: 1px solid #dedede;
+    /*border: 1px solid #dedede;*/
     border-radius: 0.4rem;
     background-color: white;
     gap: 8px;
+    box-shadow: 1px 1px 7px 3px rgba(0, 0, 0, 0.1);
 }
 
 .latest-div{
