@@ -16,6 +16,7 @@
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/customer/dashboard.css"/>
     <script
             src="https://kit.fontawesome.com/52e3cc1234.js"
             crossorigin="anonymous"
@@ -235,77 +236,80 @@
             <span class="info-box-title">Submit Transaction</span>
             <div
                     style="
-              padding: 20px;
+              padding: 15px 20px;
               display: flex;
               flex-direction: column;
-              gap: 20px;
+              gap: 10px;
             "
             >
-                <div class="horizontal-div" style="gap: 20px">
-                    <div class="input-container" style="width: 330px">
-                        <input
-                                spellcheck="false"
-                                type="text"
-                                class="form-control animated-input"
-                                name="accountNo"
-                                placeholder=" "
-                                id="destination"
-                        />
-                        <label class="input-label">Destination Account Number</label>
+                <span class="error-msg" id="error-msg"></span>
+                <div class="vertical-div" style="gap: 20px;">
+                    <div class="horizontal-div" style="gap: 20px">
+                        <div class="input-container" style="width: 330px">
+                            <input
+                                    spellcheck="false"
+                                    type="text"
+                                    class="form-control animated-input"
+                                    name="accountNo"
+                                    placeholder=" "
+                                    id="destination"
+                            />
+                            <label class="input-label">Destination Account Number</label>
+                        </div>
+                        <div class="input-container" style="width: 200px">
+                            <input
+                                    spellcheck="false"
+                                    type="text"
+                                    class="form-control animated-input"
+                                    name="amount"
+                                    id="amount"
+                                    placeholder=" "
+                            />
+                            <label class="input-label">Amount (USD)</label>
+                        </div>
                     </div>
-                    <div class="input-container" style="width: 200px">
-                        <input
-                                spellcheck="false"
-                                type="text"
-                                class="form-control animated-input"
-                                name="amount"
-                                id="amount"
-                                placeholder=" "
-                        />
-                        <label class="input-label">Amount (USD)</label>
-                    </div>
-                </div>
-                <div class="horizontal-div" style="gap: 20px">
-                    <div
-                            class="horizontal-div"
-                            style="gap: 10px; align-items: center"
-                    >
-                        <span style="font-family: medium; font-size: 12px; color: #6c757d">Transfer Later?</span>
-                        <input type="checkbox" id="transferLaterCheckbox"/>
-                    </div>
+                    <div class="horizontal-div" style="gap: 20px">
+                        <div
+                                class="horizontal-div"
+                                style="gap: 10px; align-items: center"
+                        >
+                            <span style="font-family: medium; font-size: 12px; color: #6c757d">Transfer Later?</span>
+                            <input type="checkbox" id="transferLaterCheckbox"/>
+                        </div>
 
-                    <div class="input-container" style="width: 160px">
-                        <input
-                                id="dateInput"
-                                spellcheck="false"
-                                type="text"
-                                class="form-control animated-input"
-                                name="date"
-                                placeholder=" "
-                                maxlength="10"
-                                inputmode="numeric"
-                                autocomplete="off"
-                                disabled
-                                style="cursor: not-allowed"
-                        />
-                        <label class="input-label">Date (D/M/Y)</label>
-                    </div>
+                        <div class="input-container" style="width: 160px">
+                            <input
+                                    id="dateInput"
+                                    spellcheck="false"
+                                    type="text"
+                                    class="form-control animated-input"
+                                    name="date"
+                                    placeholder=" "
+                                    maxlength="10"
+                                    inputmode="numeric"
+                                    autocomplete="off"
+                                    disabled
+                                    style="cursor: not-allowed"
+                            />
+                            <label class="input-label">Date (D/M/Y)</label>
+                        </div>
 
-                    <div class="input-container" style="width: 150px">
-                        <input
-                                id="timeInput"
-                                spellcheck="false"
-                                type="text"
-                                class="form-control animated-input"
-                                name="time"
-                                placeholder=" "
-                                maxlength="5"
-                                inputmode="numeric"
-                                autocomplete="off"
-                                disabled
-                                style="cursor: not-allowed"
-                        />
-                        <label class="input-label">Time (H:M)</label>
+                        <div class="input-container" style="width: 150px">
+                            <input
+                                    id="timeInput"
+                                    spellcheck="false"
+                                    type="text"
+                                    class="form-control animated-input"
+                                    name="time"
+                                    placeholder=" "
+                                    maxlength="5"
+                                    inputmode="numeric"
+                                    autocomplete="off"
+                                    disabled
+                                    style="cursor: not-allowed"
+                            />
+                            <label class="input-label">Time (H:M)</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -333,128 +337,128 @@
 
         <div class="vertical-div" style="width: 100%; gap: 35px;">
             <div id="latest-sent-div" class="vertical-div latest-div">
-<%--                <span class="info-box-title">Latest Sent Transfer</span>--%>
-<%--                <div class="vertical-div" style="gap: 20px">--%>
-<%--                    <div--%>
-<%--                            class="horizontal-div"--%>
-<%--                            style="--%>
-<%--                  margin-left: 12px;--%>
-<%--                  margin-right: 12px;--%>
-<%--                  gap: 28px;--%>
-<%--                  font-family: medium;--%>
-<%--                "--%>
-<%--                    >--%>
-<%--                        <div>--%>
-<%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
-<%--                  >Account Number</span--%>
-<%--                  >--%>
-<%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentNumber">N/A</span>--%>
-<%--                        </div>--%>
-<%--                        <div>--%>
-<%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
-<%--                  >Receiver's Name</span--%>
-<%--                  >--%>
-<%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentName"--%>
-<%--                            >N/A</span--%>
-<%--                            >--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-<%--                    <div--%>
-<%--                            class="horizontal-div"--%>
-<%--                            style="--%>
-<%--                  margin-left: 12px;--%>
-<%--                  margin-right: 12px;--%>
-<%--                  gap: 28px;--%>
-<%--                  font-family: medium;--%>
-<%--                "--%>
-<%--                    >--%>
-<%--                        <div>--%>
-<%--                            <span style="margin-left: 4px; font-size: 15px; color: #6c757d">Amount</span>--%>
-<%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentAmount"--%>
-<%--                            >N/A</span--%>
-<%--                            >--%>
-<%--                        </div>--%>
-<%--                        <div>--%>
-<%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
-<%--                  >Date</span--%>
-<%--                  >--%>
-<%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentDate"--%>
-<%--                            >N/A</span--%>
-<%--                            >--%>
-<%--                        </div>--%>
-<%--                        <div>--%>
-<%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
-<%--                  >Time</span--%>
-<%--                  >--%>
-<%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentTime"--%>
-<%--                            >N/A</span--%>
-<%--                            >--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-<%--                </div>--%>
+                <%--                <span class="info-box-title">Latest Sent Transfer</span>--%>
+                <%--                <div class="vertical-div" style="gap: 20px">--%>
+                <%--                    <div--%>
+                <%--                            class="horizontal-div"--%>
+                <%--                            style="--%>
+                <%--                  margin-left: 12px;--%>
+                <%--                  margin-right: 12px;--%>
+                <%--                  gap: 28px;--%>
+                <%--                  font-family: medium;--%>
+                <%--                "--%>
+                <%--                    >--%>
+                <%--                        <div>--%>
+                <%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
+                <%--                  >Account Number</span--%>
+                <%--                  >--%>
+                <%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentNumber">N/A</span>--%>
+                <%--                        </div>--%>
+                <%--                        <div>--%>
+                <%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
+                <%--                  >Receiver's Name</span--%>
+                <%--                  >--%>
+                <%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentName"--%>
+                <%--                            >N/A</span--%>
+                <%--                            >--%>
+                <%--                        </div>--%>
+                <%--                    </div>--%>
+                <%--                    <div--%>
+                <%--                            class="horizontal-div"--%>
+                <%--                            style="--%>
+                <%--                  margin-left: 12px;--%>
+                <%--                  margin-right: 12px;--%>
+                <%--                  gap: 28px;--%>
+                <%--                  font-family: medium;--%>
+                <%--                "--%>
+                <%--                    >--%>
+                <%--                        <div>--%>
+                <%--                            <span style="margin-left: 4px; font-size: 15px; color: #6c757d">Amount</span>--%>
+                <%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentAmount"--%>
+                <%--                            >N/A</span--%>
+                <%--                            >--%>
+                <%--                        </div>--%>
+                <%--                        <div>--%>
+                <%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
+                <%--                  >Date</span--%>
+                <%--                  >--%>
+                <%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentDate"--%>
+                <%--                            >N/A</span--%>
+                <%--                            >--%>
+                <%--                        </div>--%>
+                <%--                        <div>--%>
+                <%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
+                <%--                  >Time</span--%>
+                <%--                  >--%>
+                <%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="sentTime"--%>
+                <%--                            >N/A</span--%>
+                <%--                            >--%>
+                <%--                        </div>--%>
+                <%--                    </div>--%>
+                <%--                </div>--%>
             </div>
 
             <div id="latest-received-div" class="vertical-div latest-div">
-<%--                <span class="info-box-title">Latest Received Transfer</span>--%>
-<%--                <div class="vertical-div" style="gap: 20px">--%>
-<%--                    <div--%>
-<%--                            class="horizontal-div"--%>
-<%--                            style="--%>
-<%--                  margin-left: 12px;--%>
-<%--                  margin-right: 12px;--%>
-<%--                  gap: 28px;--%>
-<%--                  font-family: medium;--%>
-<%--                "--%>
-<%--                    >--%>
-<%--                        <div>--%>
-<%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
-<%--                  >Account Number</span--%>
-<%--                  >--%>
-<%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000"--%>
-<%--                                  id="receivedNumber">N/A</span>--%>
-<%--                        </div>--%>
-<%--                        <div>--%>
-<%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
-<%--                  >Sender's Name</span--%>
-<%--                  >--%>
-<%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedName"--%>
-<%--                            >N/A</span--%>
-<%--                            >--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-<%--                    <div--%>
-<%--                            class="horizontal-div"--%>
-<%--                            style="--%>
-<%--                  margin-left: 12px;--%>
-<%--                  margin-right: 12px;--%>
-<%--                  gap: 28px;--%>
-<%--                  font-family: medium;--%>
-<%--                "--%>
-<%--                    >--%>
-<%--                        <div>--%>
-<%--                            <span style="margin-left: 4px; font-size: 15px; color: #6c757d">Amount</span>--%>
-<%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedAmount"--%>
-<%--                            >N/A</span--%>
-<%--                            >--%>
-<%--                        </div>--%>
-<%--                        <div>--%>
-<%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
-<%--                  >Date</span--%>
-<%--                  >--%>
-<%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedDate"--%>
-<%--                            >N/A</span--%>
-<%--                            >--%>
-<%--                        </div>--%>
-<%--                        <div>--%>
-<%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
-<%--                  >Time</span--%>
-<%--                  >--%>
-<%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedTime"--%>
-<%--                            >N/A</span--%>
-<%--                            >--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-<%--                </div>--%>
+                <%--                <span class="info-box-title">Latest Received Transfer</span>--%>
+                <%--                <div class="vertical-div" style="gap: 20px">--%>
+                <%--                    <div--%>
+                <%--                            class="horizontal-div"--%>
+                <%--                            style="--%>
+                <%--                  margin-left: 12px;--%>
+                <%--                  margin-right: 12px;--%>
+                <%--                  gap: 28px;--%>
+                <%--                  font-family: medium;--%>
+                <%--                "--%>
+                <%--                    >--%>
+                <%--                        <div>--%>
+                <%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
+                <%--                  >Account Number</span--%>
+                <%--                  >--%>
+                <%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000"--%>
+                <%--                                  id="receivedNumber">N/A</span>--%>
+                <%--                        </div>--%>
+                <%--                        <div>--%>
+                <%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
+                <%--                  >Sender's Name</span--%>
+                <%--                  >--%>
+                <%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedName"--%>
+                <%--                            >N/A</span--%>
+                <%--                            >--%>
+                <%--                        </div>--%>
+                <%--                    </div>--%>
+                <%--                    <div--%>
+                <%--                            class="horizontal-div"--%>
+                <%--                            style="--%>
+                <%--                  margin-left: 12px;--%>
+                <%--                  margin-right: 12px;--%>
+                <%--                  gap: 28px;--%>
+                <%--                  font-family: medium;--%>
+                <%--                "--%>
+                <%--                    >--%>
+                <%--                        <div>--%>
+                <%--                            <span style="margin-left: 4px; font-size: 15px; color: #6c757d">Amount</span>--%>
+                <%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedAmount"--%>
+                <%--                            >N/A</span--%>
+                <%--                            >--%>
+                <%--                        </div>--%>
+                <%--                        <div>--%>
+                <%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
+                <%--                  >Date</span--%>
+                <%--                  >--%>
+                <%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedDate"--%>
+                <%--                            >N/A</span--%>
+                <%--                            >--%>
+                <%--                        </div>--%>
+                <%--                        <div>--%>
+                <%--                  <span style="margin-left: 4px; font-size: 15px; color: #6c757d"--%>
+                <%--                  >Time</span--%>
+                <%--                  >--%>
+                <%--                            <span style="margin-left: 4px; font-size: 18px; color: #000000" id="receivedTime"--%>
+                <%--                            >N/A</span--%>
+                <%--                            >--%>
+                <%--                        </div>--%>
+                <%--                    </div>--%>
+                <%--                </div>--%>
             </div>
         </div>
     </div>

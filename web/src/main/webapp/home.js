@@ -1,3 +1,5 @@
+window.CONTEXT_PATH = document.getElementById('divA').dataset.contextPath;
+
 const notificationsBtn = document.getElementById("notificationsBtn");
 const divC = document.getElementById("divC");
 const overlay = document.getElementById("overlay");
@@ -26,7 +28,7 @@ async function loadDashboard() {
     panel.style.display = "none";
     panel.innerHTML = "";
     try {
-        const response = await fetch("http://localhost:8080/musashi-banking-system/customer/dashboard.jsp");
+        const response = await fetch(`${window.CONTEXT_PATH}/customer/dashboard.jsp`);
         if (!response.ok) throw new Error("Failed to fetch dashboard.jsp");
         const data = await response.text();
 
@@ -56,7 +58,7 @@ async function loadDashboard() {
 }
 
 async function updateNotifications() {
-    const response = await fetch("http://localhost:8080/musashi-banking-system/updateNotifications");
+    const response = await fetch(`${window.CONTEXT_PATH}/updateNotifications`);
     const message = await response.text();
     if(message !== "success") {
         alert(message);
@@ -130,7 +132,7 @@ function formatNotificationTime(dateStr) {
 
 window.renderNotifications = async function () {
 
-    const response = await fetch("http://localhost:8080/musashi-banking-system/loadNotifications");
+    const response = await fetch(`${window.CONTEXT_PATH}/loadNotifications`);
     const json = await response.json();
     const data = json.notifications;
 
@@ -182,6 +184,11 @@ window.renderNotifications = async function () {
     const divC = document.getElementById("divC");
     divC.innerHTML = "";
 
+    if(!newContainer.hasChildNodes() && !oldContainer.hasChildNodes()){
+        noNotification();
+        return;
+    }
+
     if (newContainer.hasChildNodes()) {
         divC.appendChild(newHeading);
         divC.appendChild(newContainer);
@@ -194,3 +201,26 @@ window.renderNotifications = async function () {
     }
 }
 
+function noNotification() {
+    const divC = document.getElementById("divC");
+    divC.style.justifyContent = "center";
+
+    const img = document.createElement("img");
+    img.src = `${window.CONTEXT_PATH}/images/no-results.png`;
+    img.width = 100;
+    img.height = 100;
+    img.alt = "";
+    img.style.filter = "invert(0.45)";
+    img.id = "no-results-img";
+
+    const span = document.createElement("span");
+    span.id = "no-notifications-span";
+    span.style.filter = "invert(0.45)";
+    span.style.fontFamily = "bold";
+    span.style.textAlign = "center";
+    span.textContent = "No Notifications Yet";
+    span.style.width = 255;
+
+    divC.appendChild(img);
+    divC.appendChild(span);
+}

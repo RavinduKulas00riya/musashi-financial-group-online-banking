@@ -30,7 +30,7 @@
     ></script>
 </head>
 <body onload="loadDashboard()">
-<div id="divA">
+<div id="divA" data-context-path="${pageContext.request.contextPath}">
     <div style="height: 90px">
         <img
                 src="${pageContext.request.contextPath}/images/logo.png"

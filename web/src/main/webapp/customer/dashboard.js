@@ -1,5 +1,5 @@
 window.sendRequest = async function () {
-    const response = await fetch("http://localhost:8080/musashi-banking-system/loadCustomerDashboard");
+    const response = await fetch(`${window.CONTEXT_PATH}/loadCustomerDashboard`);
     const data = await response.json();
     console.log(data);
     loadData(data);
@@ -266,7 +266,7 @@ function emptyReceived() {
 `;
 
     const img = document.createElement("img");
-    img.src = "/musashi-banking-system/images/no-results.png";
+    img.src = `${window.CONTEXT_PATH}/images/no-results.png`;
     img.width = 30;
     img.height = 30;
     img.alt = "";
@@ -301,7 +301,7 @@ function emptySent() {
 `;
 
     const img = document.createElement("img");
-    img.src = "/musashi-banking-system/images/no-results.png";
+    img.src = `${window.CONTEXT_PATH}/images/no-results.png`;
     img.width = 30;
     img.height = 30;
     img.alt = "";
@@ -478,7 +478,7 @@ async function submit() {
         };
     }
 
-    const response = await fetch('http://localhost:8080/musashi-banking-system/transaction', {
+    const response = await fetch(`${window.CONTEXT_PATH}/transaction`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -490,7 +490,7 @@ async function submit() {
         reset();
         await sendRequest();
     } else {
-        alert(message);
+        showError(message);
     }
 }
 
@@ -501,3 +501,25 @@ function reset() {
     document.getElementById("timeInput").value = "";
     document.getElementById("transferLaterCheckbox").checked = false;
 }
+
+function showError(msg) {
+    const errorMsg = document.getElementById("error-msg");
+    errorMsg.innerHTML = "";
+    const icon = document.createElement("i");
+    icon.className = "fa fa-exclamation-circle";
+    icon.style.marginRight = "5px";
+    icon.setAttribute("aria-hidden", "true");
+    errorMsg.appendChild(icon);
+    errorMsg.appendChild(document.createTextNode(msg));
+    errorMsg.className = "error-msg";
+}
+
+(function () {
+    const errorMsg = document.getElementById("error-msg");
+    const inputs = document.querySelectorAll(".input-container");
+    inputs.forEach((input) => {
+        input.addEventListener("click", (e) => {
+            errorMsg.innerHTML = "";
+        })
+    })
+})();

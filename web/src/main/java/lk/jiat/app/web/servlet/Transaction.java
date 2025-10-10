@@ -123,6 +123,11 @@ public class Transaction extends HttpServlet {
             Account fromAccount = fromUser.getAccounts().get(0);
             Account toAccount = accountService.getAccount(toAcc);
 
+            if (toAccount==null) {
+                resp.getWriter().write("Destination account does not exist.");
+                return;
+            }
+
             if (Objects.equals(toAccount.getAccountNo(), fromAccount.getAccountNo())) {
                 resp.getWriter().write("Your account and destination account are the same.");
                 return;
