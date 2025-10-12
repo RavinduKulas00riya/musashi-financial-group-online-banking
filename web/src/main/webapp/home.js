@@ -20,7 +20,7 @@ overlay.addEventListener("click", () => {
     divA.style.pointerEvents = "auto";
     divB.style.pointerEvents = "auto";
     updateNotifications();
-
+    noNewNotification();
 });
 
 async function loadDashboard() {
@@ -39,13 +39,13 @@ async function loadDashboard() {
             if (script.id === "dashboard") {
                 const newScript = document.createElement("script");
                 newScript.src = script.src;
-                newScript.onload = async () => {
-                    if (typeof window.sendRequest === "function") {
-                        await window.sendRequest();
-                    } else {
-                        throw new Error("window.sendRequest is not defined");
-                    }
-                };
+                // newScript.onload = async () => {
+                //     if (typeof window.customerDashboardSocket === "object") {
+                //         await window.customerDashboardSocket.send(null);
+                //     } else {
+                //         throw new Error("window.sendRequest is not defined");
+                //     }
+                // };
                 document.head.appendChild(newScript);
             }
         });

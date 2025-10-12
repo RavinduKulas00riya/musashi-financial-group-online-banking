@@ -12,6 +12,7 @@ import lk.jiat.app.core.model.*;
 import lk.jiat.app.core.service.NotificationService;
 import lk.jiat.app.core.service.TransactionService;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 @Stateless
@@ -102,12 +103,13 @@ public class TransactionSessionBean implements TransactionService {
     @Override
     public void updateTransaction(Transfer transfer) {
         em.merge(transfer);
+        DecimalFormat df = new DecimalFormat("#0.00");
         notificationService.sendNotification(new Notification(
-                "$"+transfer.getAmount()+" has been transferred to you by "+transfer.getFromAccount().getAccountNo(),
+                "$"+df.format(transfer.getAmount())+" has been transferred to you by "+transfer.getFromAccount().getAccountNo(),
                 transfer.getToAccount().getUser(),
                 transfer.getDateTime()));
         notificationService.sendNotification(new Notification(
-                "The scheduled transaction to send $"+transfer.getAmount()+" to "+transfer.getToAccount().getAccountNo()+" has been completed",
+                "The scheduled transaction to send $"+df.format(transfer.getAmount())+" to "+transfer.getToAccount().getAccountNo()+" has been completed",
                 transfer.getFromAccount().getUser(),
                 transfer.getDateTime()));
     }

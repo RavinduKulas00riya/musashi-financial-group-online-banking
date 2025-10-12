@@ -108,7 +108,6 @@ public class Transaction extends HttpServlet {
                     dateTime = LocalDateTime.of(formattedDate, formattedTime);
                 } catch (Exception e) {
                     resp.getWriter().write("Invalid date or time.");
-                    System.out.println(e.getMessage());
                     return;
                 }
 
@@ -120,7 +119,6 @@ public class Transaction extends HttpServlet {
                 transactionStatus = TransactionStatus.PENDING;
             }
 
-            System.out.println(toAcc);
             Account fromAccount = fromUser.getAccounts().get(0);
             Account toAccount = accountService.getAccount(toAcc);
 
@@ -163,7 +161,6 @@ public class Transaction extends HttpServlet {
                 notification.setMessage("$" + df.format(amount) + " has been scheduled to be transferred to " + toAccount.getAccountNo() + " on " + formatter.format(dateTime));
                 notification.setUser(fromUser);
                 notification.setDateTime(LocalDateTime.now());
-                System.out.println(notification.getStatus().toString());
                 notificationService.sendNotification(notification);
 
             } else {
@@ -178,7 +175,6 @@ public class Transaction extends HttpServlet {
                 notification.setMessage("$" + df.format(amount) + " has been transferred to " + toAccount.getAccountNo());
                 notification.setUser(fromUser);
                 notification.setDateTime(LocalDateTime.now());
-                System.out.println(notification.getStatus().toString());
                 notificationService.sendNotification(notification);
 
                 notification.setMessage("$" + df.format(amount) + " has been transferred to you by " + fromAccount.getAccountNo());

@@ -1,14 +1,14 @@
-window.sendRequest = async function () {
-    const response = await fetch(`${window.CONTEXT_PATH}/loadCustomerDashboard`);
-    const data = await response.json();
-    console.log(data);
-    loadData(data);
-    if (typeof window.renderNotifications === "function") {
-        await window.renderNotifications();
-    } else {
-        throw new Error("window.renderNotifications is not defined");
-    }
-}
+// window.sendRequest = async function () {
+//     const response = await fetch(`${window.CONTEXT_PATH}/loadCustomerDashboard`);
+//     const data = await response.json();
+//     console.log(data);
+//     loadData(data);
+//     if (typeof window.renderNotifications === "function") {
+//         await window.renderNotifications();
+//     } else {
+//         throw new Error("window.renderNotifications is not defined");
+//     }
+// }
 
 function loadData(data) {
 
@@ -488,11 +488,11 @@ async function submit() {
     const message = await response.text();
     if (message === "success") {
         reset();
-        await sendRequest();
-    } else if(message === "redirect") {
+        await customerDashboardSocket.send(null);
+    } else if (message === "redirect") {
         await fetch(`${window.CONTEXT_PATH}/logout`);
         window.location.href = `${window.CONTEXT_PATH}/index.jsp`;
-    }else{
+    } else {
         showError(message);
     }
 }
@@ -526,3 +526,24 @@ function showError(msg) {
         })
     })
 })();
+
+window.customerDashboardSocket = new WebSocket("ws://localhost:8080/musashi-banking-system/customerDashboard");
+
+customerDashboardSocket.onopen = () => console.log("WebSocket connected");
+
+customerDashboardSocket.onmessage = async event => {
+    console.log(event.data);
+    try {
+        const data = JSON.parse(event.data);
+        loadData(data);
+        if (typeof window.renderNotifications === "function") {
+            await window.renderNotifications();
+        } else {
+            throw new Error("window.renderNotifications is not defined");
+        }
+    } catch (err) {
+        console.error("Invalid message format", err);
+    }
+};
+
+customerDashboardSocket.onclose = () => console.log("WebSocket closed");

@@ -5,6 +5,7 @@
   Time: 6:21 pm
   To change this template use File | Settings | File Templates.
 --%>
+<%@ page session="false" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
