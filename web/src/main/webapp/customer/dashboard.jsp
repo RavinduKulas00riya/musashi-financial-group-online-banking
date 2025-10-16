@@ -197,7 +197,7 @@
             <div class="horizontal-div" style="gap: 35px">
                 <div class="info-box">
                     <span class="info-box-title">Account Number</span>
-                    <span class="info-box-details"><%= account != null ? account.getAccountNo() : "N/A" %></span>
+                    <span class="info-box-details" id="account-num" data-full="<%= account != null ? account.getAccountNo() : "N/A" %>"><%= account != null ? account.getAccountNo() : "N/A" %></span>
                 </div>
                 <div class="info-box">
                     <span class="info-box-title">Balance</span>
@@ -264,6 +264,7 @@
                                     name="amount"
                                     id="amount"
                                     placeholder=" "
+                                    inputmode="decimal"
                             />
                             <label class="input-label">Amount (USD)</label>
                         </div>

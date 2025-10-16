@@ -32,6 +32,9 @@
     font-family: medium;
     padding-left: 5px;
     padding-right: 5px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: color 0.3s;
 }
 
 .status-box {

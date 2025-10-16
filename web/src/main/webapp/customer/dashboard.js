@@ -71,6 +71,7 @@ function fillSent(data) {
     accountLabel.textContent = "Account Number";
     const accountValue = document.createElement("span");
     accountValue.style.cssText = "margin-left: 4px; font-size: 18px; color: #000000";
+    accountValue.style.cursor = "pointer";
     accountValue.id = "sentNumber";
     accountDiv.appendChild(accountLabel);
     accountDiv.appendChild(accountValue);
@@ -132,7 +133,11 @@ function fillSent(data) {
     parentDiv.appendChild(titleSpan);
     parentDiv.appendChild(mainVerticalDiv);
 
-    document.getElementById("sentNumber").innerHTML = data.sentNumber;
+    const accountNum = document.getElementById("sentNumber");
+    accountNum.dataset.full = data.sentNumber;
+    accountNum.innerHTML = data.sentNumber;
+    mask(accountNum);
+
     document.getElementById("sentName").innerHTML = data.sentName;
     document.getElementById("sentAmount").innerHTML = data.sentAmount;
     const date = new Date(data.sentDateTime);
@@ -171,6 +176,7 @@ function fillReceived(data) {
     accountLabel.textContent = "Account Number";
     const accountValue = document.createElement("span");
     accountValue.style.cssText = "margin-left: 4px; font-size: 18px; color: #000000";
+    accountValue.style.cursor = "pointer";
     accountValue.id = "receivedNumber";
     accountDiv.appendChild(accountLabel);
     accountDiv.appendChild(accountValue);
@@ -232,7 +238,10 @@ function fillReceived(data) {
     parentDiv.appendChild(titleSpan);
     parentDiv.appendChild(mainVerticalDiv);
 
-    document.getElementById("receivedNumber").innerHTML = data.receivedNumber;
+    const accountNum = document.getElementById("receivedNumber");
+    accountNum.dataset.full = data.receivedNumber;
+    accountNum.innerHTML = data.receivedNumber;
+    mask(accountNum);
     document.getElementById("receivedName").innerHTML = data.receivedName;
     document.getElementById("receivedAmount").innerHTML = data.receivedAmount;
     const date = new Date(data.receivedDateTime);
@@ -317,6 +326,30 @@ function emptySent() {
     parentDiv.appendChild(innerDiv);
 
 }
+
+(function () {
+    const amountInput = document.getElementById("amount");
+
+    amountInput.addEventListener("input", function () {
+        let value = this.value;
+
+        // Remove all characters except digits and one dot
+        value = value.replace(/[^0-9.]/g, "");
+
+        // Only allow one dot
+        if ((value.match(/\./g) || []).length > 1) {
+            value = value.slice(0, value.lastIndexOf("."));
+        }
+
+        // Limit to two decimal places
+        if (value.includes(".")) {
+            const [integerPart, decimalPart] = value.split(".");
+            value = integerPart + "." + decimalPart.slice(0, 2);
+        }
+
+        this.value = value;
+    });
+})();
 
 (function () {
     const input = document.getElementById("dateInput");
@@ -547,3 +580,37 @@ customerDashboardSocket.onmessage = async event => {
 };
 
 customerDashboardSocket.onclose = () => console.log("WebSocket closed");
+
+const accountElement = document.getElementById("account-num");
+mask(accountElement);
+
+// Function to mask the first 4 digits
+function maskAccountNumber(number) {
+    if (number.length <= 4) return number; // edge case
+    const visible = number.slice(-3);
+    return "****" + visible;
+}
+
+function mask(accountElement){
+
+    // Get full account number from data attribute
+    const fullAccountNumber = accountElement.getAttribute("data-full");
+
+    accountElement.textContent = maskAccountNumber(fullAccountNumber);
+
+    accountElement.addEventListener("click", async () => {
+
+        try {
+            await navigator.clipboard.writeText(fullAccountNumber);
+
+            // Optional: small tooltip or animation
+            accountElement.textContent = "Copied!";
+            setTimeout(() => {
+                accountElement.textContent = "****" + fullAccountNumber.slice(-3);
+            }, 1500);
+        } catch (err) {
+            console.error("Failed to copy:", err);
+        }
+    });
+}
+
