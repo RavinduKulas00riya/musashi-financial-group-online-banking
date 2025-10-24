@@ -34,7 +34,7 @@
     response.setHeader("Pragma", "no-cache");
     response.setHeader("Expires", "0");
 %>
-<body onload="loadDashboard()">
+<body onload="loadPage('dashboard')">
 <div id="divA" data-context-path="${pageContext.request.contextPath}">
     <div style="height: 90px">
         <img
@@ -48,7 +48,7 @@
             <span class="header-titles">PAGES</span>
         </div>
         <button class="header active-header"
-                onclick="location.href='${pageContext.request.contextPath}/customer/home.jsp'">
+                onclick="loadPage('dashboard')">
             <img
                     src="${pageContext.request.contextPath}/images/dashboard2.png"
                     width="16"
@@ -58,7 +58,7 @@
             <span>Dashboard</span>
         </button>
         <button class="header inactive-header"
-                onclick="location.href='${pageContext.request.contextPath}/customer/history.jsp'">
+                onclick="loadPage('transfer_history')">
             <img
                     src="${pageContext.request.contextPath}/images/file.png"
                     width="16"
@@ -68,7 +68,7 @@
             <span>Transfer History</span>
         </button>
         <button class="header inactive-header"
-                onclick="location.href='${pageContext.request.contextPath}/customer/schedule.jsp'">
+                onclick="loadPage('user')">
             <img
                     src="${pageContext.request.contextPath}/images/stopwatch.png"
                     width="16"
@@ -131,7 +131,7 @@
           align-items: center;
         "
     >
-        <h1 style="font-family: medium">Dashboard</h1>
+        <h1 style="font-family: medium" id="page-title">Dashboard</h1>
         <div class="horizontal-div" style="gap: 35px">
             <button class="horizontal-div top-btn help-btn">
                 <i class="fa fa-question-circle-o" style="font-size: 15px; margin-top: 1.6px"></i>

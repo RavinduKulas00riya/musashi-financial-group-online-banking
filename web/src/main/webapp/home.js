@@ -23,20 +23,26 @@ overlay.addEventListener("click", () => {
     noNewNotification();
 });
 
-async function loadDashboard() {
+async function loadPage(page) {
+
+    document.getElementById("page-title").innerHTML = page.replace(/_/g, " ")
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+
     const panel = document.getElementById("panel");
     panel.style.display = "none";
     panel.innerHTML = "";
     try {
-        const response = await fetch(`${window.CONTEXT_PATH}/customer/dashboard.jsp`);
-        if (!response.ok) throw new Error("Failed to fetch dashboard.jsp");
+        const response = await fetch(`${window.CONTEXT_PATH}/customer/${page}.jsp`);
+        if (!response.ok) throw new Error("Failed to fetch "+page+".jsp");
         const data = await response.text();
 
         panel.innerHTML = data;
 
         const scripts = panel.querySelectorAll("script");
         scripts.forEach(script => {
-            if (script.id === "dashboard") {
+            if (script.id === page) {
                 const newScript = document.createElement("script");
                 newScript.src = script.src;
                 // newScript.onload = async () => {
