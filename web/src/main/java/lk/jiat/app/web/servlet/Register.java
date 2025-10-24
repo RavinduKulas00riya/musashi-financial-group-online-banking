@@ -68,7 +68,7 @@ public class Register extends HttpServlet {
                             user.setEmail(email);
                             user.setMobile(mobile);
 
-                            int number = ThreadLocalRandom.current().nextInt(1_000_000, 10_000_000);
+                            int number = ThreadLocalRandom.current().nextInt(100_000_000, 999_999_999);
                             Account account = new Account(String.valueOf(number), Double.valueOf(amount), user, LocalDateTime.now(), null);
                             user.setAccounts(List.of(account));
                             session.setAttribute("temp_user", user);

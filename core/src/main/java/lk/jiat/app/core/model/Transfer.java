@@ -1,6 +1,7 @@
 package lk.jiat.app.core.model;
 
 import jakarta.persistence.*;
+import lk.jiat.app.core.util.TransactionIdGenerator;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ import static lk.jiat.app.core.model.TransactionStatus.COMPLETED;
         @NamedQuery(name = "Transfer.findAll", query = "select t from Transfer t order by t.dateTime DESC"),
         @NamedQuery(
                 name = "Transfer.findLatestReceived",
-                query = "select t from Transfer t where t.toAccount=:customer order by t.dateTime DESC"
+                query = "select t from Transfer t where t.toAccount=:customer and t.transactionStatus=:status order by t.dateTime DESC"
         ),
         @NamedQuery(
                 name = "Transfer.findLatestSent",
@@ -25,8 +26,7 @@ import static lk.jiat.app.core.model.TransactionStatus.COMPLETED;
 })
 public class Transfer implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String id = TransactionIdGenerator.generateRandomString();
 
     public Transfer() {
     }
@@ -49,6 +49,8 @@ public class Transfer implements Serializable {
 
     private Double amount;
 
+    private LocalDateTime created_datetime = LocalDateTime.now();
+
     public TransactionStatus getTransactionStatus() {
         return transactionStatus;
     }
@@ -57,11 +59,11 @@ public class Transfer implements Serializable {
         this.transactionStatus = transactionStatus;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -102,6 +104,14 @@ public class Transfer implements Serializable {
 
     @Column(name = "date_time")
     private LocalDateTime dateTime;
+
+    public LocalDateTime getCreated_datetime() {
+        return created_datetime;
+    }
+
+    public void setCreated_datetime(LocalDateTime created_datetime) {
+        this.created_datetime = created_datetime;
+    }
 
     // Getters and setters
 }

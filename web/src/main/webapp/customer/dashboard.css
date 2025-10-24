@@ -121,7 +121,7 @@
 .input-label {
     position: absolute;
     top: 50%;
-    left: 6px;
+    left: 10px;
     transform: translateY(-50%);
     font-size: 15px;
     color: #6c757d;
@@ -134,7 +134,7 @@
     top: 0;
     transform: translateY(18%);
     font-size: 12px;
-    padding: 0 5px;
+    padding: 0 2px;
 }
 
 .animated-input:focus + .input-label {

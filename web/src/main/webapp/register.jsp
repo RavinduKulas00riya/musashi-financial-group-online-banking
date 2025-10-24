@@ -226,11 +226,11 @@
               <label class="input-label">Mobile Number</label>
             </div>
             <div class="input-container" onclick="hideError()">
-              <input spellcheck="false" type="number" class="form-control animated-input" name="amount" placeholder=" ">
+              <input spellcheck="false" min="1" type="number" class="form-control animated-input" name="amount" oninput="this.value = this.value < 1 ? '' : this.value;" placeholder=" ">
               <label class="input-label">Initial Amount</label>
             </div>
             <div class="buttons medium">
-              <button class="log-btn" style="height: 50px; font-size: 17px; border: none; border-radius: 10px; margin-bottom: 10px;" onclick="register('details')">Continue</button>
+              <button class="log-btn" style="height: 50px; font-size: 17px; border: none; border-radius: 10px; margin-bottom: 10px;" onclick="register('details')">Next</button>
               <button style="height: 50px; font-size: 17px; border: none; border-radius: 10px; color: #007bff; margin-bottom: 10px; background-color: rgba(0, 123, 255, 0.05);" onclick="window.location.href='${pageContext.request.contextPath}/index.jsp'">I already have an Account</button>
             </div>
           </div>

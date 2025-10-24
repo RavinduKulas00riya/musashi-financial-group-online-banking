@@ -63,7 +63,7 @@ public class TransactionSessionBean implements TransactionService {
     public Transfer getLatestReceived(Account customer) {
         try {
             return em.createNamedQuery("Transfer.findLatestReceived", Transfer.class)
-                    .setParameter("customer", customer).setMaxResults(1).getSingleResult();
+                    .setParameter("customer", customer).setParameter("status",TransactionStatus.COMPLETED).setMaxResults(1).getSingleResult();
         }catch (NoResultException e){
             return null;
         }
