@@ -10,6 +10,8 @@
 //     }
 // }
 
+console.log("dashboard js");
+
 function loadData(data) {
 
     document.getElementById("balance").innerHTML = data.balance;
@@ -461,26 +463,30 @@ function emptySent() {
 
 })();
 
-const checkbox = document.getElementById("transferLaterCheckbox");
-const dateInput = document.getElementById("dateInput");
-const timeInput = document.getElementById("timeInput");
+(function () {
+    const transferLaterCheckbox = document.getElementById("transferLaterCheckbox");
+    const dateInput = document.getElementById("dateInput");
+    const timeInput = document.getElementById("timeInput");
 
-checkbox.addEventListener("change", () => {
-    dateInput.value = "";
-    timeInput.value = "";
-    const enabled = checkbox.checked;
-    if (enabled) {
-        dateInput.disabled = false;
-        timeInput.disabled = false;
-        dateInput.style.cursor = "default";
-        timeInput.style.cursor = "default";
-    } else {
-        dateInput.disabled = true;
-        timeInput.disabled = true;
-        dateInput.style.cursor = "not-allowed";
-        timeInput.style.cursor = "not-allowed";
-    }
-});
+    transferLaterCheckbox.addEventListener("change", () => {
+        dateInput.value = "";
+        timeInput.value = "";
+        const enabled = transferLaterCheckbox.checked;
+        if (enabled) {
+            dateInput.disabled = false;
+            timeInput.disabled = false;
+            dateInput.style.cursor = "default";
+            timeInput.style.cursor = "default";
+        } else {
+            dateInput.disabled = true;
+            timeInput.disabled = true;
+            dateInput.style.cursor = "not-allowed";
+            timeInput.style.cursor = "not-allowed";
+        }
+    });
+})();
+
+
 
 async function submit() {
 
@@ -581,8 +587,12 @@ customerDashboardSocket.onmessage = async event => {
 
 customerDashboardSocket.onclose = () => console.log("WebSocket closed");
 
-const accountElement = document.getElementById("account-num");
-mask(accountElement);
+
+(function () {
+    const accountElement = document.getElementById("account-num");
+    mask(accountElement);
+})();
+
 
 // Function to mask the first 4 digits
 function maskAccountNumber(number) {

@@ -40,21 +40,29 @@ async function loadPage(page) {
 
         panel.innerHTML = data;
 
-        const scripts = panel.querySelectorAll("script");
-        scripts.forEach(script => {
-            if (script.id === page) {
-                const newScript = document.createElement("script");
-                newScript.src = script.src;
-                // newScript.onload = async () => {
-                //     if (typeof window.customerDashboardSocket === "object") {
-                //         await window.customerDashboardSocket.send(null);
-                //     } else {
-                //         throw new Error("window.sendRequest is not defined");
-                //     }
-                // };
-                document.head.appendChild(newScript);
-            }
-        });
+        // const scripts = panel.querySelectorAll("script");
+        // scripts.forEach(script => {
+        //     if (script.id === page) {
+        //         const newScript = document.createElement("script");
+        //         newScript.src = script.src;
+        //         // newScript.onload = async () => {
+        //         //     if (typeof window.customerDashboardSocket === "object") {
+        //         //         await window.customerDashboardSocket.send(null);
+        //         //     } else {
+        //         //         throw new Error("window.sendRequest is not defined");
+        //         //     }
+        //         // };
+        //         document.body.appendChild(newScript);
+        //     }
+        // });
+
+        const oldScript = document.getElementById("subpageScript");
+        if (oldScript) oldScript.remove();
+
+        const script = document.createElement("script");
+        script.src = `${page}.js`;
+        script.id = "subpageScript";
+        document.body.appendChild(script);
 
         panel.style.display = "flex";
     } catch (error) {
