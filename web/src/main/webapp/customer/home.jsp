@@ -44,10 +44,10 @@
         />
     </div>
     <div style="padding-left: 10px">
-        <div class="header-titles-div">
-            <span class="header-titles">PAGES</span>
+        <div class="navigator-titles-div">
+            <span class="navigator-titles">PAGES</span>
         </div>
-        <button class="header active-header"
+        <button class="navigator active-navigator"
                 onclick="loadPage('dashboard')">
             <img
                     src="${pageContext.request.contextPath}/images/dashboard2.png"
@@ -57,7 +57,7 @@
             />
             <span>Dashboard</span>
         </button>
-        <button class="header inactive-header"
+        <button class="navigator inactive-navigator"
                 onclick="loadPage('transfer_history')">
             <img
                     src="${pageContext.request.contextPath}/images/file.png"
@@ -67,7 +67,7 @@
             />
             <span>Transfer History</span>
         </button>
-        <button class="header inactive-header"
+        <button class="navigator inactive-navigator"
                 onclick="loadPage('user')">
             <img
                     src="${pageContext.request.contextPath}/images/stopwatch.png"
@@ -79,10 +79,10 @@
         </button>
     </div>
     <div style="padding-left: 12px">
-        <div class="header-titles-div">
-            <span class="header-titles">SETTINGS</span>
+        <div class="navigator-titles-div">
+            <span class="navigator-titles">SETTINGS</span>
         </div>
-        <button class="header inactive-header">
+        <button class="navigator inactive-navigator">
             <img
                     src="${pageContext.request.contextPath}/images/settings.png"
                     width="16"
@@ -93,10 +93,10 @@
         </button>
     </div>
     <div style="padding-left: 12px">
-        <div class="header-titles-div">
-            <span class="header-titles">NOTIFICATIONS</span>
+        <div class="navigator-titles-div">
+            <span class="navigator-titles">NOTIFICATIONS</span>
         </div>
-        <button class="header inactive-header inbox-div" id="notificationsBtn">
+        <button class="navigator inactive-navigator inbox-div" id="notificationsBtn">
             <img
                     src="${pageContext.request.contextPath}/images/notification.png"
                     width="16"
@@ -173,7 +173,7 @@
 </div>
 <div class="overlay" id="overlay"></div>
 
-<script src="${pageContext.request.contextPath}/home.js">
+<script id="home" src="${pageContext.request.contextPath}/home.js">
 </script>
 </body>
 </html>

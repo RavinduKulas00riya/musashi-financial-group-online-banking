@@ -76,7 +76,7 @@ async function updateNotifications() {
 
 function newNotification() {
     const btn = document.getElementById("notificationsBtn");
-    btn.classList.remove("inactive-header");
+    btn.classList.remove("inactive-navigator");
     const img = document.getElementById("notification-icon");
     const newDiv = document.getElementById("notification-new-div");
     if(img.src.includes("notification.png")){
@@ -87,7 +87,7 @@ function newNotification() {
 
 function noNewNotification() {
     const btn = document.getElementById("notificationsBtn");
-    btn.classList.add("inactive-header");
+    btn.classList.add("inactive-navigator");
     const img = document.getElementById("notification-icon");
     const newDiv = document.getElementById("notification-new-div");
     if(img.src.includes("notification2.png")){
