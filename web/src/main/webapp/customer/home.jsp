@@ -34,7 +34,7 @@
     response.setHeader("Pragma", "no-cache");
     response.setHeader("Expires", "0");
 %>
-<body onload="loadPage('dashboard')">
+<body onload="loadPage('transfer_history')">
 <div id="divA" data-context-path="${pageContext.request.contextPath}">
     <div style="height: 90px">
         <img
@@ -48,7 +48,8 @@
             <span class="navigator-titles">PAGES</span>
         </div>
         <button class="navigator active-navigator"
-                onclick="loadPage('dashboard')">
+                onclick="loadPage('dashboard')"
+                id="dashboard">
             <img
                     src="${pageContext.request.contextPath}/images/dashboard2.png"
                     width="16"
@@ -58,7 +59,8 @@
             <span>Dashboard</span>
         </button>
         <button class="navigator inactive-navigator"
-                onclick="loadPage('transfer_history')">
+                onclick="loadPage('transfer_history')"
+                id="transfer_history">
             <img
                     src="${pageContext.request.contextPath}/images/file.png"
                     width="16"
@@ -68,7 +70,8 @@
             <span>Transfer History</span>
         </button>
         <button class="navigator inactive-navigator"
-                onclick="loadPage('user')">
+                onclick="loadPage('scheduled_operations')"
+                id="scheduled_operations">
             <img
                     src="${pageContext.request.contextPath}/images/stopwatch.png"
                     width="16"

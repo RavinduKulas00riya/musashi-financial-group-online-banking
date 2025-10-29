@@ -64,6 +64,19 @@ async function loadPage(page) {
         script.id = "subpageScript";
         document.body.appendChild(script);
 
+        const buttons = document.querySelectorAll(".navigator");
+        for(const button of buttons) {
+            if(button.classList.contains("active-navigator")) {
+                button.classList.replace("active-navigator", "inactive-navigator");
+                const img = button.querySelector("img");
+                img.src = img.src.replace("2.png",".png");
+            }
+        }
+        const button = document.getElementById(page);
+        button.classList.replace("inactive-navigator", "active-navigator");
+        const img = button.querySelector("img");
+        img.src = img.src.replace(".png","2.png");
+
         panel.style.display = "flex";
     } catch (error) {
         console.error("Error:", error.message);
