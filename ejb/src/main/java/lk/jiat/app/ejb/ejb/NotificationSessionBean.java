@@ -7,8 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
-import lk.jiat.app.core.event.CustomerDashboardEvent;
-import lk.jiat.app.core.model.Interest;
+import lk.jiat.app.core.event.PublicEvent;
 import lk.jiat.app.core.model.Notification;
 import lk.jiat.app.core.model.NotificationStatus;
 import lk.jiat.app.core.model.User;
@@ -24,13 +23,13 @@ public class NotificationSessionBean implements NotificationService {
     private EntityManager em;
 
     @Inject
-    private Event<CustomerDashboardEvent> customerDashboardEvent;
+    private Event<PublicEvent> publicEvent;
 
     @Override
     public void sendNotification(Notification notification) {
 
         em.persist(notification);
-        customerDashboardEvent.fire(new CustomerDashboardEvent(notification.getUser().getId()));
+        publicEvent.fire(new PublicEvent(notification.getUser().getId()));
     }
 
     @Override

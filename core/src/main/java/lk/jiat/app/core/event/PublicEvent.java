@@ -1,9 +1,9 @@
 package lk.jiat.app.core.event;
 
-public class CustomerDashboardEvent {
+public class PublicEvent {
     private final Integer userId;
 
-    public CustomerDashboardEvent(Integer userId) {
+    public PublicEvent(Integer userId) {
         this.userId = userId;
     }
 

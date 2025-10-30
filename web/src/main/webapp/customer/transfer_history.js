@@ -197,3 +197,59 @@ document.querySelectorAll(".copy-icon").forEach((icon) => {
         }, 3000);
     });
 });
+
+websocket = new WebSocket("ws://localhost:8080/musashi-banking-system/customerTransactionHistory");
+
+websocket.onopen = () => console.log("WebSocket connected");
+
+websocket.onmessage = async event => {
+    console.log(event.data);
+    try {
+
+        if (event.data ==="update"){
+            websocket.send(filters());
+            console.log("Sent Filters");
+            return;
+        }
+
+        // const data = JSON.parse(event.data);
+        // console.log(data);
+        // loadData(data);
+        // if (typeof window.renderNotifications === "function") {
+        //     await window.renderNotifications();
+        // } else {
+        //     throw new Error("window.renderNotifications is not defined");
+        // }
+    } catch (err) {
+        console.error("Invalid message format", err);
+    }
+};
+
+websocket.onclose = () => console.log("WebSocket closed");
+
+function filters() {
+    const accountNum = document.getElementById("account-num").value;
+    const counterparty = document.getElementById("counterparty").value;
+    const type = document.getElementById("type").dataset.value;
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+
+    return JSON.stringify({
+        accountNum: accountNum,
+        counterparty: counterparty,
+        startDate: startDate,
+        endDate: endDate,
+        type: type,
+    });
+}
+
+function loadData(data) {
+    const parent = document.getElementById("rows");
+    parent.style.display = "none";
+    parent.innerHTML = "";
+
+    const rows = JSON.parse(data);
+    rows.forEach((row) => {
+
+    })
+}

@@ -10,8 +10,6 @@
 //     }
 // }
 
-console.log("dashboard js");
-
 function loadData(data) {
 
     document.getElementById("balance").innerHTML = data.balance;
@@ -566,7 +564,7 @@ function showError(msg) {
     })
 })();
 
-window.customerDashboardSocket = new WebSocket("ws://localhost:8080/musashi-banking-system/customerDashboard");
+customerDashboardSocket = new WebSocket("ws://localhost:8080/musashi-banking-system/customerDashboard");
 
 customerDashboardSocket.onopen = () => console.log("WebSocket connected");
 
@@ -574,6 +572,7 @@ customerDashboardSocket.onmessage = async event => {
     console.log(event.data);
     try {
         const data = JSON.parse(event.data);
+
         loadData(data);
         if (typeof window.renderNotifications === "function") {
             await window.renderNotifications();
