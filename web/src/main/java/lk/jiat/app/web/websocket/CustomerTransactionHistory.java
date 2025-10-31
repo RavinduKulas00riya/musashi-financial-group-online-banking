@@ -42,7 +42,7 @@ public class CustomerTransactionHistory {
             Integer id = (Integer) httpSession.getAttribute("user_id");
             if (id != null) {
                 UserSessions.addUserSession(id, Page.CUSTOMER_HISTORY, session);
-                System.out.println("WebSocket opened for user ID: " + id);
+                System.out.println("TH WebSocket opened for user ID: " + id);
                 sendToUser(id, "");
             }
         }
@@ -50,7 +50,9 @@ public class CustomerTransactionHistory {
 
     @OnClose
     public void onClose(Session session) {
-        UserSessions.removeUserSession(session);
+        Integer id = UserSessions.getUserIdBySessionAndPage(session, Page.CUSTOMER_HISTORY);
+        UserSessions.removeSessionFromPage(id, Page.CUSTOMER_HISTORY, session);
+        System.out.println("User id: " + id + " removed from customer history");
     }
 
     @OnError
@@ -74,16 +76,14 @@ public class CustomerTransactionHistory {
 
     public void onCustomerTransactionHistoryUpdate(@Observes PublicEvent event) {
 
-            Set<Session> sessions = UserSessions.getUserSessions(event.getUserId(), Page.CUSTOMER_HISTORY);
-            sessions.forEach(session -> {
-                if (session != null && session.isOpen()) {
-                    try {
-                    session.getBasicRemote().sendText("update");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+        Set<Session> sessions = UserSessions.getUserSessions(event.getUserId(), Page.CUSTOMER_HISTORY);
+        sessions.forEach(session -> {
+            if (session != null && session.isOpen()) {
+
+                sendToUser(event.getUserId(), "");
+
+            }
+        });
 
     }
 
@@ -91,66 +91,70 @@ public class CustomerTransactionHistory {
 
         JSONObject response = new JSONObject();
 
+        Set<Session> sessions = UserSessions.getUserSessions(id, Page.CUSTOMER_HISTORY);
+
+        if (sessions.isEmpty()) {
+            return;
+        }
+
         try {
 
-                if (message.isEmpty()) {
-                    response.put("task", "update");
-                    sendData(id,message);
+            if (message.isEmpty()) {
+                response.put("task", "update");
+                sendData(sessions, response.toString());
+                return;
+            }
+
+            JSONObject filters = new JSONObject(message);
+            String accountNumber = filters.getString("accountNum");
+            String counterparty = filters.getString("counterparty");
+            String startDate = filters.getString("startDate");
+            String endDate = filters.getString("endDate");
+            String type = filters.getString("type");
+
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+                    .withResolverStyle(ResolverStyle.STRICT);
+
+            LocalDate formattedStartDate;
+            LocalDate formattedEndDate;
+
+            if (!startDate.isEmpty()) {
+                try {
+                    formattedStartDate = LocalDate.parse(startDate, dateFormatter);
+                } catch (Exception e) {
+                    response.put("task", "invalidStartDate");
+                    sendData(sessions, response.toString());
                     return;
                 }
+            }
 
-                JSONObject filters = new JSONObject(message);
-                String accountNumber = filters.getString("accountNum");
-                String counterparty = filters.getString("counterparty");
-                String startDate = filters.getString("startDate");
-                String endDate = filters.getString("endDate");
-                String type = filters.getString("type");
-
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
-                        .withResolverStyle(ResolverStyle.STRICT);
-
-                LocalDate formattedStartDate;
-                LocalDate formattedEndDate;
-
-                if (!startDate.isEmpty()) {
-                    try {
-                        formattedStartDate = LocalDate.parse(startDate, dateFormatter);
-                    } catch (Exception e) {
-                        response.put("task", "invalidStartDate");
-                        sendData(id,message);
-                        return;
-                    }
+            if (!endDate.isEmpty()) {
+                try {
+                    formattedEndDate = LocalDate.parse(endDate, dateFormatter);
+                } catch (Exception e) {
+                    response.put("task", "invalidEndDate");
+                    sendData(sessions, response.toString());
+                    return;
                 }
+            }
 
-                if (!endDate.isEmpty()) {
-                    try {
-                        formattedEndDate = LocalDate.parse(endDate, dateFormatter);
-                    } catch (Exception e) {
-                        response.put("task", "invalidEndDate");
-                        sendData(id,message);
-                        return;
-                    }
-                }
+            Context ctx = new InitialContext();
+            UserService userService = (UserService) ctx.lookup("java:global/musashi-banking-system-ear/ejb-module/UserSessionBean");
+            TransactionService transactionService = (TransactionService) ctx.lookup("java:global/musashi-banking-system-ear/ejb-module/TransactionSessionBean");
+            User user = userService.getUserById(id);
+            Account account = user.getAccounts().get(0);
 
-                Context ctx = new InitialContext();
-                UserService userService = (UserService) ctx.lookup("java:global/musashi-banking-system-ear/ejb-module/UserSessionBean");
-                TransactionService transactionService = (TransactionService) ctx.lookup("java:global/musashi-banking-system-ear/ejb-module/TransactionSessionBean");
-                User user = userService.getUserById(id);
-                Account account = user.getAccounts().get(0);
+            JSONArray rows = new JSONArray();
 
-                JSONArray rows = new JSONArray();
-
-                //load all
-
+            //load all
+            sendData(sessions, response.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void sendData(Integer id, String message) {
-
-        Set<Session> sessions = UserSessions.getUserSessions(id, Page.CUSTOMER_HISTORY);
+    private void sendData(Set<Session> sessions, String message) {
 
         for (Session session : sessions) {
 

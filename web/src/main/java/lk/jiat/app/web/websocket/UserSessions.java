@@ -38,6 +38,32 @@ public class UserSessions {
         );
     }
 
+    public static void removeSessionFromPage(Integer userId, Page page, Session session) {
+        Map<Page, Set<Session>> pageMap = userSessions.get(userId);
+        if (pageMap != null) {
+            Set<Session> sessions = pageMap.get(page);
+            if (sessions != null) {
+                sessions.remove(session);
+
+                // optional cleanup if no sessions left
+                if (sessions.isEmpty()) {
+                    pageMap.remove(page);
+                }
+                if (pageMap.isEmpty()) {
+                    userSessions.remove(userId);
+                }
+            }
+        }
+    }
+
+    public static boolean doesSessionExistInPage(Integer userId, Page page, Session session) {
+        Map<Page, Set<Session>> pageMap = userSessions.get(userId);
+        if (pageMap == null) return false;
+
+        Set<Session> sessions = pageMap.get(page);
+        return sessions != null && sessions.contains(session);
+    }
+
     public static Integer getUserIdBySessionAndPage(Session session, Page page) {
         for (Map.Entry<Integer, Map<Page, Set<Session>>> userEntry : userSessions.entrySet()) {
             Integer userId = userEntry.getKey();

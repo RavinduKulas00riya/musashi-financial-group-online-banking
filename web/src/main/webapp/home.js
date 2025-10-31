@@ -1,5 +1,16 @@
 window.CONTEXT_PATH = document.getElementById('divA').dataset.contextPath;
 
+const SocketManager = {
+    customerDashboardSocket: null,
+    customerTransferHistorySocket: null,
+
+    closeAll() {
+        [this.customerDashboardSocket, this.customerTransferHistorySocket].forEach(socket => {
+            if (socket && socket.readyState === WebSocket.OPEN) socket.close();
+        });
+    }
+};
+
 const notificationsBtn = document.getElementById("notificationsBtn");
 const divC = document.getElementById("divC");
 const overlay = document.getElementById("overlay");
@@ -35,7 +46,7 @@ async function loadPage(page) {
     panel.innerHTML = "";
     try {
         const response = await fetch(`${window.CONTEXT_PATH}/customer/${page}.jsp`);
-        if (!response.ok) throw new Error("Failed to fetch "+page+".jsp");
+        if (!response.ok) throw new Error("Failed to fetch " + page + ".jsp");
         const data = await response.text();
 
         panel.innerHTML = data;
@@ -59,23 +70,25 @@ async function loadPage(page) {
         const oldScript = document.getElementById("subpageScript");
         if (oldScript) oldScript.remove();
 
+        await SocketManager.closeAll();
+
         const script = document.createElement("script");
         script.src = `${page}.js`;
         script.id = "subpageScript";
         document.body.appendChild(script);
 
         const buttons = document.querySelectorAll(".navigator");
-        for(const button of buttons) {
-            if(button.classList.contains("active-navigator")) {
+        for (const button of buttons) {
+            if (button.classList.contains("active-navigator")) {
                 button.classList.replace("active-navigator", "inactive-navigator");
                 const img = button.querySelector("img");
-                img.src = img.src.replace("2.png",".png");
+                img.src = img.src.replace("2.png", ".png");
             }
         }
         const button = document.getElementById(page);
         button.classList.replace("inactive-navigator", "active-navigator");
         const img = button.querySelector("img");
-        img.src = img.src.replace(".png","2.png");
+        img.src = img.src.replace(".png", "2.png");
 
         panel.style.display = "flex";
     } catch (error) {
@@ -87,10 +100,10 @@ async function loadPage(page) {
 async function updateNotifications() {
     const response = await fetch(`${window.CONTEXT_PATH}/updateNotifications`);
     const message = await response.text();
-    if(message !== "success") {
+    if (message !== "success") {
         alert(message);
         console.log(message);
-    }else{
+    } else {
         await renderNotifications();
     }
 }
@@ -100,7 +113,7 @@ function newNotification() {
     btn.classList.remove("inactive-navigator");
     const img = document.getElementById("notification-icon");
     const newDiv = document.getElementById("notification-new-div");
-    if(img.src.includes("notification.png")){
+    if (img.src.includes("notification.png")) {
         img.src = img.src.replace("notification.png", "notification2.png");
         newDiv.style.display = "flex";
     }
@@ -111,7 +124,7 @@ function noNewNotification() {
     btn.classList.add("inactive-navigator");
     const img = document.getElementById("notification-icon");
     const newDiv = document.getElementById("notification-new-div");
-    if(img.src.includes("notification2.png")){
+    if (img.src.includes("notification2.png")) {
         img.src = img.src.replace("notification2.png", "notification.png");
         newDiv.style.display = "none";
     }
@@ -211,7 +224,7 @@ window.renderNotifications = async function () {
     const divC = document.getElementById("divC");
     divC.innerHTML = "";
 
-    if(!newContainer.hasChildNodes() && !oldContainer.hasChildNodes()){
+    if (!newContainer.hasChildNodes() && !oldContainer.hasChildNodes()) {
         noNotification();
         return;
     }

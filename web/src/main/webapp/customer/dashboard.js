@@ -525,7 +525,7 @@ async function submit() {
     const message = await response.text();
     if (message === "success") {
         reset();
-        await customerDashboardSocket.send(null);
+        // await SocketManager.customerDashboardSocket.send(null);
     } else if (message === "redirect") {
         await fetch(`${window.CONTEXT_PATH}/logout`);
         window.location.href = `${window.CONTEXT_PATH}/index.jsp`;
@@ -564,11 +564,11 @@ function showError(msg) {
     })
 })();
 
-customerDashboardSocket = new WebSocket("ws://localhost:8080/musashi-banking-system/customerDashboard");
+SocketManager.customerDashboardSocket = new WebSocket("ws://localhost:8080/musashi-banking-system/customerDashboard");
 
-customerDashboardSocket.onopen = () => console.log("WebSocket connected");
+SocketManager.customerDashboardSocket.onopen = () => console.log("D WebSocket connected");
 
-customerDashboardSocket.onmessage = async event => {
+SocketManager.customerDashboardSocket.onmessage = async event => {
     console.log(event.data);
     try {
         const data = JSON.parse(event.data);
@@ -584,7 +584,7 @@ customerDashboardSocket.onmessage = async event => {
     }
 };
 
-customerDashboardSocket.onclose = () => console.log("WebSocket closed");
+SocketManager.customerDashboardSocket.onclose = () => console.log("D WebSocket closed");
 
 
 (function () {

@@ -36,7 +36,7 @@ public class CustomerDashboard {
             Integer id = (Integer) httpSession.getAttribute("user_id");
             if (id != null) {
                 UserSessions.addUserSession(id, Page.CUSTOMER_DASHBOARD, session);
-                System.out.println("WebSocket opened for user ID: " + id);
+                System.out.println("D WebSocket opened for user ID: " + id);
                 sendToUser(id);
             }
         }
@@ -44,7 +44,9 @@ public class CustomerDashboard {
 
     @OnClose
     public void onClose(Session session) {
-        UserSessions.removeUserSession(session);
+        Integer id = UserSessions.getUserIdBySessionAndPage(session, Page.CUSTOMER_DASHBOARD);
+        UserSessions.removeSessionFromPage(id,Page.CUSTOMER_DASHBOARD, session);
+        System.out.println("User id: " + id+" removed from customer dashboard");
     }
 
     @OnError
@@ -73,6 +75,12 @@ public class CustomerDashboard {
     // Sends a message only to a specific user
     public static void sendToUser(Integer id) {
         Set<Session> sessions = UserSessions.getUserSessions(id, Page.CUSTOMER_DASHBOARD);
+
+        if(sessions.isEmpty()) {
+            return;
+        }
+
+        System.out.println("Sessions: " + sessions.size());
 
         try {
             Context ctx = new InitialContext();

@@ -198,16 +198,18 @@ document.querySelectorAll(".copy-icon").forEach((icon) => {
     });
 });
 
-websocket = new WebSocket("ws://localhost:8080/musashi-banking-system/customerTransactionHistory");
+SocketManager.customerTransferHistorySocket = new WebSocket("ws://localhost:8080/musashi-banking-system/customerTransactionHistory");
 
-websocket.onopen = () => console.log("WebSocket connected");
+SocketManager.customerTransferHistorySocket.onopen = () => console.log("TH WebSocket connected");
 
-websocket.onmessage = async event => {
+SocketManager.customerTransferHistorySocket.onmessage = async event => {
     console.log(event.data);
     try {
 
-        if (event.data ==="update"){
-            websocket.send(filters());
+        const data = JSON.parse(event.data);
+
+        if (data.task ==="update"){
+            await SocketManager.customerTransferHistorySocket.send(filters());
             console.log("Sent Filters");
             return;
         }
@@ -225,7 +227,7 @@ websocket.onmessage = async event => {
     }
 };
 
-websocket.onclose = () => console.log("WebSocket closed");
+SocketManager.customerTransferHistorySocket.onclose = () => console.log("TH WebSocket closed");
 
 function filters() {
     const accountNum = document.getElementById("account-num").value;
