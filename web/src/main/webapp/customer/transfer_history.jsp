@@ -81,7 +81,7 @@
                     placeholder="DD/MM/YYYY"
                     required
             />
-            <div class="error-message" id="dateError">Invalid date format</div>
+            <div class="error-message" id="startDateError">Invalid date format</div>
         </div>
 
         <div class="vertical-div sort-div">
@@ -93,13 +93,14 @@
                     placeholder="DD/MM/YYYY"
                     required
             />
+            <div class="error-message" id="endDateError">Invalid date format</div>
         </div>
 
         <div class="sort-btn-div">
             <button class="reset-btn" id="reset">Reset</button>
         </div>
         <div class="sort-btn-div">
-            <button class="search-btn">Apply</button>
+            <button class="search-btn" onclick="SocketManager.customerTransferHistorySocket.send('')">Apply</button>
         </div>
     </div>
 

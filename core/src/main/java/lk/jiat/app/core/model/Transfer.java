@@ -13,7 +13,8 @@ import static lk.jiat.app.core.model.TransactionStatus.COMPLETED;
 @NamedQueries({
         @NamedQuery(name = "Transfer.findByUser", query = "select t from Transfer t where t.toAccount=:customer or t.fromAccount=:customer order by t.dateTime DESC"),
         @NamedQuery(name = "Transfer.findByUsers", query = "select t from Transfer t where (t.toAccount=:account1 and t.fromAccount=:account2) or (t.toAccount=:account2 and t.fromAccount=:account1) order by t.dateTime DESC"),
-        @NamedQuery(name = "Transfer.findPendingTransactions", query = "select t from Transfer t where t.transactionStatus=:status"),
+        @NamedQuery(name = "Transfer.findTransactionsByStatus", query = "select t from Transfer t where t.transactionStatus=:status"),
+        @NamedQuery(name = "Transfer.findTransactionsByStatusAndUser", query = "select t from Transfer t where t.transactionStatus=:status and (t.toAccount=:account or t.fromAccount=:account)"),
         @NamedQuery(name = "Transfer.findAll", query = "select t from Transfer t order by t.dateTime DESC"),
         @NamedQuery(
                 name = "Transfer.findLatestReceived",
@@ -22,6 +23,15 @@ import static lk.jiat.app.core.model.TransactionStatus.COMPLETED;
         @NamedQuery(
                 name = "Transfer.findLatestSent",
                 query = "select t from Transfer t where t.fromAccount=:customer and t.transactionStatus=:status order by t.dateTime DESC"
+        ),
+        @NamedQuery(
+                name = "Transfer.findTransactionsByAccountAndStatusAndDateRange",
+                query = "SELECT t FROM Transfer t " +
+                        "WHERE t.transactionStatus = :status " +
+                        "AND (t.toAccount = :account OR t.fromAccount = :account) " +
+                        "AND (:startDate IS NULL OR t.dateTime >= :startDate) " +
+                        "AND (:endDate IS NULL OR t.dateTime <= :endDate) " +
+                        "ORDER BY t.dateTime DESC"
         )
 })
 public class Transfer implements Serializable {

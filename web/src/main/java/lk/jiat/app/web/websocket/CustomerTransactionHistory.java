@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -89,6 +90,9 @@ public class CustomerTransactionHistory {
 
     public void sendToUser(Integer id, String message) {
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm:ss");
+        DecimalFormat df = new DecimalFormat("#0.00");
+
         JSONObject response = new JSONObject();
 
         Set<Session> sessions = UserSessions.getUserSessions(id, Page.CUSTOMER_HISTORY);
@@ -105,6 +109,8 @@ public class CustomerTransactionHistory {
                 return;
             }
 
+
+
             JSONObject filters = new JSONObject(message);
             String accountNumber = filters.getString("accountNum");
             String counterparty = filters.getString("counterparty");
@@ -115,8 +121,8 @@ public class CustomerTransactionHistory {
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
                     .withResolverStyle(ResolverStyle.STRICT);
 
-            LocalDate formattedStartDate;
-            LocalDate formattedEndDate;
+            LocalDate formattedStartDate = null;
+            LocalDate formattedEndDate = null;
 
             if (!startDate.isEmpty()) {
                 try {
@@ -138,6 +144,8 @@ public class CustomerTransactionHistory {
                 }
             }
 
+            response.put("task", "loadRows");
+
             Context ctx = new InitialContext();
             UserService userService = (UserService) ctx.lookup("java:global/musashi-banking-system-ear/ejb-module/UserSessionBean");
             TransactionService transactionService = (TransactionService) ctx.lookup("java:global/musashi-banking-system-ear/ejb-module/TransactionSessionBean");
@@ -146,7 +154,64 @@ public class CustomerTransactionHistory {
 
             JSONArray rows = new JSONArray();
 
-            //load all
+            List<Transfer> transactionList = transactionService.getTransactionsByAccountAndStatusAndDateRange(account, TransactionStatus.COMPLETED, formattedStartDate, formattedEndDate);
+            for (Transfer transaction : transactionList) {
+
+                JSONObject row = new JSONObject();
+
+                if(transaction.getFromAccount().getId().equals(account.getId())){
+
+                    if(!accountNumber.isEmpty()) {
+                        if(!transaction.getToAccount().getAccountNo().contains(accountNumber)){
+                            continue;
+                        }
+                    }
+
+                    if(!counterparty.isEmpty()) {
+                        if(!transaction.getToAccount().getUser().getName().toLowerCase().contains(counterparty.toLowerCase())){
+                            continue;
+                        }
+                    }
+
+                    if(type.equals("1")) {
+                        continue;
+                    }
+
+                    row.put("type","sent");
+                    row.put("accountNumber",transaction.getToAccount().getAccountNo());
+                    row.put("counterparty",transaction.getToAccount().getUser().getName());
+                }else{
+
+                    if(!accountNumber.isEmpty()) {
+                        if(!transaction.getFromAccount().getAccountNo().contains(accountNumber)){
+                            continue;
+                        }
+                    }
+
+                    if(!counterparty.isEmpty()) {
+                        if(!transaction.getFromAccount().getUser().getName().toLowerCase().contains(counterparty.toLowerCase())){
+                            continue;
+                        }
+                    }
+
+                    if(type.equals("2")) {
+                        continue;
+                    }
+
+                    row.put("type","received");
+                    row.put("accountNumber",transaction.getFromAccount().getAccountNo());
+                    row.put("counterparty",transaction.getFromAccount().getUser().getName());
+                }
+
+                row.put("id", transaction.getId());
+                row.put("datetime", formatter.format(transaction.getDateTime()));
+                row.put("amount", df.format(transaction.getAmount()));
+
+                rows.put(row);
+            }
+
+            response.put("rows", rows);
+
             sendData(sessions, response.toString());
 
         } catch (Exception e) {

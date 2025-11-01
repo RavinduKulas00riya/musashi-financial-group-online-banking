@@ -37,7 +37,7 @@ public class TimerSessionBean implements TimerService {
 
         try {
 
-            List<Transfer> pendingTransactions = transactionService.getPendingTransactions();
+            List<Transfer> pendingTransactions = transactionService.getTransactionsByStatus(TransactionStatus.PENDING);
             pendingTransactions.forEach(t -> {
 
                 if (t.getDateTime().isBefore(LocalDateTime.now())) {

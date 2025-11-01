@@ -3,9 +3,11 @@ package lk.jiat.app.core.service;
 import jakarta.ejb.Remote;
 import jakarta.transaction.Transaction;
 import lk.jiat.app.core.model.Account;
+import lk.jiat.app.core.model.TransactionStatus;
 import lk.jiat.app.core.model.Transfer;
 import lk.jiat.app.core.model.User;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Remote
@@ -16,8 +18,9 @@ public interface TransactionService {
     List<Transfer> getAllTransactions();
     void deleteTransaction(Transfer transfer);
     Transfer getTransaction(Integer id);
-    List<Transfer> getPendingTransactions();
+    List<Transfer> getTransactionsByStatus(TransactionStatus status);
     void updateTransaction(Transfer transfer);
     Transfer getLatestSent(Account customer);
     Transfer getLatestReceived(Account customer);
+    List<Transfer> getTransactionsByAccountAndStatusAndDateRange(Account account, TransactionStatus status, LocalDate start, LocalDate end);
 }

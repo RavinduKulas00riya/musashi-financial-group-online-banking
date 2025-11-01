@@ -13,6 +13,8 @@ import lk.jiat.app.core.service.NotificationService;
 import lk.jiat.app.core.service.TransactionService;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Stateless
@@ -70,6 +72,22 @@ public class TransactionSessionBean implements TransactionService {
     }
 
     @Override
+    public List<Transfer> getTransactionsByAccountAndStatusAndDateRange(Account account,TransactionStatus status, LocalDate start, LocalDate end) {
+        LocalDateTime startDateTime = start != null ? start.atStartOfDay() : null;
+        LocalDateTime endDateTime = end != null ? end.plusDays(1).atStartOfDay() : null;
+        try {
+            return em.createNamedQuery("Transfer.findTransactionsByAccountAndStatusAndDateRange", Transfer.class)
+                    .setParameter("status", status)
+                    .setParameter("account", account)
+                    .setParameter("startDate", startDateTime)
+                    .setParameter("endDate", endDateTime)
+                    .getResultList();
+        }catch (NoResultException e){
+            return List.of();
+        }
+    }
+
+    @Override
     public Transfer getLatestSent(Account customer) {
         try {
             return em.createNamedQuery("Transfer.findLatestSent", Transfer.class)
@@ -91,10 +109,10 @@ public class TransactionSessionBean implements TransactionService {
     }
 
     @Override
-    public List<Transfer> getPendingTransactions() {
+    public List<Transfer> getTransactionsByStatus(TransactionStatus status) {
         try {
-            return em.createNamedQuery("Transfer.findPendingTransactions", Transfer.class)
-                    .setParameter("status", TransactionStatus.PENDING).getResultList();
+            return em.createNamedQuery("Transfer.findTransactionsByStatus", Transfer.class)
+                    .setParameter("status", status).getResultList();
         }catch (NoResultException e){
             return List.of();
         }

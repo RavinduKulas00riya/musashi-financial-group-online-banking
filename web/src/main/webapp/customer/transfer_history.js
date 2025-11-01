@@ -28,6 +28,8 @@
         startDate.style.borderColor = "#0d0d0d46";
         endDate.value = "";
         endDate.style.borderColor = "#0d0d0d46";
+
+        SocketManager.customerTransferHistorySocket.send("");
     });
 })();
 
@@ -79,24 +81,6 @@ document.addEventListener("click", (e) => {
 
 (function () {
     const inputs = document.querySelectorAll(".dateInput");
-    const dateError = document.getElementById("dateError");
-
-    function isValidDate(dateStr) {
-        const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-        const match = dateStr.match(regex);
-        if (!match) return false;
-
-        const day = parseInt(match[1]);
-        const month = parseInt(match[2]);
-        const year = parseInt(match[3]);
-
-        const date = new Date(year, month - 1, day);
-        return (
-            date.getFullYear() === year &&
-            date.getMonth() === month - 1 &&
-            date.getDate() === day
-        );
-    }
 
     function formatDate(digits) {
         const n = digits.length;
@@ -158,24 +142,35 @@ document.addEventListener("click", (e) => {
         input.addEventListener("blur", () => {
             const value = input.value.trim();
 
+            if(input.id === "startDate"){
+                dateError = document.getElementById("startDateError");
+            }else{
+                dateError = document.getElementById("endDateError");
+            }
+
             if (value === "") {
                 dateError.classList.remove("show");
                 input.style.borderColor = "#0d0d0d46";
-                return;
-            }
-
-            if (!isValidDate(value)) {
-                dateError.classList.add("show");
-                input.style.borderColor = "#d8000c";
-            } else {
-                dateError.classList.remove("show");
+            }else{
                 input.style.borderColor = "#007bff";
             }
+
+            // if (!isValidDate(value)) {
+            //     dateError.classList.add("show");
+            //     input.style.borderColor = "#d8000c";
+            // } else {
+            //     dateError.classList.remove("show");
+            //     input.style.borderColor = "#007bff";
+            // }
         });
 
-        input.addEventListener("input", () => {
-            dateError.classList.remove("show");
-            input.style.borderColor = "#0d0d0d46";
+        input.addEventListener("click", () => {
+            console.log("clicked");
+            if(input.id === "startDate"){
+                hideDateErrors("start");
+            }else{
+                hideDateErrors("end");
+            }
         });
     });
 })();
@@ -203,25 +198,29 @@ SocketManager.customerTransferHistorySocket = new WebSocket("ws://localhost:8080
 SocketManager.customerTransferHistorySocket.onopen = () => console.log("TH WebSocket connected");
 
 SocketManager.customerTransferHistorySocket.onmessage = async event => {
-    console.log(event.data);
+    // console.log(event.data);
     try {
 
         const data = JSON.parse(event.data);
 
         if (data.task ==="update"){
+            console.log("1");
+            if(filters()==null) return;
+            console.log("2");
             await SocketManager.customerTransferHistorySocket.send(filters());
             console.log("Sent Filters");
             return;
         }
+        loadData(data.rows);
 
         // const data = JSON.parse(event.data);
         // console.log(data);
         // loadData(data);
-        // if (typeof window.renderNotifications === "function") {
-        //     await window.renderNotifications();
-        // } else {
-        //     throw new Error("window.renderNotifications is not defined");
-        // }
+        if (typeof window.renderNotifications === "function") {
+            await window.renderNotifications();
+        } else {
+            throw new Error("window.renderNotifications is not defined");
+        }
     } catch (err) {
         console.error("Invalid message format", err);
     }
@@ -229,29 +228,150 @@ SocketManager.customerTransferHistorySocket.onmessage = async event => {
 
 SocketManager.customerTransferHistorySocket.onclose = () => console.log("TH WebSocket closed");
 
+function isValidDate(dateStr) {
+    const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    const match = dateStr.match(regex);
+    if (!match) return false;
+
+    const day = parseInt(match[1]);
+    const month = parseInt(match[2]);
+    const year = parseInt(match[3]);
+
+    const date = new Date(year, month - 1, day);
+    return (
+        date.getFullYear() === year &&
+        date.getMonth() === month - 1 &&
+        date.getDate() === day
+    );
+}
+
 function filters() {
+
     const accountNum = document.getElementById("account-num").value;
     const counterparty = document.getElementById("counterparty").value;
     const type = document.getElementById("type").dataset.value;
     const startDate = document.getElementById("startDate").value;
     const endDate = document.getElementById("endDate").value;
 
-    return JSON.stringify({
+    let output = JSON.stringify({
         accountNum: accountNum,
         counterparty: counterparty,
         startDate: startDate,
         endDate: endDate,
         type: type,
     });
+
+    if(startDate && !isValidDate(startDate)) {
+        showDateErrors("start");
+        output = null;
+    }
+    if(endDate && !isValidDate(endDate)) {
+        showDateErrors("end");
+        output = null;
+    }
+
+    return output;
 }
 
-function loadData(data) {
-    const parent = document.getElementById("rows");
-    parent.style.display = "none";
-    parent.innerHTML = "";
+function loadData(rows) {
+    const rowsContainer = document.getElementById("rows");
+    rowsContainer.style.display = "none";
+    rowsContainer.innerHTML = "";
 
-    const rows = JSON.parse(data);
+    // const rows = JSON.parse(data);
     rows.forEach((row) => {
+        const div = document.createElement("div");
+        div.className = "horizontal-div table-row";
 
-    })
+        // --- Column 1: Date/Time ---
+        const col1 = document.createElement("div");
+        col1.className = "table-row-div";
+        col1.innerHTML = `<span>${row.datetime}</span>`;
+        div.appendChild(col1);
+
+        // --- Column 2: Account / Copy icon ---
+        const accountNumber = row.accountNumber;
+        const col2 = document.createElement("div");
+        col2.className = "table-row-div";
+        col2.innerHTML = `
+    <i class="fa fa-clone copy-icon" aria-hidden="true" data-tooltip="${accountNumber}"></i>
+    <span><span class="mask">******</span>${accountNumber.slice(-3)}</span>
+  `;
+        div.appendChild(col2);
+
+        // --- Column 3: Counterparty ---
+        const col3 = document.createElement("div");
+        col3.className = "table-row-div";
+        col3.innerHTML = `<span>${row.counterparty}</span>`;
+        div.appendChild(col3);
+
+        // --- Column 4: Amount ---
+        const col4 = document.createElement("div");
+        col4.className = "table-row-div";
+        if(row.type === "sent"){
+            col4.innerHTML = `<div class="amount outgoing">− ${row.amount}</div>`;
+        }else{
+            col4.innerHTML = `<div class="amount incoming">+ ${row.amount}</div>`;
+        }
+
+        div.appendChild(col4);
+
+        // --- Column 5: Transaction ID ---
+        const col5 = document.createElement("div");
+        col5.className = "table-row-div";
+        const id = row.id;
+        col5.innerHTML = `
+    <i class="fa fa-clone copy-icon" aria-hidden="true" data-tooltip="${id}"></i>
+    <span>${id.slice(0, 5)}<span class="mask">**********</span>${id.slice(-5)}</span>
+  `;
+        div.appendChild(col5);
+
+        // append the whole row
+        rowsContainer.appendChild(div);
+    });
+
+    rowsContainer.style.display = "block";
+    copyButtons();
+}
+
+function copyButtons(){
+
+    document.querySelectorAll(".copy-icon").forEach((icon) => {
+        icon.addEventListener("click", async () => {
+
+            const textToCopy = icon.dataset.tooltip;
+            await navigator.clipboard.writeText(textToCopy);
+
+            // change icon and tooltip
+            icon.classList.remove("fa-clone");
+            icon.classList.add("fa-check");
+
+            // revert after 3s
+            setTimeout(() => {
+                icon.classList.remove("fa-check");
+                icon.classList.add("fa-clone");
+            }, 3000);
+        });
+    });
+}
+
+function showDateErrors(date){
+
+    if (date === "start"){
+        document.getElementById("startDateError").classList.add("show");
+        document.getElementById("startDate").style.borderColor = "#d8000c";
+    }else if (date === "end"){
+        document.getElementById("endDateError").classList.add("show");
+        document.getElementById("endDate").style.borderColor = "#d8000c";
+    }
+}
+
+function hideDateErrors(date){
+    if (date === "start"){
+        document.getElementById("startDateError").classList.remove("show");
+        document.getElementById("startDate").style.borderColor = "#0d0d0d46";
+    }else if (date === "end"){
+        document.getElementById("endDateError").classList.remove("show");
+        document.getElementById("endDate").style.borderColor = "#0d0d0d46";
+    }
 }
