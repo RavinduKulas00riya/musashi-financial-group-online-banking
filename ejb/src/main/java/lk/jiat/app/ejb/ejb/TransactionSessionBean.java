@@ -7,6 +7,7 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transaction;
 import lk.jiat.app.core.model.*;
 import lk.jiat.app.core.service.NotificationService;
@@ -72,19 +73,42 @@ public class TransactionSessionBean implements TransactionService {
     }
 
     @Override
-    public List<Transfer> getTransactionsByAccountAndStatusAndDateRange(Account account,TransactionStatus status, LocalDate start, LocalDate end) {
-        LocalDateTime startDateTime = start != null ? start.atStartOfDay() : null;
-        LocalDateTime endDateTime = end != null ? end.plusDays(1).atStartOfDay() : null;
-        try {
-            return em.createNamedQuery("Transfer.findTransactionsByAccountAndStatusAndDateRange", Transfer.class)
-                    .setParameter("status", status)
-                    .setParameter("account", account)
-                    .setParameter("startDate", startDateTime)
-                    .setParameter("endDate", endDateTime)
-                    .getResultList();
-        }catch (NoResultException e){
-            return List.of();
+    public List<Transfer> getTransactionsByAccountAndStatusAndDateRange(Account account,TransactionStatus status, LocalDate start, LocalDate end, String sortBy) {
+        LocalDateTime startDate = start != null ? start.atStartOfDay() : null;
+        LocalDateTime endDate = end != null ? end.plusDays(1).atStartOfDay() : null;
+        String baseQuery = "SELECT t FROM Transfer t " +
+                "WHERE t.transactionStatus = :status " +
+                "AND (t.toAccount = :account OR t.fromAccount = :account) " +
+                "AND (:startDate IS NULL OR t.dateTime >= :startDate) " +
+                "AND (:endDate IS NULL OR t.dateTime <= :endDate) ";
+
+        String orderClause;
+
+        switch (sortBy) {
+            case "dateAsc":
+                orderClause = "ORDER BY t.dateTime ASC";
+                break;
+            case "dateDesc":
+                orderClause = "ORDER BY t.dateTime DESC";
+                break;
+            case "amountAsc":
+                orderClause = "ORDER BY t.amount ASC";
+                break;
+            case "amountDesc":
+                orderClause = "ORDER BY t.amount DESC";
+                break;
+            default:
+                orderClause = "ORDER BY t.dateTime DESC";
+                break;
         }
+
+        TypedQuery<Transfer> query = em.createQuery(baseQuery + orderClause, Transfer.class);
+        query.setParameter("status", status);
+        query.setParameter("account", account);
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
+
+        return query.getResultList();
     }
 
     @Override

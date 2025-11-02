@@ -117,6 +117,7 @@ public class CustomerTransactionHistory {
             String startDate = filters.getString("startDate");
             String endDate = filters.getString("endDate");
             String type = filters.getString("type");
+            String sort = filters.getString("sort");
 
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
                     .withResolverStyle(ResolverStyle.STRICT);
@@ -154,7 +155,7 @@ public class CustomerTransactionHistory {
 
             JSONArray rows = new JSONArray();
 
-            List<Transfer> transactionList = transactionService.getTransactionsByAccountAndStatusAndDateRange(account, TransactionStatus.COMPLETED, formattedStartDate, formattedEndDate);
+            List<Transfer> transactionList = transactionService.getTransactionsByAccountAndStatusAndDateRange(account, TransactionStatus.COMPLETED, formattedStartDate, formattedEndDate, sort);
             for (Transfer transaction : transactionList) {
 
                 JSONObject row = new JSONObject();

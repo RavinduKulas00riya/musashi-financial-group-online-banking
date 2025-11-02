@@ -24,15 +24,6 @@ import static lk.jiat.app.core.model.TransactionStatus.COMPLETED;
                 name = "Transfer.findLatestSent",
                 query = "select t from Transfer t where t.fromAccount=:customer and t.transactionStatus=:status order by t.dateTime DESC"
         ),
-        @NamedQuery(
-                name = "Transfer.findTransactionsByAccountAndStatusAndDateRange",
-                query = "SELECT t FROM Transfer t " +
-                        "WHERE t.transactionStatus = :status " +
-                        "AND (t.toAccount = :account OR t.fromAccount = :account) " +
-                        "AND (:startDate IS NULL OR t.dateTime >= :startDate) " +
-                        "AND (:endDate IS NULL OR t.dateTime <= :endDate) " +
-                        "ORDER BY t.dateTime DESC"
-        )
 })
 public class Transfer implements Serializable {
     @Id

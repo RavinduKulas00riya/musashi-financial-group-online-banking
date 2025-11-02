@@ -106,8 +106,8 @@
 
     <div class="horizontal-div table-top">
         <div>
-            <span style="cursor: pointer">Date & Time</span>
-            <button class="sort-btn">DESC</button>
+            <span style="cursor: pointer" onclick="sortByDate()">Date & Time</span>
+            <button class="sort-btn" id="sortDate">DESC</button>
         </div>
         <div>
             <span>Account Number</span>
@@ -116,8 +116,8 @@
             <span>Counterparty</span>
         </div>
         <div>
-            <span style="cursor: pointer">Amount (USD)</span>
-            <button class="sort-btn">MIXED</button>
+            <span style="cursor: pointer" onclick="sortByAmount()">Amount (USD)</span>
+            <button class="sort-btn" id="sortAmount">MIXED</button>
         </div>
         <div>
             <span>Transaction ID</span>

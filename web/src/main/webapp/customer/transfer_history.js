@@ -29,6 +29,10 @@
         endDate.value = "";
         endDate.style.borderColor = "#0d0d0d46";
 
+        document.getElementById("sortDate").innerText = "DESC";
+        document.getElementById("sortAmount").innerText = "MIXED";
+        sort = "dateDesc";
+
         SocketManager.customerTransferHistorySocket.send("");
     });
 })();
@@ -165,7 +169,6 @@ document.addEventListener("click", (e) => {
         });
 
         input.addEventListener("click", () => {
-            console.log("clicked");
             if(input.id === "startDate"){
                 hideDateErrors("start");
             }else{
@@ -204,11 +207,8 @@ SocketManager.customerTransferHistorySocket.onmessage = async event => {
         const data = JSON.parse(event.data);
 
         if (data.task ==="update"){
-            console.log("1");
             if(filters()==null) return;
-            console.log("2");
             await SocketManager.customerTransferHistorySocket.send(filters());
-            console.log("Sent Filters");
             return;
         }
         loadData(data.rows);
@@ -259,6 +259,7 @@ function filters() {
         startDate: startDate,
         endDate: endDate,
         type: type,
+        sort: sort,
     });
 
     if(startDate && !isValidDate(startDate)) {
@@ -375,3 +376,39 @@ function hideDateErrors(date){
         document.getElementById("endDate").style.borderColor = "#0d0d0d46";
     }
 }
+
+let sort = "dateDesc";
+
+function sortByDate(){
+
+    document.getElementById("sortAmount").innerText = "MIXED";
+    let sortBy = document.getElementById("sortDate");
+
+    if (sortBy.innerText === "DESC"){
+        sortBy.innerText = "ASC";
+        sort = "dateAsc";
+    }else if (sortBy.innerText === "ASC"){
+        sortBy.innerText = "DESC";
+        sort = "dateDesc";
+    }else{
+        sortBy.innerText = "DESC";
+        sort = "dateDesc";
+    }
+}
+
+function sortByAmount(){
+    document.getElementById("sortDate").innerText = "MIXED";
+    let sortBy = document.getElementById("sortAmount");
+
+    if (sortBy.innerText === "DESC"){
+        sortBy.innerText = "ASC";
+        sort = "amountAsc";
+    }else if (sortBy.innerText === "ASC"){
+        sortBy.innerText = "DESC";
+        sort = "amountDesc";
+    }else{
+        sortBy.innerText = "DESC";
+        sort = "amountDesc";
+    }
+}
+

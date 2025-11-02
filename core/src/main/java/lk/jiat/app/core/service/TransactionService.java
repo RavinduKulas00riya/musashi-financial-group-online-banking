@@ -22,5 +22,5 @@ public interface TransactionService {
     void updateTransaction(Transfer transfer);
     Transfer getLatestSent(Account customer);
     Transfer getLatestReceived(Account customer);
-    List<Transfer> getTransactionsByAccountAndStatusAndDateRange(Account account, TransactionStatus status, LocalDate start, LocalDate end);
+    List<Transfer> getTransactionsByAccountAndStatusAndDateRange(Account account, TransactionStatus status, LocalDate start, LocalDate end, String sortBy);
 }
