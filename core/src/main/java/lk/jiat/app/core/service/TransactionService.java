@@ -2,6 +2,7 @@ package lk.jiat.app.core.service;
 
 import jakarta.ejb.Remote;
 import jakarta.transaction.Transaction;
+import lk.jiat.app.core.dto.CustomerTransactionHistoryTableDTO;
 import lk.jiat.app.core.model.Account;
 import lk.jiat.app.core.model.TransactionStatus;
 import lk.jiat.app.core.model.Transfer;
@@ -22,5 +23,6 @@ public interface TransactionService {
     void updateTransaction(Transfer transfer);
     Transfer getLatestSent(Account customer);
     Transfer getLatestReceived(Account customer);
-    List<Transfer> getTransactionsByAccountAndStatusAndDateRange(Account account, TransactionStatus status, LocalDate start, LocalDate end, String sortBy);
+    CustomerTransactionHistoryTableDTO customerTransactionHistoryTable(Account account, TransactionStatus status, LocalDate start, LocalDate end, String sortBy, int page, int pageSize, String accountNum, String counterparty, String type);
+    long getCustomerTransactionHistoryTableRowCount(Account account,TransactionStatus status, LocalDate start, LocalDate end);
 }

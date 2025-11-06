@@ -36,6 +36,8 @@ overlay.addEventListener("click", () => {
 
 async function loadPage(page) {
 
+    console.log(page);
+
     document.getElementById("page-title").innerHTML = page.replace(/_/g, " ")
         .split(" ")
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -75,6 +77,13 @@ async function loadPage(page) {
         const script = document.createElement("script");
         script.src = `${page}.js`;
         script.id = "subpageScript";
+        script.onload = () => {
+            if(page === "dashboard" && DashboardPage?.init) {
+                DashboardPage.init();
+            }else if (page === "transfer_history" && TransferHistoryPage?.init) {
+                TransferHistoryPage.init();
+            }
+        };
         document.body.appendChild(script);
 
         const buttons = document.querySelectorAll(".navigator");

@@ -324,7 +324,6 @@
                 border-radius: 10px;
               "
                         id="submit-btn"
-                        onclick="submit()"
                 >
                     <i
                             class="fa-solid fa-circle-notch fa-spin"
@@ -464,6 +463,6 @@
         </div>
     </div>
 </div>
-<script id="dashboard" src="${pageContext.request.contextPath}/customer/dashboard.js"></script>
+<%--<script id="dashboard" src="${pageContext.request.contextPath}/customer/dashboard.js"></script>--%>
 </body>
 </html>

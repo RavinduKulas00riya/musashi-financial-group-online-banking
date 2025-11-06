@@ -176,7 +176,6 @@
 </div>
 <div class="overlay" id="overlay"></div>
 
-<script id="home" src="${pageContext.request.contextPath}/home.js">
-</script>
+<script id="home" src="${pageContext.request.contextPath}/home.js"></script>
 </body>
 </html>

@@ -9,6 +9,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transaction;
+import lk.jiat.app.core.dto.CustomerTransactionHistoryTableDTO;
 import lk.jiat.app.core.model.*;
 import lk.jiat.app.core.service.NotificationService;
 import lk.jiat.app.core.service.TransactionService;
@@ -73,42 +74,103 @@ public class TransactionSessionBean implements TransactionService {
     }
 
     @Override
-    public List<Transfer> getTransactionsByAccountAndStatusAndDateRange(Account account,TransactionStatus status, LocalDate start, LocalDate end, String sortBy) {
+    public CustomerTransactionHistoryTableDTO customerTransactionHistoryTable(Account account, TransactionStatus status, LocalDate start,
+                                                                              LocalDate end, String sortBy, int page, int pageSize,
+                                                                              String accountNum, String counterparty, String type) {
+        try {
+
+            LocalDateTime startDate = start != null ? start.atStartOfDay() : null;
+            LocalDateTime endDate = end != null ? end.plusDays(1).atStartOfDay() : null;
+            String baseQuery = "SELECT t FROM Transfer t " +
+                    "WHERE t.transactionStatus = :status " +
+                    "AND (t.toAccount = :account OR t.fromAccount = :account) " +
+                    "AND (:startDate IS NULL OR t.dateTime >= :startDate) " +
+                    "AND (:endDate IS NULL OR t.dateTime <= :endDate) ";
+
+            if (accountNum != null && !accountNum.isEmpty()) {
+                baseQuery += "AND ((t.toAccount = :account AND t.fromAccount.accountNo LIKE CONCAT('%', :accountNum, '%')) OR (t.fromAccount = :account AND t.toAccount.accountNo LIKE CONCAT('%', :accountNum, '%'))) ";
+            }
+
+            if (counterparty != null && !counterparty.isEmpty()) {
+                baseQuery += "AND ((t.toAccount = :account AND t.fromAccount.user.name LIKE CONCAT('%', :counterparty, '%')) OR (t.fromAccount = :account AND t.toAccount.user.name LIKE CONCAT('%', :counterparty, '%'))) ";
+            }
+
+            if (type.equals("1")) {
+
+                baseQuery += "AND t.toAccount = :account ";
+
+            } else if (type.equals("2")) {
+
+                baseQuery += "AND t.fromAccount = :account ";
+
+            }
+
+            String orderClause;
+
+            switch (sortBy) {
+                case "dateAsc":
+                    orderClause = "ORDER BY t.dateTime ASC";
+                    break;
+                case "dateDesc":
+                    orderClause = "ORDER BY t.dateTime DESC";
+                    break;
+                case "amountAsc":
+                    orderClause = "ORDER BY t.amount ASC";
+                    break;
+                case "amountDesc":
+                    orderClause = "ORDER BY t.amount DESC";
+                    break;
+                default:
+                    orderClause = "ORDER BY t.dateTime DESC";
+                    break;
+            }
+
+            TypedQuery<Transfer> query = em.createQuery(baseQuery + orderClause, Transfer.class);
+
+            query.setParameter("status", status);
+            query.setParameter("account", account);
+            query.setParameter("startDate", startDate);
+            query.setParameter("endDate", endDate);
+
+            if (accountNum != null && !accountNum.isEmpty()) {
+                query.setParameter("accountNum", accountNum);
+            }
+
+            if (counterparty != null && !counterparty.isEmpty()) {
+                query.setParameter("counterparty", counterparty);
+            }
+
+            CustomerTransactionHistoryTableDTO result = new CustomerTransactionHistoryTableDTO();
+            System.out.println(baseQuery + orderClause);
+            result.setTotalRowCount(query.getResultList().size());
+
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+
+            result.setList(query.getResultList());
+            return result;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public long getCustomerTransactionHistoryTableRowCount(Account account, TransactionStatus status, LocalDate start, LocalDate end) {
         LocalDateTime startDate = start != null ? start.atStartOfDay() : null;
         LocalDateTime endDate = end != null ? end.plusDays(1).atStartOfDay() : null;
-        String baseQuery = "SELECT t FROM Transfer t " +
+        String countQuery = "SELECT COUNT(t) FROM Transfer t " +
                 "WHERE t.transactionStatus = :status " +
                 "AND (t.toAccount = :account OR t.fromAccount = :account) " +
                 "AND (:startDate IS NULL OR t.dateTime >= :startDate) " +
-                "AND (:endDate IS NULL OR t.dateTime <= :endDate) ";
+                "AND (:endDate IS NULL OR t.dateTime <= :endDate)";
 
-        String orderClause;
-
-        switch (sortBy) {
-            case "dateAsc":
-                orderClause = "ORDER BY t.dateTime ASC";
-                break;
-            case "dateDesc":
-                orderClause = "ORDER BY t.dateTime DESC";
-                break;
-            case "amountAsc":
-                orderClause = "ORDER BY t.amount ASC";
-                break;
-            case "amountDesc":
-                orderClause = "ORDER BY t.amount DESC";
-                break;
-            default:
-                orderClause = "ORDER BY t.dateTime DESC";
-                break;
-        }
-
-        TypedQuery<Transfer> query = em.createQuery(baseQuery + orderClause, Transfer.class);
+        TypedQuery<Long> query = em.createQuery(countQuery, Long.class);
         query.setParameter("status", status);
         query.setParameter("account", account);
         query.setParameter("startDate", startDate);
         query.setParameter("endDate", endDate);
 
-        return query.getResultList();
+        return query.getSingleResult();
     }
 
     @Override

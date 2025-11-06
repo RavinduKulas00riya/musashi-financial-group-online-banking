@@ -100,13 +100,19 @@
             <button class="reset-btn" id="reset">Reset</button>
         </div>
         <div class="sort-btn-div">
-            <button class="search-btn" onclick="SocketManager.customerTransferHistorySocket.send('')">Apply</button>
+            <button class="search-btn" id="apply">Apply</button>
+        </div>
+        <div class="sort-btn-div">
+            <button class="refresh-btn"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+            <div class="refresh-msg">
+                New Record(s) Available
+            </div>
         </div>
     </div>
 
     <div class="horizontal-div table-top">
         <div>
-            <span style="cursor: pointer" onclick="sortByDate()">Date & Time</span>
+            <span style="cursor: pointer" id="sortDateBtn">Date & Time</span>
             <button class="sort-btn" id="sortDate">DESC</button>
         </div>
         <div>
@@ -116,7 +122,7 @@
             <span>Counterparty</span>
         </div>
         <div>
-            <span style="cursor: pointer" onclick="sortByAmount()">Amount (USD)</span>
+            <span style="cursor: pointer" id="sortAmountBtn">Amount (USD)</span>
             <button class="sort-btn" id="sortAmount">MIXED</button>
         </div>
         <div>
@@ -277,19 +283,19 @@
         <button class="prev">
             <i class="fa fa-arrow-left" aria-hidden="true"></i>
         </button>
-        <button>3</button>
-        <button>4</button>
-        <button class="page-active">5</button>
-        <button>6</button>
-        <button disabled>...</button>
-        <button>12</button>
+        <button class="page-button">3</button>
+        <button class="page-button">4</button>
+        <button class="page-button page-active">5</button>
+        <button class="page-button">6</button>
+        <button style="cursor: default;" disabled>...</button>
+        <button class="page-button">12</button>
         <button class="next">
             <i class="fa fa-arrow-right" aria-hidden="true"></i>
         </button>
     </div>
 </div>
 
-<script id="transfer_history" src="${pageContext.request.contextPath}/customer/transfer_history.js"></script>
+<%--<script id="transfer_history" src="${pageContext.request.contextPath}/customer/transfer_history.js"></script>--%>
 </body>
 </html>
 
