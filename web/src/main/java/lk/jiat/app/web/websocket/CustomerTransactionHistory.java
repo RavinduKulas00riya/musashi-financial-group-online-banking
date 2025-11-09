@@ -167,8 +167,6 @@ public class CustomerTransactionHistory {
             CustomerTransactionHistoryTableDTO dto = transactionService.customerTransactionHistoryTable(account, TransactionStatus.COMPLETED, formattedStartDate, formattedEndDate, sort, page, 7, accountNumber, counterparty, type);
             List<Transfer> transactionList = dto.getList();
             long totalRows = dto.getTotalRowCount();
-            System.out.println("Transaction List size: " + transactionList.size());
-            System.out.println("Original Total rows: " + totalRows);
             for (Transfer transaction : transactionList) {
 
                 JSONObject row = new JSONObject();
@@ -176,50 +174,12 @@ public class CustomerTransactionHistory {
                 //outgoing
                 if(transaction.getFromAccount().getId().equals(account.getId())){
 
-//                    if(!accountNumber.isEmpty()) {
-//                        if(!transaction.getToAccount().getAccountNo().contains(accountNumber)){
-//                            totalRows--;
-//                            continue;
-//                        }
-//                    }
-//
-//                    if(!counterparty.isEmpty()) {
-//                        if(!transaction.getToAccount().getUser().getName().toLowerCase().contains(counterparty.toLowerCase())){
-//                            totalRows--;
-//                            continue;
-//                        }
-//                    }
-//
-//                    if(type.equals("1")) {
-//                        totalRows--;
-//                        continue;
-//                    }
-
                     row.put("type","sent");
                     row.put("accountNumber",transaction.getToAccount().getAccountNo());
                     row.put("counterparty",transaction.getToAccount().getUser().getName());
 
                 //incoming
                 }else{
-
-//                    if(!accountNumber.isEmpty()) {
-//                        if(!transaction.getFromAccount().getAccountNo().contains(accountNumber)){
-//                            totalRows--;
-//                            continue;
-//                        }
-//                    }
-//
-//                    if(!counterparty.isEmpty()) {
-//                        if(!transaction.getFromAccount().getUser().getName().toLowerCase().contains(counterparty.toLowerCase())){
-//                            totalRows--;
-//                            continue;
-//                        }
-//                    }
-//
-//                    if(type.equals("2")) {
-//                        totalRows--;
-//                        continue;
-//                    }
 
                     row.put("type","received");
                     row.put("accountNumber",transaction.getFromAccount().getAccountNo());
@@ -234,11 +194,9 @@ public class CustomerTransactionHistory {
             }
 
             int totalPages = (int) Math.ceil((double) totalRows / 7);
-            System.out.println("Total Row Count: "+ totalRows);
             response.put("rows", rows);
             response.put("totalPages", totalPages);
             response.put("currentPage", page);
-            System.out.println("Response: " + response);
             sendData(sessions, response.toString());
 
         } catch (Exception e) {

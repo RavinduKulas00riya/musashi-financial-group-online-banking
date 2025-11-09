@@ -8,8 +8,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Dynamic Web Page</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/home.css"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/customer/transfer_history.css"/>
@@ -28,8 +28,9 @@
     response.setHeader("Expires", "0");
 %>
 <body>
-<div class="vertical-div" style="width: 100%">
-    <div class="horizontal-div" style="margin-bottom: 20px; gap: 20px">
+<div class="vertical-div" id="main-body" style="width: 100%;">
+
+    <div class="horizontal-div" id="filters-list" style="margin-bottom: 20px; gap: 20px">
         <div class="vertical-div sort-div">
             <span class="sort-div-span">Account Number</span>
             <input
@@ -109,6 +110,16 @@
             </div>
         </div>
     </div>
+
+    <%--    empty message--%>
+    <div class="vertical-div center-div" style="gap: 32px; height: 450px; width: 100%; display: none;" id="empty-message">
+        <img src="${pageContext.request.contextPath}/images/no-results.png" width="230" height="230" alt="" style="filter: invert(0.25);">
+        <div class="horizontal-div center-div" style="gap: 12px;">
+            <span style="font-family: bold;">No Completed Transfers Found.</span>
+            <button class="redirect-btn">Begin a Transaction <i class="bi bi-arrow-up-right"></i></button>
+        </div>
+    </div>
+    <%--    empty message--%>
 
     <div class="horizontal-div table-top">
         <div>
@@ -276,7 +287,6 @@
             </div>
         </div>
     </div>
-
 
 
     <div class="center-div table-bottom">

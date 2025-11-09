@@ -30,8 +30,10 @@ overlay.addEventListener("click", () => {
     overlay.classList.remove("active");
     divA.style.pointerEvents = "auto";
     divB.style.pointerEvents = "auto";
-    updateNotifications();
-    noNewNotification();
+    updateNotifications().then(r =>
+        noNewNotification()
+    );
+
 });
 
 async function loadPage(page) {
@@ -53,38 +55,43 @@ async function loadPage(page) {
 
         panel.innerHTML = data;
 
-        // const scripts = panel.querySelectorAll("script");
-        // scripts.forEach(script => {
-        //     if (script.id === page) {
-        //         const newScript = document.createElement("script");
-        //         newScript.src = script.src;
-        //         // newScript.onload = async () => {
-        //         //     if (typeof window.customerDashboardSocket === "object") {
-        //         //         await window.customerDashboardSocket.send(null);
-        //         //     } else {
-        //         //         throw new Error("window.sendRequest is not defined");
-        //         //     }
-        //         // };
-        //         document.body.appendChild(newScript);
-        //     }
-        // });
+        const currentPage = panel.dataset.currentPage;
+        if (currentPage) {
+            if (currentPage === "dashboard" && window.DashboardPage?.cleanup) {
+                await window.DashboardPage.cleanup();
+            } else if (currentPage === "transfer_history" && window.TransferHistoryPage?.cleanup) {
+                await window.TransferHistoryPage.cleanup();
+            }
+        }
 
+        panel.dataset.currentPage = page;
         const oldScript = document.getElementById("subpageScript");
         if (oldScript) oldScript.remove();
 
         await SocketManager.closeAll();
 
-        const script = document.createElement("script");
-        script.src = `${page}.js`;
-        script.id = "subpageScript";
-        script.onload = () => {
-            if(page === "dashboard" && DashboardPage?.init) {
-                DashboardPage.init();
-            }else if (page === "transfer_history" && TransferHistoryPage?.init) {
-                TransferHistoryPage.init();
-            }
-        };
-        document.body.appendChild(script);
+        const scriptId = `${page}Script`;
+        let script = document.getElementById(scriptId);
+
+        if (!script) {
+            script = document.createElement("script");
+            script.id = scriptId;
+            script.src = `${page}.js`;
+
+            await new Promise((res, rej) => {
+                script.onload = res;
+                script.onerror = rej;
+                document.body.appendChild(script);
+            });
+        }
+        // ---- END NEW ----
+
+        // run init for the freshly loaded page
+        if (page === "dashboard" && window.DashboardPage?.init) {
+            window.DashboardPage.init();
+        } else if (page === "transfer_history" && window.TransferHistoryPage?.init) {
+            window.TransferHistoryPage.init();
+        }
 
         const buttons = document.querySelectorAll(".navigator");
         for (const button of buttons) {

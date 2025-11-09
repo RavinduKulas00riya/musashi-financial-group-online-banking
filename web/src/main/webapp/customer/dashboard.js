@@ -10,7 +10,13 @@
 //     }
 // }
 
-const DashboardPage = (() => {
+(() => {
+    // --------------------------------------------------------------
+    // If the page object is already on the global scope → reuse it
+    // --------------------------------------------------------------
+    if (window.DashboardPage) {
+        return window.DashboardPage;
+    }
 
     let socket = null;
 
@@ -640,7 +646,8 @@ const DashboardPage = (() => {
         });
     }
 
-
-    return{init: init,cleanup:cleanup}
+    const pageAPI = { init, cleanup };
+    window.DashboardPage = pageAPI;
+    return pageAPI;
 })();
 

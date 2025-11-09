@@ -1,4 +1,7 @@
-const TransferHistoryPage = (() => {
+(() => {
+    if (window.TransferHistoryPage) {
+        return window.TransferHistoryPage;
+    }
 
     let active_page = 1;
     let sort = "dateDesc";
@@ -9,6 +12,7 @@ const TransferHistoryPage = (() => {
     let startDate = "";
     let endDate = "";
     let type = "0";
+    let emptyScreen = false;
 
     function init() {
         console.log("TransferHistoryPage initialized");
@@ -22,6 +26,55 @@ const TransferHistoryPage = (() => {
         setupSortingDateBtn();
         setupRefreshButton();
         setupApplyButton();
+        setFilters();
+
+        // empty-message → go to dashboard and clean up current page
+        const emptyBtn = document.getElementById("empty-message")?.querySelector("button");
+        if (emptyBtn) {
+            emptyBtn.addEventListener("click", () => {
+                document.getElementById("dashboard")?.click();
+            });
+        }
+    }
+
+    function showEmptyScreen(){
+
+        if(emptyScreen){
+            return;
+        }
+
+        emptyScreen = !emptyScreen;
+
+        const tableTop = document.getElementsByClassName("table-top")[0];
+        tableTop.style.display = "none";
+
+        const tableBottom = document.getElementsByClassName("table-bottom")[0];
+        tableBottom.style.display = "none";
+
+        const rows = document.getElementById("rows");
+        rows.style.display = "none";
+
+        document.getElementById("empty-message").style.display = "flex";
+    }
+
+    function hideEmptyScreen(){
+
+        if(!emptyScreen){
+            return;
+        }
+
+        emptyScreen = !emptyScreen;
+
+        const tableTop = document.getElementsByClassName("table-top")[0];
+        tableTop.style.display = "flex";
+
+        const tableBottom = document.getElementsByClassName("table-bottom")[0];
+        tableBottom.style.display = "flex";
+
+        const rows = document.getElementById("rows");
+        rows.style.display = "block";
+
+        document.getElementById("empty-message").style.display = "none";
     }
 
     function setFilterVariables() {
@@ -30,6 +83,15 @@ const TransferHistoryPage = (() => {
         type = document.getElementById("type").dataset.value;
         startDate = document.getElementById("startDate").value;
         endDate = document.getElementById("endDate").value;
+    }
+
+    function clearFilterVariables() {
+        accountNum = ""
+        counterparty = "";
+        type = "0";
+        startDate = "";
+        endDate = "";
+        emptyScreen = false;
     }
 
     function setFilters() {
@@ -142,52 +204,42 @@ const TransferHistoryPage = (() => {
 
     function cleanup() {
         console.log("TransferHistoryPage cleanup");
+        clearFilterVariables();
         if (socket && socket.readyState === WebSocket.OPEN) socket.close();
         socket = null;
+    }
+
+    async function reset(){
+        const accountNum = document.getElementById("account-num");
+        const counterparty = document.getElementById("counterparty");
+        const startDate = document.getElementById("startDate");
+        const endDate = document.getElementById("endDate");
+
+        accountNum.value = "";
+        counterparty.value = "";
+        document.querySelector('.custom-option[data-value="0"]').click();
+        startDate.value = "";
+        startDate.style.borderColor = "#0d0d0d46";
+        endDate.value = "";
+        endDate.style.borderColor = "#0d0d0d46";
+        emptyScreen = false;
+
+        document.getElementById("sortDate").innerText = "DESC";
+        document.getElementById("sortAmount").innerText = "MIXED";
+        sort = "dateDesc";
+
+        setFilterVariables();
+
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            if (filters() == null) return;
+            await socket.send(filters());
+        }
     }
 
     function setupResetButton() {
         const resetBtn = document.getElementById("reset");
         if (!resetBtn) return;
-        resetBtn.addEventListener("click", async () => {
-            const accountNum = document.getElementById("account-num");
-            const counterparty = document.getElementById("counterparty");
-            const startDate = document.getElementById("startDate");
-            const endDate = document.getElementById("endDate");
-            // const options = document.querySelectorAll(".custom-option");
-            // const select = document.getElementById("type-select");
-            // const trigger = select.querySelector(".custom-select-trigger");
-            // const textSpan = trigger.querySelector("span");
-            // const defaultOption = select.querySelector(
-            //     '.custom-option[data-value="0"]'
-            // );
-
-            // options.forEach((option) => option.classList.remove("selected"));
-
-            accountNum.value = "";
-            counterparty.value = "";
-            // defaultOption.classList.add("selected");
-            // textSpan.textContent = defaultOption.textContent;
-            // trigger.dataset.value = defaultOption.dataset.value;
-            // trigger.classList.remove("active");
-            // select.classList.remove("open");
-            document.querySelector('.custom-option[data-value="0"]').click();
-            startDate.value = "";
-            startDate.style.borderColor = "#0d0d0d46";
-            endDate.value = "";
-            endDate.style.borderColor = "#0d0d0d46";
-
-            document.getElementById("sortDate").innerText = "DESC";
-            document.getElementById("sortAmount").innerText = "MIXED";
-            sort = "dateDesc";
-
-            setFilterVariables();
-
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                if (filters() == null) return;
-                await socket.send(filters());
-            }
-        });
+        resetBtn.addEventListener("click", reset);
     }
 
     function setupCustomSelects() {
@@ -320,7 +372,12 @@ const TransferHistoryPage = (() => {
                 const data = JSON.parse(event.data);
                 console.log(event.data);
                 if (data.task === "update") {
-                    showRefreshButton();
+                    if(emptyScreen){
+                        if (filters() == null) return;
+                        await socket.send(filters());
+                        return;
+                    }
+                    await showRefreshButton();
                     return;
                 }
 
@@ -358,18 +415,21 @@ const TransferHistoryPage = (() => {
             container.appendChild(prev);
         }
 
-        for (
-            let i = Math.max(1, currentPage - 2);
-            i <= Math.min(totalPages, currentPage + 2);
-            i++
-        ) {
-            const btn = document.createElement("button");
-            btn.classList.add("page-button");
-            if (i === currentPage) btn.classList.add("page-active");
-            btn.textContent = i;
-            btn.onclick = () => loadTHPage(i);
-            container.appendChild(btn);
+        if(totalPages > 1) {
+            for (
+                let i = Math.max(1, currentPage - 2);
+                i <= Math.min(totalPages, currentPage + 2);
+                i++
+            ) {
+                const btn = document.createElement("button");
+                btn.classList.add("page-button");
+                if (i === currentPage) btn.classList.add("page-active");
+                btn.textContent = i;
+                btn.onclick = () => loadTHPage(i);
+                container.appendChild(btn);
+            }
         }
+
 
         if (currentPage !== totalPages) {
             const next = document.createElement("button");
@@ -424,6 +484,14 @@ const TransferHistoryPage = (() => {
     }
 
     function loadData(rows) {
+
+        if(rows && rows.length === 0) {
+            console.log("No rows found");
+            showEmptyScreen();
+            return;
+        }
+
+        hideEmptyScreen();
         const rowsContainer = document.getElementById("rows");
         rowsContainer.style.display = "none";
         rowsContainer.innerHTML = "";
@@ -494,7 +562,7 @@ const TransferHistoryPage = (() => {
         }
     }
 
-    // ===== Expose only public methods =====
-    return {init, cleanup};
-
+    const pageAPI = { init, cleanup };
+    window.TransferHistoryPage = pageAPI;
+    return pageAPI;
 })();
