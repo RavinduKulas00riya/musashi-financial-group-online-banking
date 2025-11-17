@@ -330,7 +330,7 @@
                             id="submit-icon"
                             style="margin-right: 5px"
                     ></i>
-                    <span id="submit-text">Submit</span>
+                    <span id="submit-text" style="cursor: pointer">Submit</span>
                 </button>
             </div>
         </div>

@@ -138,12 +138,12 @@
         <div class="horizontal-div" style="gap: 35px">
             <button class="horizontal-div top-btn help-btn">
                 <i class="fa fa-question-circle-o" style="font-size: 15px; margin-top: 1.6px"></i>
-                <span style="font-size: 12.7px">help?</span>
+                <span style="font-size: 12.7px; cursor: pointer">help?</span>
             </button>
             <button class="horizontal-div top-btn logout-btn"
                     onclick="location.href='${pageContext.request.contextPath}/logout'">
                 <i class="fa fa-sign-out" style="font-size: 15px; margin-top: 1.6px"></i>
-                <span style="font-size: 12.7px">Log out</span>
+                <span style="font-size: 12.7px; cursor: pointer">Log out</span>
             </button>
         </div>
     </div>

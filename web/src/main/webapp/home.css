@@ -18,6 +18,22 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+span{
+    user-select: none;
+    cursor: default;
+}
+
+h1{
+    user-select: none;
+    cursor: default;
+}
+
+img{
+    user-select: none;
+    cursor: default;
+}
+
 body {
     overflow-x: hidden;
     /* background-color: #f8f7f6; */
