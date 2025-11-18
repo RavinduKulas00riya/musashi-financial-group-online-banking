@@ -69,20 +69,20 @@ public class LoadAllHistory extends HttpServlet {
 
             JSONArray jsonArray = new JSONArray();
 
-            for(Transfer transfer : list) {
-
-                if(!Objects.equals(status, "") && !transfer.getTransactionStatus().name().equals(status)) {
-                    continue;
-                }
-
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("from", transfer.getFromAccount().getAccountNo());
-                jsonObject.put("to", transfer.getToAccount().getAccountNo());
-                jsonObject.put("amount", transfer.getAmount());
-                jsonObject.put("dateTime", formatter.format(transfer.getDateTime()));
-                jsonObject.put("status", transfer.getTransactionStatus().name());
-                jsonArray.put(jsonObject);
-            }
+//            for(Transfer transfer : list) {
+//
+//                if(!Objects.equals(status, "") && !transfer.getTransactionStatus().name().equals(status)) {
+//                    continue;
+//                }
+//
+//                JSONObject jsonObject = new JSONObject();
+//                jsonObject.put("from", transfer.getFromAccount().getAccountNo());
+//                jsonObject.put("to", transfer.getToAccount().getAccountNo());
+//                jsonObject.put("amount", transfer.getAmount());
+//                jsonObject.put("dateTime", formatter.format(transfer.getDateTime()));
+//                jsonObject.put("status", transfer.getTransactionStatus().name());
+//                jsonArray.put(jsonObject);
+//            }
 
             resp.setContentType("application/json");
             resp.getWriter().write(jsonArray.toString());

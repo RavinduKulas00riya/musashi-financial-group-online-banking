@@ -8,10 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lk.jiat.app.core.model.*;
-import lk.jiat.app.core.service.AccountService;
-import lk.jiat.app.core.service.NotificationService;
-import lk.jiat.app.core.service.TransactionService;
-import lk.jiat.app.core.service.UserService;
+import lk.jiat.app.core.service.*;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -35,10 +32,15 @@ public class Transaction extends HttpServlet {
     private TransactionService transactionService;
 
     @EJB
+    private ScheduledTransactionService scheduledTransactionService;
+
+    @EJB
     private NotificationService notificationService;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        boolean instantTransaction = true;
 
         try {
 
@@ -89,7 +91,6 @@ public class Transaction extends HttpServlet {
             boolean hasTime = time != null && !time.trim().isEmpty();
 
             LocalDateTime dateTime = LocalDateTime.now();
-            TransactionStatus transactionStatus = TransactionStatus.COMPLETED;
 
             if ((hasDate && !hasTime) || (!hasDate && hasTime)) {
                 resp.getWriter().write("Both date and time must be filled if one is provided.");
@@ -116,7 +117,7 @@ public class Transaction extends HttpServlet {
                     return;
                 }
 
-                transactionStatus = TransactionStatus.PENDING;
+                instantTransaction = false;
             }
 
             Account fromAccount = fromUser.getAccounts().get(0);
@@ -151,9 +152,12 @@ public class Transaction extends HttpServlet {
 
             User toUser = toAccount.getUser();
 
-            transactionService.createTransaction(new Transfer(dateTime, transactionStatus, amount, toAccount, fromAccount));
 
-            if (transactionStatus == TransactionStatus.PENDING) {
+
+            if (!instantTransaction) {
+
+                //scheduled transfer
+                scheduledTransactionService.createTransaction(new ScheduledTransfer(dateTime, amount, toAccount, fromAccount));
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -165,6 +169,7 @@ public class Transaction extends HttpServlet {
 
             } else {
 
+                transactionService.createTransaction(new Transfer(dateTime, amount, toAccount, fromAccount));
                 fromAccount.setBalance(fromAccount.getBalance() - amount);
                 accountService.updateAccount(fromAccount);
 

@@ -2,6 +2,7 @@ package lk.jiat.app.web.websocket;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.event.TransactionPhase;
 import jakarta.servlet.http.HttpSession;
 import jakarta.websocket.*;
 import jakarta.websocket.server.HandshakeRequest;
@@ -68,7 +69,7 @@ public class CustomerDashboard {
         }
     }
 
-    public void onCustomerDashboardUpdate(@Observes PublicEvent event) {
+    public void onCustomerDashboardUpdate(@Observes(during = TransactionPhase.AFTER_SUCCESS) PublicEvent event) {
         sendToUser(event.getUserId());
     }
 

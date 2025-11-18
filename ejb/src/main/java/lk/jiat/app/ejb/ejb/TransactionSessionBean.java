@@ -67,14 +67,14 @@ public class TransactionSessionBean implements TransactionService {
     public Transfer getLatestReceived(Account customer) {
         try {
             return em.createNamedQuery("Transfer.findLatestReceived", Transfer.class)
-                    .setParameter("customer", customer).setParameter("status",TransactionStatus.COMPLETED).setMaxResults(1).getSingleResult();
+                    .setParameter("customer", customer).setMaxResults(1).getSingleResult();
         }catch (NoResultException e){
             return null;
         }
     }
 
     @Override
-    public CustomerTransactionHistoryTableDTO customerTransactionHistoryTable(Account account, TransactionStatus status, LocalDate start,
+    public CustomerTransactionHistoryTableDTO customerTransactionHistoryTable(Account account, LocalDate start,
                                                                               LocalDate end, String sortBy, int page, int pageSize,
                                                                               String accountNum, String counterparty, String type) {
         try {
@@ -82,8 +82,7 @@ public class TransactionSessionBean implements TransactionService {
             LocalDateTime startDate = start != null ? start.atStartOfDay() : null;
             LocalDateTime endDate = end != null ? end.plusDays(1).atStartOfDay() : null;
             String baseQuery = "SELECT t FROM Transfer t " +
-                    "WHERE t.transactionStatus = :status " +
-                    "AND (t.toAccount = :account OR t.fromAccount = :account) " +
+                    "WHERE (t.toAccount = :account OR t.fromAccount = :account) " +
                     "AND (:startDate IS NULL OR t.dateTime >= :startDate) " +
                     "AND (:endDate IS NULL OR t.dateTime <= :endDate) ";
 
@@ -127,7 +126,6 @@ public class TransactionSessionBean implements TransactionService {
 
             TypedQuery<Transfer> query = em.createQuery(baseQuery + orderClause, Transfer.class);
 
-            query.setParameter("status", status);
             query.setParameter("account", account);
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
@@ -155,17 +153,15 @@ public class TransactionSessionBean implements TransactionService {
     }
 
     @Override
-    public long getCustomerTransactionHistoryTableRowCount(Account account, TransactionStatus status, LocalDate start, LocalDate end) {
+    public long getCustomerTransactionHistoryTableRowCount(Account account, LocalDate start, LocalDate end) {
         LocalDateTime startDate = start != null ? start.atStartOfDay() : null;
         LocalDateTime endDate = end != null ? end.plusDays(1).atStartOfDay() : null;
         String countQuery = "SELECT COUNT(t) FROM Transfer t " +
-                "WHERE t.transactionStatus = :status " +
-                "AND (t.toAccount = :account OR t.fromAccount = :account) " +
+                "WHERE (t.toAccount = :account OR t.fromAccount = :account) " +
                 "AND (:startDate IS NULL OR t.dateTime >= :startDate) " +
                 "AND (:endDate IS NULL OR t.dateTime <= :endDate)";
 
         TypedQuery<Long> query = em.createQuery(countQuery, Long.class);
-        query.setParameter("status", status);
         query.setParameter("account", account);
         query.setParameter("startDate", startDate);
         query.setParameter("endDate", endDate);
@@ -177,7 +173,7 @@ public class TransactionSessionBean implements TransactionService {
     public Transfer getLatestSent(Account customer) {
         try {
             return em.createNamedQuery("Transfer.findLatestSent", Transfer.class)
-                    .setParameter("customer", customer).setParameter("status",TransactionStatus.COMPLETED).setMaxResults(1).getSingleResult();
+                    .setParameter("customer", customer).setMaxResults(1).getSingleResult();
         }catch (NoResultException e){
             return null;
         }
@@ -195,26 +191,16 @@ public class TransactionSessionBean implements TransactionService {
     }
 
     @Override
-    public List<Transfer> getTransactionsByStatus(TransactionStatus status) {
-        try {
-            return em.createNamedQuery("Transfer.findTransactionsByStatus", Transfer.class)
-                    .setParameter("status", status).getResultList();
-        }catch (NoResultException e){
-            return List.of();
-        }
-    }
-
-    @Override
     public void updateTransaction(Transfer transfer) {
         em.merge(transfer);
-        DecimalFormat df = new DecimalFormat("#0.00");
-        notificationService.sendNotification(new Notification(
-                "$"+df.format(transfer.getAmount())+" has been transferred to you by "+transfer.getFromAccount().getAccountNo(),
-                transfer.getToAccount().getUser(),
-                transfer.getDateTime()));
-        notificationService.sendNotification(new Notification(
-                "The scheduled transaction to send $"+df.format(transfer.getAmount())+" to "+transfer.getToAccount().getAccountNo()+" has been completed",
-                transfer.getFromAccount().getUser(),
-                transfer.getDateTime()));
+//        DecimalFormat df = new DecimalFormat("#0.00");
+//        notificationService.sendNotification(new Notification(
+//                "$"+df.format(transfer.getAmount())+" has been transferred to you by "+transfer.getFromAccount().getAccountNo(),
+//                transfer.getToAccount().getUser(),
+//                transfer.getDateTime()));
+//        notificationService.sendNotification(new Notification(
+//                "The scheduled transaction to send $"+df.format(transfer.getAmount())+" to "+transfer.getToAccount().getAccountNo()+" has been completed",
+//                transfer.getFromAccount().getUser(),
+//                transfer.getDateTime()));
     }
 }

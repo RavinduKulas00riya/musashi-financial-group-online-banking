@@ -2,6 +2,7 @@ package lk.jiat.app.web.websocket;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.event.TransactionPhase;
 import jakarta.servlet.http.HttpSession;
 import jakarta.websocket.*;
 import jakarta.websocket.server.HandshakeRequest;
@@ -76,7 +77,7 @@ public class CustomerTransactionHistory {
         }
     }
 
-    public void onCustomerTransactionHistoryUpdate(@Observes PublicEvent event) {
+    public void onCustomerTransactionHistoryUpdate(@Observes(during = TransactionPhase.AFTER_SUCCESS) PublicEvent event) {
 
         Set<Session> sessions = UserSessions.getUserSessions(event.getUserId(), Page.CUSTOMER_HISTORY);
         sessions.forEach(session -> {
@@ -164,7 +165,7 @@ public class CustomerTransactionHistory {
 
             JSONArray rows = new JSONArray();
 
-            CustomerTransactionHistoryTableDTO dto = transactionService.customerTransactionHistoryTable(account, TransactionStatus.COMPLETED, formattedStartDate, formattedEndDate, sort, page, 7, accountNumber, counterparty, type);
+            CustomerTransactionHistoryTableDTO dto = transactionService.customerTransactionHistoryTable(account, formattedStartDate, formattedEndDate, sort, page, 7, accountNumber, counterparty, type);
             List<Transfer> transactionList = dto.getList();
             long totalRows = dto.getTotalRowCount();
             for (Transfer transaction : transactionList) {

@@ -378,6 +378,12 @@
                         return;
                     }
                     await showRefreshButton();
+                    if (typeof window.renderNotifications === "function") {
+                        console.log("TH render notifications");
+                        await window.renderNotifications();
+                    } else {
+                        throw new Error("window.renderNotifications is not defined");
+                    }
                     return;
                 }
 

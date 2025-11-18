@@ -24,6 +24,9 @@ public class TimerSessionBean implements TimerService {
     private InterestService interestService;
 
     @EJB
+    private ScheduledTransactionService scheduledTransactionService;
+
+    @EJB
     private TransactionService transactionService;
 
     @EJB
@@ -37,7 +40,7 @@ public class TimerSessionBean implements TimerService {
 
         try {
 
-            List<Transfer> pendingTransactions = transactionService.getTransactionsByStatus(TransactionStatus.PENDING);
+            List<ScheduledTransfer> pendingTransactions = scheduledTransactionService.getTransactionsByStatus(ScheduledTransactionStatus.PENDING);
             pendingTransactions.forEach(t -> {
 
                 if (t.getDateTime().isBefore(LocalDateTime.now())) {
@@ -49,8 +52,18 @@ public class TimerSessionBean implements TimerService {
                     to.setBalance(to.getBalance() + amount);
                     accountService.updateAccount(from);
                     accountService.updateAccount(to);
-                    t.setTransactionStatus(TransactionStatus.COMPLETED);
-                    transactionService.updateTransaction(t);
+                    t.setStatus(ScheduledTransactionStatus.COMPLETED);
+                    scheduledTransactionService.updateTransaction(t);
+                    transactionService.createTransaction(new Transfer(t.getDateTime(),t.getAmount(),t.getToAccount(),t.getFromAccount()));
+                }
+            });
+
+            List<ScheduledTransfer> pausedTransactions = scheduledTransactionService.getTransactionsByStatus(ScheduledTransactionStatus.PAUSED);
+            pausedTransactions.forEach(t -> {
+
+                if (t.getDateTime().isBefore(LocalDateTime.now())) {
+                    t.setStatus(ScheduledTransactionStatus.CANCELED);
+                    scheduledTransactionService.updateTransaction(t);
                 }
             });
         } catch (Exception e) {
