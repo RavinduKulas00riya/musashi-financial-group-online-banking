@@ -4,9 +4,10 @@
         <jta-data-source>jiat_jdbc</jta-data-source>
         <class>lk.jiat.app.core.model.User</class>
         <class>lk.jiat.app.core.model.Account</class>
-        <class>lk.jiat.app.core.model.Interest</class>
         <class>lk.jiat.app.core.model.Notification</class>
         <class>lk.jiat.app.core.model.Transfer</class>
+        <class>lk.jiat.app.core.model.ScheduledTransfer</class>
+        <class>lk.jiat.app.core.model.DailyBalance</class>
         <shared-cache-mode>NONE</shared-cache-mode>
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="create"/>

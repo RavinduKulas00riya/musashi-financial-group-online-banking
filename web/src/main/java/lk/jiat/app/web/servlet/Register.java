@@ -69,7 +69,7 @@ public class Register extends HttpServlet {
                             user.setMobile(mobile);
 
                             int number = ThreadLocalRandom.current().nextInt(100_000_000, 999_999_999);
-                            Account account = new Account(String.valueOf(number), Double.valueOf(amount), user, LocalDateTime.now(), null);
+                            Account account = new Account(String.valueOf(number), Double.valueOf(amount), user, LocalDateTime.now());
                             user.setAccounts(List.of(account));
                             session.setAttribute("temp_user", user);
 

@@ -4,6 +4,9 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Schedule;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import lk.jiat.app.core.event.PublicEvent;
 import lk.jiat.app.core.model.*;
 import lk.jiat.app.core.service.*;
 
@@ -21,9 +24,6 @@ public class TimerSessionBean implements TimerService {
     private AccountService accountService;
 
     @EJB
-    private InterestService interestService;
-
-    @EJB
     private ScheduledTransactionService scheduledTransactionService;
 
     @EJB
@@ -31,6 +31,9 @@ public class TimerSessionBean implements TimerService {
 
     @EJB
     private DailyBalanceService dailyBalanceService;
+
+    @Inject
+    private Event<PublicEvent> publicEvent;
 
     private final Double interestRate = 0.001;
 
@@ -93,8 +96,9 @@ public class TimerSessionBean implements TimerService {
 
                 account.setBalance(finalBalance);
                 accountService.updateAccount(account);
-                interestService.addInterest(new Interest(finalBalance, account, LocalDateTime.now(), formattedAmount));
-
+                Account interestAccount = accountService.getAccount("000000000");
+                transactionService.createTransaction(new Transfer(LocalDateTime.now(),formattedAmount,account,interestAccount));
+                publicEvent.fire(new PublicEvent(account.getUser().getId()));
             });
         }catch (Exception e){
             System.out.println(e);

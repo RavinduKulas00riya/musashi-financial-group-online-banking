@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
         @NamedQuery(name = "Transfer.findAll", query = "select t from Transfer t order by t.dateTime DESC"),
         @NamedQuery(
                 name = "Transfer.findLatestReceived",
-                query = "select t from Transfer t where t.toAccount=:customer order by t.dateTime DESC"
+                query = "select t from Transfer t where t.toAccount=:customer and not t.fromAccount.id=1 order by t.dateTime DESC"
         ),
         @NamedQuery(
                 name = "Transfer.findLatestSent",

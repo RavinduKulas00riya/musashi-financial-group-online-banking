@@ -25,12 +25,11 @@ public class Account implements Serializable{
 
     private Double balance;
 
-    public Account(String accountNo, Double balance, User user, LocalDateTime createdDateTime, List<Interest> interests) {
+    public Account(String accountNo, Double balance, User user, LocalDateTime createdDateTime) {
         this.accountNo = accountNo;
         this.balance = balance;
         this.user = user;
         this.createdDateTime = createdDateTime;
-        this.interests = interests;
     }
 
     public Account() {
@@ -45,14 +44,6 @@ public class Account implements Serializable{
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public List<Interest> getInterests() {
-        return interests;
-    }
-
-    public void setInterests(List<Interest> interests) {
-        this.interests = interests;
     }
 
     public LocalDateTime getCreatedDateTime() {
@@ -102,8 +93,8 @@ public class Account implements Serializable{
     @Column(name = "created_date_time")
     private LocalDateTime createdDateTime;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Interest> interests;
+//    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    private List<Interest> interests;
 
     // Getters and setters
 }
