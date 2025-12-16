@@ -70,8 +70,8 @@
             <span>Transfer History</span>
         </button>
         <button class="navigator inactive-navigator"
-                onclick="loadPage('scheduled_operations')"
-                id="scheduled_operations">
+                onclick="loadPage('timely_operations')"
+                id="timely_operations">
             <img
                     src="${pageContext.request.contextPath}/images/stopwatch.png"
                     width="16"
@@ -142,7 +142,7 @@
             </button>
             <button class="horizontal-div top-btn logout-btn"
                     onclick="location.href='${pageContext.request.contextPath}/logout'">
-                <i class="fa fa-sign-out" style="font-size: 15px; margin-top: 1.6px"></i>
+                <i class="fas fa-sign-out-alt" style="font-size: 15px; margin-top: 1.6px"></i>
                 <span style="font-size: 12.7px; cursor: pointer">Log out</span>
             </button>
         </div>

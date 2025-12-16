@@ -61,6 +61,8 @@ async function loadPage(page) {
                 await window.DashboardPage.cleanup();
             } else if (currentPage === "transfer_history" && window.TransferHistoryPage?.cleanup) {
                 await window.TransferHistoryPage.cleanup();
+            } else if (currentPage === "timely_operations" && window.TimelyOperationsPage?.cleanup) {
+                await window.TimelyOperationsPage.cleanup();
             }
         }
 
@@ -91,6 +93,8 @@ async function loadPage(page) {
             window.DashboardPage.init();
         } else if (page === "transfer_history" && window.TransferHistoryPage?.init) {
             window.TransferHistoryPage.init();
+        } else if (page === "timely_operations" && window.TimelyOperationsPage?.init) {
+            window.TimelyOperationsPage.init();
         }
 
         const buttons = document.querySelectorAll(".navigator");

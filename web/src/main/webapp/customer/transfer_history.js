@@ -508,8 +508,28 @@
 
             const col1 = document.createElement("div");
             col1.className = "table-row-div";
-            col1.innerHTML = `<span>${row.datetime}</span>`;
+
+            const span = document.createElement("span");
+
+            span.style.display = "inline-flex";
+            span.style.alignItems = "center";
+            span.style.gap = "8px";
+
+            span.innerHTML = row.datetime.replace(
+                ",",
+                ' <i class="fa fa-circle" aria-hidden="true"></i> '
+            );
+
+            const icon = span.querySelector("i");
+            if (icon) {
+                icon.style.fontSize = "4px";
+                icon.style.lineHeight = "1";
+                icon.style.display = "inline-block";
+            }
+
+            col1.appendChild(span);
             div.appendChild(col1);
+
 
             const accountNumber = row.accountNumber;
             const col2 = document.createElement("div");

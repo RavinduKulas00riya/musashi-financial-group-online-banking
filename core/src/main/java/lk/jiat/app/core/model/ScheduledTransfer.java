@@ -43,7 +43,7 @@ public class ScheduledTransfer implements Serializable {
     @Enumerated(EnumType.STRING)
     private ScheduledTransactionStatus status = ScheduledTransactionStatus.PENDING;
 
-    private LocalDate created_datetime = LocalDate.now();
+    private LocalDateTime created_datetime = LocalDateTime.now();
 
     public ScheduledTransfer(LocalDateTime dateTime, Double amount, Account toAccount, Account fromAccount) {
         this.dateTime = dateTime;
@@ -96,11 +96,11 @@ public class ScheduledTransfer implements Serializable {
         this.dateTime = dateTime;
     }
 
-    public LocalDate getCreated_datetime() {
+    public LocalDateTime getCreated_datetime() {
         return created_datetime;
     }
 
-    public void setCreated_datetime(LocalDate created_datetime) {
+    public void setCreated_datetime(LocalDateTime created_datetime) {
         this.created_datetime = created_datetime;
     }
 }

@@ -1,0 +1,469 @@
+.status-btn {
+    font-family: bold;
+    font-size: 13px;
+    padding: 6px 0px;
+    width: 120px;
+    border-radius: 0.5rem;
+}
+
+.pending {
+    cursor: pointer;
+    color: #146A4B;
+    background-color: #E3F6EF;
+    border: 1px solid rgba(20, 106, 75, 0.15);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.pending:hover {
+    background-color: #d4e6df;
+    box-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.08),
+            0 3px 9px rgba(0, 0, 0, 0.08);
+}
+
+.pending:active {
+    background-color: #cddfd8;
+    box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.12);
+    transform: translateY(1px);
+}
+
+.paused {
+    cursor: pointer;
+    color: #A64A19;
+    background-color: #FFF4EC;
+    border: 1px solid rgba(166, 74, 25, 0.18);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.paused:hover {
+    background-color: #F2E6DD;
+    box-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.08),
+            0 3px 9px rgba(0, 0, 0, 0.08);
+}
+
+.paused:active {
+    background-color: #EBD9CC;
+    box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.12);
+    transform: translateY(1px);
+}
+
+.table-top-btn {
+    background-color: #00000009;
+    color: #212529;
+    font-family: medium;
+    border-radius: 0.4rem;
+    font-size: 13px;
+    cursor: pointer;
+    height: 30px;
+    width: 120px;
+    border: 1px solid #21252914;
+    transition: all 0.2s ease; /* smooth hover/active transition */
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+}
+
+/* Hover: slightly lighter background and lift */
+.table-top-btn:hover {
+    background: #0000001b;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* Active (click): darker background and press down */
+.table-top-btn:active {
+    background: #00000025;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.filter span {
+    font-family: bold;
+    font-size: 12.5px;
+}
+
+.filter i {
+    font-size: 12px;
+    align-self: center;
+    color: #00000064;
+}
+
+.filter input,
+.filter select {
+    font-size: 13px;
+    font-family: regular;
+    padding: 0px 5px;
+    cursor: default;
+    height: 30px;
+    width: 140px;
+    border: 2px solid #0d0d0d46;
+    border-radius: 0.4rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.filter-status-btn-div {
+    gap: 22px;
+    padding-top: 20px;
+}
+
+.filter-status-btn-div button {
+    font-family: medium;
+    border-radius: 0.5rem;
+    padding: 7px 15px;
+}
+
+.active-filter-status {
+    border: 2px solid #000000af;
+    color: #000000;
+    pointer-events: none;
+}
+
+.inactive-filter-status {
+    border: 1px solid transparent;
+    background-color: #0000000a;
+    color: #00000096;
+    cursor: pointer;
+}
+
+.inactive-filter-status:hover {
+    background-color: #00000012;
+}
+
+.reset-btn {
+    background-color: #00000009;
+    color: #212529;
+    font-family: medium;
+    border-radius: 0.4rem;
+    font-size: 13px;
+    border: transparent;
+    cursor: pointer;
+    height: 30px;
+    width: 140px;
+    border: 1px solid #21252914;
+    transition: all 0.2s ease;
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+}
+
+.reset-btn:hover {
+    background: #0000001b;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
+}
+
+.reset-btn:active {
+    background: #00000025;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn {
+    background: #1875ff;
+    color: #fff;
+    font-family: medium;
+    font-size: 13px;
+    height: 30px;
+    width: 140px;
+    border: none;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  */
+}
+
+.filter-btn:hover {
+    background: #0f61d1;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.filter-btn:active {
+    background: #0c4aad;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.to_overlay {
+    background-color: #00000032;
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.to_overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.filter-div {
+    background-color: white;
+    border-radius: 20px;
+    z-index: 3;
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.filter-div-title {
+    font-family: regular;
+    font-size: 18px;
+    margin: 16px 25px;
+}
+
+.filter-div-content{
+    padding: 10px 80px 60px 80px;
+    gap: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-div.show {
+    display: flex;
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: all;
+}
+
+.sort-div {
+    background-color: white;
+    border-radius: 20px;
+    z-index: 4;
+    width: 400px;
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.sort-div-content{
+    padding: 10px 60px 40px 60px;
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sort-sub-div span {
+    font-family: medium;
+    font-size: 14px;
+}
+
+.sort-div.show {
+    display: flex;
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: all;
+}
+
+.sort-sub-div {
+    justify-content: space-between;
+    padding-bottom: 20px;
+}
+
+.sort-sub-div button {
+    font-size: 10px;
+    font-family: bold;
+    border-radius: 0.5rem;
+    padding: 7px 15px;
+    border: 1px solid transparent;
+}
+
+.active-sort {
+    background: #000000c8;
+    color: white;
+    pointer-events: none;
+}
+
+.inactive-sort {
+    background-color: #0000000c;
+    color: #000000c1;
+    cursor: pointer;
+}
+
+.inactive-sort:hover {
+    background-color: #00000014;
+}
+
+
+.table-top {
+    height: 40px;
+    font-family: bold;
+    border: transparent;
+    background-color: #00000009;
+    border-radius: 0.4rem;
+    align-items: center;
+    padding: 0px 12px;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.table-bottom {
+    height: 30px;
+    font-family: bold;
+    align-items: center;
+    margin-top: 15px;
+    gap: 5px;
+}
+
+.table-bottom button {
+    background-color: white;
+    height: 30px;
+    width: 30px;
+    font-family: bold;
+    border-width: 2px;
+    border-style: solid;
+    border-color: white;
+    border-radius: 0.4rem;
+    font-size: 13px;
+    cursor: pointer;
+    color: #000;
+}
+
+.page-button {
+    transition: border-color 0.1s ease;
+}
+
+.page-button:hover {
+    border-color: #0d0d0d9a;
+}
+
+.page-button.page-active {
+    border-color: #0d0d0d9a;
+}
+
+.table-top div {
+    flex: 1;
+    display: flex;
+    gap: 6px;
+}
+
+.table-row {
+    font-family: medium;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #00000019;
+    align-items: center;
+    padding: 0px 12px;
+    font-size: 13px;
+    overflow: hidden;
+}
+
+.table-row-div {
+    flex: 1;
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    overflow: hidden;
+    position: relative;
+    min-height: 62px;
+}
+
+.copy-icon {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    font-size: 16px;
+}
+
+.copy-icon:hover {
+    color: #007bff;
+}
+
+/* Tooltip */
+.copy-icon::after {
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    font-size: 11.5px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+}
+
+/* Show tooltip on hover */
+.copy-icon:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(2px);
+}
+/* .table-row-div i{
+  cursor: pointer;
+} */
+
+.mask {
+    font-family: "Courier New", Courier, monospace;
+    font-weight: bold;
+}
+
+.refresh-msg {
+    position: absolute;
+    top: 40px; /* adjust based on input height + spacing */
+    left: -3px;
+    background-color: white;
+    color: #000;
+    font-size: 12px;
+    font-family: regular;
+    padding: 5px 8px;
+    border: 1px solid #00000025;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.refresh-msg.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.refresh-btn {
+    background-color: #00000009;
+    color: #212529;
+    font-family: medium;
+    border-radius: 0.4rem;
+    font-size: 13px;
+    border: transparent;
+    display: none;
+    cursor: pointer;
+    height: 30px;
+    width: 120px;
+    border: 1px solid #21252914;
+    transition: all 0.2s ease; /* smooth hover/active transition */
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+}
+
+.refresh-btn.show{
+    display: block;
+ }
+
+/* Hover: slightly lighter background and lift */
+.refresh-btn:hover {
+    background: #0000001b;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* Active (click): darker background and press down */
+.refresh-btn:active {
+    background: #00000025;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.refresh-btn-div {
+    display: flex;
+    align-items: end;
+    position: relative;
+}
