@@ -153,23 +153,6 @@ public class TransactionSessionBean implements TransactionService {
     }
 
     @Override
-    public long getCustomerTransactionHistoryTableRowCount(Account account, LocalDate start, LocalDate end) {
-        LocalDateTime startDate = start != null ? start.atStartOfDay() : null;
-        LocalDateTime endDate = end != null ? end.plusDays(1).atStartOfDay() : null;
-        String countQuery = "SELECT COUNT(t) FROM Transfer t " +
-                "WHERE (t.toAccount = :account OR t.fromAccount = :account) " +
-                "AND (:startDate IS NULL OR t.dateTime >= :startDate) " +
-                "AND (:endDate IS NULL OR t.dateTime <= :endDate)";
-
-        TypedQuery<Long> query = em.createQuery(countQuery, Long.class);
-        query.setParameter("account", account);
-        query.setParameter("startDate", startDate);
-        query.setParameter("endDate", endDate);
-
-        return query.getSingleResult();
-    }
-
-    @Override
     public Transfer getLatestSent(Account customer) {
         try {
             return em.createNamedQuery("Transfer.findLatestSent", Transfer.class)

@@ -28,7 +28,6 @@
           width: 100%;
           display: flex;
           justify-content: space-between;
-          padding-right: 20px;
         ">
         <div style="display: flex; gap: 20px">
             <div class="center-div" style="
@@ -40,7 +39,7 @@
             </div>
             <div class="vertical-div" style="gap: 10px">
                 <span style="font-size: 13px; font-family: medium; color: #555555">Total Value Pending</span>
-                <span style="font-size: 25px; font-family: regular">USD 12,320.33</span>
+                <span style="font-size: 25px; font-family: regular" id="totalAmount">USD 12,320.33</span>
             </div>
         </div>
         <div style="display: flex; gap: 20px">
@@ -53,7 +52,7 @@
             </div>
             <div class="vertical-div" style="gap: 10px">
                 <span style="font-size: 13px; font-family: medium; color: #555555">Total Pending Transfers</span>
-                <span style="font-size: 25px; font-family: regular">12</span>
+                <span style="font-size: 25px; font-family: regular" id="totalCount">12</span>
             </div>
         </div>
         <div style="display: flex; gap: 20px">
@@ -74,6 +73,7 @@
                 align-items: center;
                 gap: 8px;
               "
+                        id="nextScheduled"
                 >Dec 12, 2025
               <i
                       class="fas fa-circle"
@@ -93,7 +93,7 @@
             </div>
             <div class="vertical-div" style="gap: 10px">
                 <span style="font-size: 13px; font-family: medium; color: #555555">Next Daily Interest</span>
-                <span style="font-size: 25px; font-family: regular">10:25:12</span>
+                <span style="font-size: 25px; font-family: regular" id="midnight-timer">10:25:12</span>
             </div>
         </div>
     </div>
@@ -137,7 +137,7 @@
             </div>
         </div>
 
-        <div class="rows">
+        <div id="rows">
 
             <div class="horizontal-div table-row">
                 <div class="table-row-div">
@@ -155,72 +155,8 @@
                     </div>
                 </div>
                 <div class="table-row-div">
-                    <i class="fa fa-clone copy-icon" aria-hidden="true" data-tooltip="Copy"></i>
-                    <span><span class="mask">*******</span>219</span>
-                </div>
-                <div class="table-row-div">
-                    <span>Tony Soprano</span>
-                </div>
-                <div class="table-row-div">
-                    <div class="amount">97.30</div>
-                </div>
-                <div class="table-row-div">
-                    <button class="status-btn pending">
-                        <i class="fas fa-play" style="margin-right: 6px" aria-hidden="true"></i>Pending
-                    </button>
-                </div>
-            </div>
-
-            <div class="horizontal-div table-row">
-                <div class="table-row-div">
-                    <div class="center-div" style="gap: 6px">
-                        <span>24 Dec 2025</span>
-                        <i class="fas fa-circle" style="font-size: 4px" aria-hidden="true"></i>
-                        <span>23:45</span>
-                    </div>
-                </div>
-                <div class="table-row-div">
-                    <div class="center-div" style="gap: 6px">
-                        <span>26 Nov 2025</span>
-                        <i class="fas fa-circle" style="font-size: 4px" aria-hidden="true"></i>
-                        <span>10:45:12</span>
-                    </div>
-                </div>
-                <div class="table-row-div">
-                    <i class="fa fa-clone copy-icon" aria-hidden="true" data-tooltip="Copy"></i>
-                    <span><span class="mask">*******</span>219</span>
-                </div>
-                <div class="table-row-div">
-                    <span>Tony Soprano</span>
-                </div>
-                <div class="table-row-div">
-                    <div class="amount">97.30</div>
-                </div>
-                <div class="table-row-div">
-                    <button class="status-btn pending">
-                        <i class="fas fa-play" style="margin-right: 6px" aria-hidden="true"></i>Pending
-                    </button>
-                </div>
-            </div>
-
-            <div class="horizontal-div table-row">
-                <div class="table-row-div">
-                    <div class="center-div" style="gap: 6px">
-                        <span>24 Dec 2025</span>
-                        <i class="fas fa-circle" style="font-size: 4px" aria-hidden="true"></i>
-                        <span>23:45</span>
-                    </div>
-                </div>
-                <div class="table-row-div">
-                    <div class="center-div" style="gap: 6px">
-                        <span>26 Nov 2025</span>
-                        <i class="fas fa-circle" style="font-size: 4px" aria-hidden="true"></i>
-                        <span>10:45:12</span>
-                    </div>
-                </div>
-                <div class="table-row-div">
-                    <i class="fa fa-clone copy-icon" aria-hidden="true" data-tooltip="Copy"></i>
-                    <span><span class="mask">*******</span>219</span>
+                    <i class="fa fa-clone copy-icon" aria-hidden="true" data-tooltip="362517537"></i>
+                    <span><span class="mask">*******</span>537</span>
                 </div>
                 <div class="table-row-div">
                     <span>Tony Soprano</span>
@@ -245,7 +181,7 @@
             <button class="page-button">4</button>
             <button class="page-button page-active">5</button>
             <button class="page-button">6</button>
-            <button style="cursor: default" disabled>...</button>
+            <button style="cursor: default;" disabled>...</button>
             <button class="page-button">12</button>
             <button class="next">
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
@@ -270,14 +206,14 @@
                 >
                     <input
                             type="text"
-                            id="createdStart"
+                            id="scheduledStart"
                             placeholder="DD/MM/YYYY"
                             required
                     />
                     <i class="fa fa-minus" aria-hidden="true"></i>
                     <input
                             type="text"
-                            id="createdEnd"
+                            id="scheduledEnd"
                             placeholder="DD/MM/YYYY"
                             required
                     />
@@ -293,14 +229,14 @@
                 >
                     <input
                             type="text"
-                            id="deliveryStart"
+                            id="createdStart"
                             placeholder="DD/MM/YYYY"
                             required
                     />
                     <i class="fa fa-minus" aria-hidden="true"></i>
                     <input
                             type="text"
-                            id="deliveryEnd"
+                            id="createdEnd"
                             placeholder="DD/MM/YYYY"
                             required
                     />
@@ -329,9 +265,9 @@
             </div>
 
             <div class="horizontal-div filter-status-btn-div">
-                <button class="active-filter-status">All</button>
-                <button class="inactive-filter-status">Pending</button>
-                <button class="inactive-filter-status">Paused</button>
+                <button class="active-filter-status" id="status-all">All</button>
+                <button class="inactive-filter-status" id="status-pending">Pending</button>
+                <button class="inactive-filter-status" id="status-paused">Paused</button>
             </div>
 
             <div class="horizontal-div" style="gap: 40px">
@@ -349,22 +285,22 @@
             <div class="center-div sort-sub-div">
                 <span>Scheduled Time</span>
                 <div class="center-div" style="gap: 20px">
-                    <button class="active-sort">DESC</button>
-                    <button class="inactive-sort">ASC</button>
+                    <button class="active-sort" id="scheduledDesc">DESC</button>
+                    <button class="inactive-sort" id="scheduledAsc">ASC</button>
                 </div>
             </div>
             <div class="center-div sort-sub-div">
                 <span>Created Time</span>
                 <div class="center-div" style="gap: 20px">
-                    <button class="inactive-sort">DESC</button>
-                    <button class="inactive-sort">ASC</button>
+                    <button class="inactive-sort" id="createdDesc">DESC</button>
+                    <button class="inactive-sort" id="createdAsc">ASC</button>
                 </div>
             </div>
             <div class="center-div sort-sub-div">
                 <span>Amount</span>
                 <div class="center-div" style="gap: 20px">
-                    <button class="inactive-sort">DESC</button>
-                    <button class="inactive-sort">ASC</button>
+                    <button class="inactive-sort" id="amountDesc">DESC</button>
+                    <button class="inactive-sort" id="amountAsc">ASC</button>
                 </div>
             </div>
         </div>

@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @ServerEndpoint(
         value = "/customerTransactionHistory",
-        configurator = CustomerTransactionHistory.Configurator.class
+        configurator = Configurator.class
 )
 @ApplicationScoped
 public class CustomerTransactionHistory {
@@ -220,17 +220,4 @@ public class CustomerTransactionHistory {
         }
     }
 
-
-    // === Inner class to link HttpSession ===
-    public static class Configurator extends ServerEndpointConfig.Configurator {
-        @Override
-        public void modifyHandshake(ServerEndpointConfig config,
-                                    HandshakeRequest request,
-                                    HandshakeResponse response) {
-            HttpSession httpSession = (HttpSession) request.getHttpSession();
-            if (httpSession != null) {
-                config.getUserProperties().put("httpSession", httpSession);
-            }
-        }
-    }
 }

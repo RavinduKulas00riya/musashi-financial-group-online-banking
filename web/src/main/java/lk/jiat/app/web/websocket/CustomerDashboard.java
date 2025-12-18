@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @ServerEndpoint(
         value = "/customerDashboard",
-        configurator = CustomerDashboard.Configurator.class
+        configurator = Configurator.class
 )
 @ApplicationScoped
 public class CustomerDashboard {
@@ -137,16 +137,4 @@ public class CustomerDashboard {
         }
     }
 
-// === Inner class to link HttpSession ===
-public static class Configurator extends ServerEndpointConfig.Configurator {
-    @Override
-    public void modifyHandshake(ServerEndpointConfig config,
-                                HandshakeRequest request,
-                                HandshakeResponse response) {
-        HttpSession httpSession = (HttpSession) request.getHttpSession();
-        if (httpSession != null) {
-            config.getUserProperties().put("httpSession", httpSession);
-        }
-    }
-}
 }

@@ -20,5 +20,4 @@ public interface TransactionService {
     Transfer getLatestSent(Account customer);
     Transfer getLatestReceived(Account customer);
     CustomerTransactionHistoryTableDTO customerTransactionHistoryTable(Account account, LocalDate start, LocalDate end, String sortBy, int page, int pageSize, String accountNum, String counterparty, String type);
-    long getCustomerTransactionHistoryTableRowCount(Account account,LocalDate start, LocalDate end);
 }

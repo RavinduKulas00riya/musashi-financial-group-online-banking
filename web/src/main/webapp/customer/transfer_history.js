@@ -20,7 +20,6 @@
         setupResetButton();
         setupCustomSelects();
         setupDateInputs();
-        setupCopyButtons();
         connectWebSocket();
         setupSortingAmountBtn();
         setupSortingDateBtn();
