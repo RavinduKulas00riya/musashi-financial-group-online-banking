@@ -3,6 +3,8 @@
         return window.TimelyOperationsPage;
     }
 
+    let socket = null;
+
     let accountNum = "";
     let counterparty = "";
     let scheduledStart = "";
@@ -28,41 +30,42 @@
 
     function renderPagination(currentPage, totalPages) {
 
-        console.log(currentPage, totalPages);
-
         const container = document.querySelector(".table-bottom");
         container.innerHTML = "";
 
-        if (currentPage !== 1) {
-            const prev = document.createElement("button");
-            prev.classList.add("prev");
-            prev.innerHTML = `<i class="fa fa-arrow-left"></i>`;
-            prev.onclick = () => loadTHPage(currentPage - 1);
-            container.appendChild(prev);
-        }
+        if(totalPages > 0) {
 
-        if(totalPages > 1) {
-            for (
-                let i = Math.max(1, currentPage - 2);
-                i <= Math.min(totalPages, currentPage + 2);
-                i++
-            ) {
-                const btn = document.createElement("button");
-                btn.classList.add("page-button");
-                if (i === currentPage) btn.classList.add("page-active");
-                btn.textContent = i;
-                btn.onclick = () => loadTHPage(i);
-                container.appendChild(btn);
+            if (currentPage !== 1) {
+                const prev = document.createElement("button");
+                prev.classList.add("prev");
+                prev.innerHTML = `<i class="fa fa-arrow-left"></i>`;
+                prev.onclick = () => loadTHPage(currentPage - 1);
+                container.appendChild(prev);
             }
-        }
+
+            if (totalPages > 1) {
+                for (
+                    let i = Math.max(1, currentPage - 2);
+                    i <= Math.min(totalPages, currentPage + 2);
+                    i++
+                ) {
+                    const btn = document.createElement("button");
+                    btn.classList.add("page-button");
+                    if (i === currentPage) btn.classList.add("page-active");
+                    btn.textContent = i;
+                    btn.onclick = () => loadTHPage(i);
+                    container.appendChild(btn);
+                }
+            }
 
 
-        if (currentPage !== totalPages) {
-            const next = document.createElement("button");
-            next.classList.add("next");
-            next.innerHTML = `<i class="fa fa-arrow-right"></i>`;
-            next.onclick = () => loadTHPage(currentPage + 1);
-            container.appendChild(next);
+            if (currentPage !== totalPages) {
+                const next = document.createElement("button");
+                next.classList.add("next");
+                next.innerHTML = `<i class="fa fa-arrow-right"></i>`;
+                next.onclick = () => loadTHPage(currentPage + 1);
+                container.appendChild(next);
+            }
         }
     }
 
@@ -301,6 +304,21 @@
         document.getElementsByClassName('active-sort')[0].id = sortBy;
     }
 
+    function clearFiltersAndSort() {
+        document.getElementById("accountNum").value = "";
+        document.getElementById("counterparty").value = "";
+        document.getElementById("scheduledStart").value = "";
+        document.getElementById("scheduledEnd").value = "";
+        document.getElementById("createdStart").value = "";
+        document.getElementById("createdEnd").value = "";
+        const activeStatus = document.getElementsByClassName('active-filter-status')[0];
+        activeStatus.className = activeStatus.className.replace('active', 'inactive');
+        document.getElementById("status-all").className = document.getElementById("status-all").className.replace('inactive', 'active');
+        const activeSort = document.getElementsByClassName('active-sort')[0];
+        activeSort.className = activeSort.className.replace('active', 'inactive');
+        document.getElementById("scheduledDesc").className = document.getElementById("scheduledDesc").className.replace('inactive', 'active');
+    }
+
     function filters() {
         let output = JSON.stringify({
             accountNum,
@@ -391,30 +409,55 @@
 
         async function closeModal(action) {
             console.log(action + " button clicked");
+
+            if(action === "Reset") {
+                clearFiltersAndSort();
+            }
+
             setFilterVariables();
             if (filters() == null) return;
             await socket.send(filters());
             overlay.classList.remove("show");
             filterDiv.classList.remove("show");
+            sortDiv.classList.remove("show");
         }
 
         applyBtn.addEventListener("click", () => closeModal("Apply"));
         resetBtn.addEventListener("click", () => closeModal("Reset"));
 
         overlay.addEventListener("click", (e) => {
-            if (e.target === overlay) {
+            if (e.target === overlay)
                 closeModal("overlay");
-                overlay.classList.remove("show");
-                filterDiv.classList.remove("show");
-                sortDiv.classList.remove("show");
-            }
         });
+
+        //sort buttons
+        const sortButtons = document.getElementById("sortDiv").querySelectorAll("button");
+        sortButtons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                const activeSort =  document.getElementsByClassName('active-sort')[0];
+                activeSort.className = activeSort.className.replace('active', 'inactive');
+                button.className = button.className.replace('inactive', 'active');
+                sortBy = button.id;
+                closeModal(sortBy);
+            })
+        })
+
+        //filter status
+        const statusButtons = document.getElementById("filterStatus").querySelectorAll("button");
+        statusButtons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                const activeStatus =  document.getElementsByClassName('active-filter-status')[0];
+                activeStatus.className = activeStatus.className.replace('active', 'inactive');
+                button.className = button.className.replace('inactive', 'active');
+                status = button.innerText;
+            })
+        })
     }
 
     function cleanup() {
         console.log("TransferHistoryPage cleanup");
-        // if (socket && socket.readyState === WebSocket.OPEN) socket.close();
-        // socket = null;
+        if (socket && socket.readyState === WebSocket.OPEN) socket.close();
+        socket = null;
     }
 
     const pageAPI = { init, cleanup };

@@ -121,7 +121,7 @@
 }
 
 .inactive-filter-status {
-    border: 1px solid transparent;
+    border: 2px solid transparent;
     background-color: #0000000a;
     color: #00000096;
     cursor: pointer;

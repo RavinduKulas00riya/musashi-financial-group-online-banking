@@ -135,32 +135,40 @@ public class CustomerTimelyOperations {
             String stringStatus = filters.getString("status");
             Integer page = filters.getInt("page");
 
-            LocalDate scheduledStartDate = null;
-            LocalDate scheduledEndDate = null;
-            LocalDate createdStartDate = null;
-            LocalDate createdEndDate = null;
+            LocalDateTime scheduledStartDate = null;
+            LocalDateTime scheduledEndDate = null;
+            LocalDateTime createdStartDate = null;
+            LocalDateTime createdEndDate = null;
 
             try {
-                scheduledStartDate = LocalDate.parse(scheduledStart, dateFormatter);
-            } catch (Exception ignored) {}
+                scheduledStartDate = scheduledStart.isEmpty()?null:LocalDate.parse(scheduledStart, dateFormatter).atStartOfDay();
+            } catch (Exception ignored) {
+                System.out.println("Could not parse scheduledStart: " + scheduledStart);
+            }
 
             try {
-                scheduledEndDate = LocalDate.parse(scheduledEnd, dateFormatter);
-            }catch (Exception ignored) {}
+                scheduledEndDate = scheduledEnd.isEmpty()?null:LocalDate.parse(scheduledEnd, dateFormatter).atStartOfDay();
+            }catch (Exception ignored) {
+                System.out.println("Could not parse scheduledEnd: " + scheduledEnd);
+            }
 
             try {
-                createdStartDate = LocalDate.parse(createdStart, dateFormatter);
-            }catch (Exception ignored) {}
+                createdStartDate = createdStart.isEmpty()?null:LocalDate.parse(createdStart, dateFormatter).atStartOfDay();
+            }catch (Exception ignored) {
+                System.out.println("Could not parse createdStart: " + createdStart);
+            }
 
             try {
-                createdEndDate = LocalDate.parse(createdEnd, dateFormatter);
-            }catch (Exception ignored) {}
+                createdEndDate = createdEnd.isEmpty()?null:LocalDate.parse(createdEnd, dateFormatter).atStartOfDay();
+            }catch (Exception ignored) {
+                System.out.println("Could not parse createdEnd: " + createdEnd);
+            }
 
             ScheduledTransactionStatus status = null;
 
-            if(stringStatus == "Pending") {
+            if(stringStatus.equals("Pending")) {
                 status = ScheduledTransactionStatus.PENDING;
-            }else if (stringStatus == "Paused") {
+            }else if (stringStatus.equals("Paused")) {
                 status = ScheduledTransactionStatus.PAUSED;
             }
 

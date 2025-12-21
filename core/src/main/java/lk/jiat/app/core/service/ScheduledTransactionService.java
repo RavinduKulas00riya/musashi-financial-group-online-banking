@@ -9,6 +9,7 @@ import lk.jiat.app.core.model.ScheduledTransfer;
 import lk.jiat.app.core.model.Transfer;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Remote
@@ -20,5 +21,5 @@ public interface ScheduledTransactionService {
     void deleteTransaction(ScheduledTransfer transfer);
     void updateTransaction(ScheduledTransfer transfer);
     List<ScheduledTransfer> getTransactionsByStatus(ScheduledTransactionStatus status);
-    CustomerTimelyOperationsTableDTO customerTimelyOperationsTable(Account account, LocalDate scheduledStart, LocalDate scheduledEnd, LocalDate createdStart, LocalDate createdEnd,  String sortBy, int page, int pageSize, String accountNum, String counterparty, ScheduledTransactionStatus status);
+    CustomerTimelyOperationsTableDTO customerTimelyOperationsTable(Account account, LocalDateTime scheduledStart, LocalDateTime scheduledEnd, LocalDateTime createdStart, LocalDateTime createdEnd, String sortBy, int page, int pageSize, String accountNum, String counterparty, ScheduledTransactionStatus status);
 }

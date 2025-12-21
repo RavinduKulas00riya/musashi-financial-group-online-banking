@@ -94,7 +94,7 @@ public class ScheduledTransactionSessionBean implements ScheduledTransactionServ
     }
 
     @Override
-    public CustomerTimelyOperationsTableDTO customerTimelyOperationsTable(Account account, LocalDate scheduledStart, LocalDate scheduledEnd, LocalDate createdStart, LocalDate createdEnd, String sortBy, int page, int pageSize, String accountNum, String counterparty, ScheduledTransactionStatus status) {
+    public CustomerTimelyOperationsTableDTO customerTimelyOperationsTable(Account account, LocalDateTime scheduledStart, LocalDateTime scheduledEnd, LocalDateTime createdStart, LocalDateTime createdEnd, String sortBy, int page, int pageSize, String accountNum, String counterparty, ScheduledTransactionStatus status) {
         try {
 
             CustomerTimelyOperationsTableDTO result = new CustomerTimelyOperationsTableDTO();
@@ -232,10 +232,10 @@ public class ScheduledTransactionSessionBean implements ScheduledTransactionServ
     private void bindCommonParameters(
             Query query,
             Account account,
-            LocalDate scheduledStart,
-            LocalDate scheduledEnd,
-            LocalDate createdStart,
-            LocalDate createdEnd,
+            LocalDateTime scheduledStart,
+            LocalDateTime scheduledEnd,
+            LocalDateTime createdStart,
+            LocalDateTime createdEnd,
             String accountNum,
             String counterparty,
             ScheduledTransactionStatus status

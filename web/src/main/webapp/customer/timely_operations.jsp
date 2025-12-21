@@ -264,7 +264,7 @@
                 </div>
             </div>
 
-            <div class="horizontal-div filter-status-btn-div">
+            <div class="horizontal-div filter-status-btn-div" id="filterStatus">
                 <button class="active-filter-status" id="status-all">All</button>
                 <button class="inactive-filter-status" id="status-pending">Pending</button>
                 <button class="inactive-filter-status" id="status-paused">Paused</button>
