@@ -22,4 +22,5 @@ public interface ScheduledTransactionService {
     void updateTransaction(ScheduledTransfer transfer);
     List<ScheduledTransfer> getTransactionsByStatus(ScheduledTransactionStatus status);
     CustomerTimelyOperationsTableDTO customerTimelyOperationsTable(Account account, LocalDateTime scheduledStart, LocalDateTime scheduledEnd, LocalDateTime createdStart, LocalDateTime createdEnd, String sortBy, int page, int pageSize, String accountNum, String counterparty, ScheduledTransactionStatus status);
+    ScheduledTransfer getTransactionById(Integer id);
 }

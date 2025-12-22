@@ -48,7 +48,7 @@ public class ScheduledTransactionSessionBean implements ScheduledTransactionServ
     public List<ScheduledTransfer> getAllTransactions() {
         try {
             return em.createNamedQuery("ScheduledTransfer.findAll", ScheduledTransfer.class).getResultList();
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             return List.of();
         }
     }
@@ -60,26 +60,30 @@ public class ScheduledTransactionSessionBean implements ScheduledTransactionServ
 
     @Override
     public void updateTransaction(ScheduledTransfer transfer) {
-        em.merge(transfer);
-        DecimalFormat df = new DecimalFormat("#0.00");
-        if(transfer.getStatus().equals(ScheduledTransactionStatus.COMPLETED)){
+        try {
+            System.out.println("Updating transaction " + transfer.getId() + " with status " + transfer.getStatus());
+            em.merge(transfer);
+            DecimalFormat df = new DecimalFormat("#0.00");
+            if (transfer.getStatus().equals(ScheduledTransactionStatus.COMPLETED)) {
 
-            notificationService.sendNotification(new Notification(
-                    "$"+df.format(transfer.getAmount())+" has been transferred to you by "+transfer.getFromAccount().getAccountNo(),
-                    transfer.getToAccount().getUser(),
-                    transfer.getDateTime()));
-            notificationService.sendNotification(new Notification(
-                    "The scheduled transaction to send $"+df.format(transfer.getAmount())+" to "+transfer.getToAccount().getAccountNo()+" has been completed",
-                    transfer.getFromAccount().getUser(),
-                    transfer.getDateTime()));
-//            publicEvent.fire(new PublicEvent(transfer.getToAccount().getUser().getId()));
-//            publicEvent.fire(new PublicEvent(transfer.getFromAccount().getUser().getId()));
-        }else{
-            notificationService.sendNotification(new Notification(
-                    "The scheduled transaction to send $"+df.format(transfer.getAmount())+" to "+transfer.getToAccount().getAccountNo()+" has been cancelled (Paused by user)",
-                    transfer.getFromAccount().getUser(),
-                    transfer.getDateTime()));
-//            publicEvent.fire(new PublicEvent(transfer.getFromAccount().getUser().getId()));
+                notificationService.sendNotification(new Notification(
+                        "$" + df.format(transfer.getAmount()) + " has been transferred to you by " + transfer.getFromAccount().getAccountNo(),
+                        transfer.getToAccount().getUser(),
+                        transfer.getDateTime()));
+                notificationService.sendNotification(new Notification(
+                        "The scheduled transaction to send $" + df.format(transfer.getAmount()) + " to " + transfer.getToAccount().getAccountNo() + " has been completed",
+                        transfer.getFromAccount().getUser(),
+                        transfer.getDateTime()));
+            } else {
+
+//                notificationService.sendNotification(new Notification(
+//                        "The scheduled transaction to send $" + df.format(transfer.getAmount()) + " to " + transfer.getToAccount().getAccountNo() + " has been cancelled (Paused by user)",
+//                        transfer.getFromAccount().getUser(),
+//                        transfer.getDateTime()));
+                publicEvent.fire(new PublicEvent(transfer.getFromAccount().getUser().getId()));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
     }
@@ -87,8 +91,8 @@ public class ScheduledTransactionSessionBean implements ScheduledTransactionServ
     @Override
     public List<ScheduledTransfer> getTransactionsByStatus(ScheduledTransactionStatus status) {
         try {
-            return em.createNamedQuery("ScheduledTransfer.findByStatus", ScheduledTransfer.class).setParameter("status",status).getResultList();
-        }catch (NoResultException e){
+            return em.createNamedQuery("ScheduledTransfer.findByStatus", ScheduledTransfer.class).setParameter("status", status).getResultList();
+        } catch (NoResultException e) {
             return List.of();
         }
     }
@@ -158,12 +162,14 @@ public class ScheduledTransactionSessionBean implements ScheduledTransactionServ
                             "SELECT t.dateTime FROM ScheduledTransfer t " +
                                     "WHERE t.fromAccount = :account " +
                                     "AND t.status <> :completedStatus " +
-                                    "ORDER BY t.dateTime DESC",
+                                    "AND t.status <> :cancelledStatus " +
+                                    "ORDER BY t.dateTime ASC",
                             LocalDateTime.class
                     );
 
             dateQuery.setParameter("account", account);
             dateQuery.setParameter("completedStatus", ScheduledTransactionStatus.COMPLETED);
+            dateQuery.setParameter("cancelledStatus", ScheduledTransactionStatus.CANCELLED);
             dateQuery.setMaxResults(1);
             result.setNextDateTime(dateQuery.getResultList().stream().findFirst().orElse(null));
 
@@ -172,12 +178,14 @@ public class ScheduledTransactionSessionBean implements ScheduledTransactionServ
                     em.createQuery(
                             "SELECT COUNT(t) FROM ScheduledTransfer t " +
                                     "WHERE t.fromAccount = :account " +
+                                    "AND t.status <> :cancelledStatus " +
                                     "AND t.status <> :completedStatus ",
                             Long.class
                     );
 
             totalCountQuery.setParameter("account", account);
             totalCountQuery.setParameter("completedStatus", ScheduledTransactionStatus.COMPLETED);
+            totalCountQuery.setParameter("cancelledStatus", ScheduledTransactionStatus.CANCELLED);
             result.setTotalRowCount(totalCountQuery.getSingleResult().intValue());
 
             //get total amount of scheduled transactions
@@ -185,18 +193,29 @@ public class ScheduledTransactionSessionBean implements ScheduledTransactionServ
                     em.createQuery(
                             "SELECT SUM(t.amount) FROM ScheduledTransfer t " +
                                     "WHERE t.fromAccount = :account " +
+                                    "AND t.status <> :cancelledStatus " +
                                     "AND t.status <> :completedStatus ",
                             Double.class
                     );
 
             amountQuery.setParameter("account", account);
             amountQuery.setParameter("completedStatus", ScheduledTransactionStatus.COMPLETED);
+            amountQuery.setParameter("cancelledStatus", ScheduledTransactionStatus.CANCELLED);
             Double total = amountQuery.getSingleResult();
             result.setTotalAmount(total != null ? total : 0.0);
 
             return result;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ScheduledTransfer getTransactionById(Integer id) {
+        try {
+            return em.createNamedQuery("ScheduledTransfer.findById", ScheduledTransfer.class).setParameter("id", id).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         }
     }
 
@@ -212,7 +231,8 @@ public class ScheduledTransactionSessionBean implements ScheduledTransactionServ
                 .append(" AND (:scheduledEnd IS NULL OR t.dateTime <= :scheduledEnd) ")
                 .append(" AND (:createdStart IS NULL OR t.created_datetime >= :createdStart) ")
                 .append(" AND (:createdEnd IS NULL OR t.created_datetime <= :createdEnd) ")
-                .append(" AND t.status <> :completedStatus ");
+                .append(" AND t.status <> :completedStatus ")
+                .append(" AND t.status <> :cancelledStatus ");
 
         if (accountNum != null && !accountNum.isEmpty()) {
             sb.append(" AND t.toAccount.accountNo = :accountNum ");
@@ -246,6 +266,7 @@ public class ScheduledTransactionSessionBean implements ScheduledTransactionServ
         query.setParameter("createdStart", createdStart);
         query.setParameter("createdEnd", createdEnd);
         query.setParameter("completedStatus", ScheduledTransactionStatus.COMPLETED);
+        query.setParameter("cancelledStatus", ScheduledTransactionStatus.CANCELLED);
 
         if (accountNum != null && !accountNum.isEmpty()) {
             query.setParameter("accountNum", accountNum);

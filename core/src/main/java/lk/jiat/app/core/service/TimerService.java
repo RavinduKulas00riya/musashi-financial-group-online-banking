@@ -6,6 +6,7 @@ import jakarta.ejb.Remote;
 public interface TimerService {
 
     void checkPendingTransactions();
+    void checkPausedTransactions();
     void dailyInterestCalculation();
     void dailyBalanceUpdate();
 }

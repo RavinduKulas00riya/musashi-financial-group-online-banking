@@ -12,9 +12,11 @@
     let createdStart = "";
     let createdEnd = "";
     let status = "All";
-    let sortBy = "scheduledDesc";
+    let sortBy = "scheduledAsc";
 
     let active_page = 1;
+
+    let midnightIntervalId = null;
 
     function init() {
         console.log("TimelyOperationsPage initialized");
@@ -24,7 +26,7 @@
 
         setTimeout(() => {
             updateMidnightCountdown();
-            setInterval(updateMidnightCountdown, 1000);
+            midnightIntervalId = setInterval(updateMidnightCountdown, 1000);
         }, 1000 - (Date.now() % 1000));
     }
 
@@ -192,6 +194,19 @@
 
         const statusBtn = document.createElement("button");
         statusBtn.className = `status-btn ${rowData.status.toLowerCase()}`;
+        statusBtn.addEventListener("click", async() => {
+            await fetch(`${window.CONTEXT_PATH}/changeScheduledTransactionStatus?id=`+rowData.id);
+            // const message = await response.text();
+            // alert(message);
+            // if (message === "success") {
+            //     reset();
+            // } else if (message === "redirect") {
+            //     await fetch(`${window.CONTEXT_PATH}/logout`);
+            //     window.location.href = `${window.CONTEXT_PATH}/index.jsp`;
+            // } else {
+            //     showError(message);
+            // }
+        })
 
         const statusIcon = document.createElement("i");
         if(rowData.status.toLowerCase() === "pending") {
@@ -223,22 +238,22 @@
                 console.log(event.data);
                 const data = JSON.parse(event.data);
 
-                // if (data.task === "update") {
-                //     if(emptyScreen){
-                //         if (filters() == null) return;
-                //         await socket.send(filters());
-                //         return;
-                //     }
-                //     await showRefreshButton();
-                //     if (typeof window.renderNotifications === "function") {
-                //         console.log("TH render notifications");
-                //         await window.renderNotifications();
-                //     } else {
-                //         throw new Error("window.renderNotifications is not defined");
-                //     }
-                //     return;
-                // }
-                //
+                if (data.task === "update") {
+                    // if(emptyScreen){
+                        if (filters() == null) return;
+                        await socket.send(filters());
+                        return;
+                    // }
+                    // await showRefreshButton();
+                    // if (typeof window.renderNotifications === "function") {
+                    //     console.log("TH render notifications");
+                    //     await window.renderNotifications();
+                    // } else {
+                    //     throw new Error("window.renderNotifications is not defined");
+                    // }
+                    // return;
+                }
+
                 if (data.task === "filters") {
                     if (filters() == null) return;
                     await socket.send(filters());
@@ -316,7 +331,7 @@
         document.getElementById("status-all").className = document.getElementById("status-all").className.replace('inactive', 'active');
         const activeSort = document.getElementsByClassName('active-sort')[0];
         activeSort.className = activeSort.className.replace('active', 'inactive');
-        document.getElementById("scheduledDesc").className = document.getElementById("scheduledDesc").className.replace('inactive', 'active');
+        document.getElementById("scheduledAsc").className = document.getElementById("scheduledAsc").className.replace('inactive', 'active');
     }
 
     function filters() {
@@ -456,7 +471,15 @@
 
     function cleanup() {
         console.log("TransferHistoryPage cleanup");
-        if (socket && socket.readyState === WebSocket.OPEN) socket.close();
+
+        if (midnightIntervalId !== null) {
+            clearInterval(midnightIntervalId);
+            midnightIntervalId = null;
+        }
+
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.close();
+        }
         socket = null;
     }
 

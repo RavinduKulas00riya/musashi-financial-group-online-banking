@@ -190,12 +190,13 @@ public class CustomerTimelyOperations {
 
                 JSONObject row = new JSONObject();
 
+                row.put("id", transaction.getId());
                 row.put("scheduledDate", convertToDate.format(transaction.getDateTime()));
                 row.put("scheduledTime", convertToTime.format(transaction.getDateTime()));
                 row.put("createdDate", convertToDate.format(transaction.getCreated_datetime()));
                 row.put("createdTime", convertToTime.format(transaction.getCreated_datetime()));
                 row.put("amount", df.format(transaction.getAmount()));
-                row.put("counterparty", account.getUser().getName());
+                row.put("counterparty", transaction.getToAccount().getUser().getName());
                 row.put("accountNum", transaction.getToAccount().getAccountNo());
                 row.put("status", transaction.getStatus().name().toLowerCase());
 

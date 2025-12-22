@@ -285,22 +285,23 @@
             <div class="center-div sort-sub-div">
                 <span>Scheduled Time</span>
                 <div class="center-div" style="gap: 20px">
-                    <button class="active-sort" id="scheduledDesc">DESC</button>
                     <button class="inactive-sort" id="scheduledAsc">ASC</button>
+                    <button class="active-sort" id="scheduledDesc">DESC</button>
                 </div>
             </div>
             <div class="center-div sort-sub-div">
                 <span>Created Time</span>
                 <div class="center-div" style="gap: 20px">
-                    <button class="inactive-sort" id="createdDesc">DESC</button>
                     <button class="inactive-sort" id="createdAsc">ASC</button>
+                    <button class="inactive-sort" id="createdDesc">DESC</button>
                 </div>
             </div>
             <div class="center-div sort-sub-div">
                 <span>Amount</span>
                 <div class="center-div" style="gap: 20px">
-                    <button class="inactive-sort" id="amountDesc">DESC</button>
                     <button class="inactive-sort" id="amountAsc">ASC</button>
+                    <button class="inactive-sort" id="amountDesc">DESC</button>
+
                 </div>
             </div>
         </div>

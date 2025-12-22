@@ -10,8 +10,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "scheduled_transfers")
 @NamedQueries({
-        @NamedQuery(name = "ScheduledTransfer.findAll", query = "select t from ScheduledTransfer t order by t.dateTime DESC"),
+        @NamedQuery(name = "ScheduledTransfer.findAll", query = "select t from ScheduledTransfer t order by t.dateTime ASC"),
         @NamedQuery(name = "ScheduledTransfer.findByStatus", query = "select t from ScheduledTransfer t where t.status=:status"),
+        @NamedQuery(name = "ScheduledTransfer.findById", query = "select t from ScheduledTransfer t where t.id=:id"),
 })
 public class ScheduledTransfer implements Serializable {
 

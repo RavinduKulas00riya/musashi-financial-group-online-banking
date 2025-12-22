@@ -60,18 +60,22 @@ public class TimerSessionBean implements TimerService {
                     transactionService.createTransaction(new Transfer(t.getDateTime(),t.getAmount(),t.getToAccount(),t.getFromAccount()));
                 }
             });
-
-            List<ScheduledTransfer> pausedTransactions = scheduledTransactionService.getTransactionsByStatus(ScheduledTransactionStatus.PAUSED);
-            pausedTransactions.forEach(t -> {
-
-                if (t.getDateTime().isBefore(LocalDateTime.now())) {
-                    t.setStatus(ScheduledTransactionStatus.CANCELED);
-                    scheduledTransactionService.updateTransaction(t);
-                }
-            });
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    @Override
+    @Schedule(hour = "*", minute = "*", second = "0", persistent = true)
+    public void checkPausedTransactions() {
+        List<ScheduledTransfer> pausedTransactions = scheduledTransactionService.getTransactionsByStatus(ScheduledTransactionStatus.PAUSED);
+        pausedTransactions.forEach(t -> {
+
+            if (t.getDateTime().isBefore(LocalDateTime.now())) {
+                t.setStatus(ScheduledTransactionStatus.CANCELLED);
+                scheduledTransactionService.updateTransaction(t);
+            }
+        });
     }
 
     @Override

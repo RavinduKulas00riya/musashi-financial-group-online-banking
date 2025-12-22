@@ -112,6 +112,7 @@
     font-family: medium;
     border-radius: 0.5rem;
     padding: 7px 15px;
+    transition: color,background-color,border 0.2s ease;
 }
 
 .active-filter-status {
